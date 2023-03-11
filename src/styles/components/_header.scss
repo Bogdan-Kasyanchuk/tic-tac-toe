@@ -1,0 +1,16 @@
+.c-header {
+  @apply flex items-center justify-between px-5 py-3 border-b-4 border-black gap-x-5 bg-gradient-to-r from-blue-dark;
+
+  &__title {
+    @apply text-2xl font-semibold text-white uppercase;
+    @apply md:text-3xl;
+  }
+
+  &__menu {
+    @apply flex items-center gap-x-5;
+  }
+
+  &__button.c-button {
+    @apply px-3.5 py-0.5 text-lg;
+  }
+}

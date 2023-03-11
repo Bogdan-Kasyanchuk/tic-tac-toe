@@ -1,0 +1,18 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+
+  @apply text-base leading-none text-black font-normal;
+
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.app-bg {
+  @apply flex flex-col relative mx-auto max-w-480 h-full min-h-100vh bg-gradient-to-r from-stone-300;
+
+  &__image {
+    @apply absolute -z-1 w-full h-full object-cover;
+  }
+}

@@ -1,0 +1,33 @@
+.c-modal {
+  @apply border-white border bg-blue-dark p-5 w-85vw max-w-125 flex flex-col gap-y-10;
+
+  &__close-button {
+    @apply flex items-center justify-center w-8 h-8 relative self-end z-21 bg-blue-50 transition;
+
+    &:hover {
+      @apply bg-blue-200;
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      @apply absolute w-4/5 h-0.5 bg-black;
+    }
+
+    &::before {
+      @apply rotate-45;
+    }
+
+    &::after {
+      @apply -rotate-45;
+    }
+  }
+
+  &__content {
+    @apply text-white text-3xl text-center;
+  }
+
+  &__button-wrapper {
+    @apply flex justify-around flex-wrap gap-5;
+  }
+}

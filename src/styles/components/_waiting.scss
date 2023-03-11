@@ -1,0 +1,11 @@
+.c-waiting {
+  @apply flex flex-col items-center border-white border bg-blue-dark p-5 w-85vw max-w-100;
+
+  &__title {
+    @apply text-2xl text-white text-center;
+  }
+
+  &__text {
+    @apply text-xl text-white;
+  }
+}

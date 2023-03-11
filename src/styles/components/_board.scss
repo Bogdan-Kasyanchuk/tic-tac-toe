@@ -1,0 +1,101 @@
+.c-board {
+  @apply mx-auto grid gap-0.5 grid-cols-3 grid-rows-3 bg-black;
+
+  &__cell {
+    @apply relative flex items-center justify-center cursor-pointer bg-blue-50 transition;
+
+    &:hover {
+      @apply bg-blue-200;
+    }
+
+    &-circle {
+      @apply w-3/4 border-4 rounded-full h-3/4 border-green;
+    }
+
+    &-cross-wrapper {
+      @apply relative w-full -top-0.5;
+    }
+
+    &-cross {
+      @apply absolute w-full h-1 bg-red;
+
+      &:first-child {
+        @apply rotate-45;
+      }
+
+      &:last-child {
+        @apply -rotate-45;
+      }
+    }
+
+    &-active {
+      @apply absolute z-10 h-2.5 w-full+6px bg-blue-700;
+
+      &--vertical {
+        @apply rotate-90;
+      }
+
+      &--rotate_45 {
+        @apply rotate-45 w-144%;
+      }
+
+      &--rotate_-45 {
+        @apply -rotate-45 w-144%;
+      }
+    }
+
+    &:nth-child(3n + 1) {
+      .c-board__cell-active--horizontal {
+        @apply -left-5 w-full+20px;
+      }
+    }
+
+    &:nth-child(3n) {
+      .c-board__cell-active--horizontal {
+        @apply -right-5 w-full+20px;
+      }
+    }
+
+    &:nth-child(-n + 3) {
+      .c-board__cell-active--vertical {
+        @apply top-7 w-full+20px;
+        @apply md:top-17.5;
+      }
+    }
+
+    &:nth-child(n + 7) {
+      .c-board__cell-active--vertical {
+        @apply bottom-7 w-full+20px;
+        @apply md:bottom-17.5;
+      }
+    }
+
+    &:first-child {
+      .c-board__cell-active--rotate_45 {
+        @apply -left-7 top-8 w-full+50px;
+        @apply md:-left-12.5 md:top-18 md:w-full+90px;
+      }
+    }
+
+    &:last-child {
+      .c-board__cell-active--rotate_45 {
+        @apply -right-7 bottom-8 w-full+50px;
+        @apply md:-right-12.5 md:bottom-18.5 md:w-full+90px;
+      }
+    }
+
+    &:nth-child(3) {
+      .c-board__cell-active--rotate_-45 {
+        @apply -left-5.5 top-8 w-full+50px;
+        @apply md:-left-10 md:top-18 md:w-full+90px;
+      }
+    }
+
+    &:nth-child(7) {
+      .c-board__cell-active--rotate_-45 {
+        @apply -right-5.5 bottom-8 w-full+50px;
+        @apply md:-right-10 md:bottom-18.5 md:w-full+90px;
+      }
+    }
+  }
+}

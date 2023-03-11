@@ -1,0 +1,39 @@
+.c-select {
+  @apply relative;
+
+  &__dropdown {
+    @apply right-0 absolute z-50;
+
+    &-inner {
+      @apply mt-2.5 min-w-30 max-w-100vw-40px bg-blue-50;
+    }
+  }
+
+  &__list {
+    @apply m-0 p-0 list-none;
+  }
+
+  &__item {
+    @apply whitespace-nowrap px-4 leading-loose text-black text-lg;
+
+    button {
+      @apply w-full text-left;
+    }
+
+    &:first-child {
+      @apply text-base leading-loose;
+    }
+
+    &:nth-child(2) {
+      @apply border-b border-black;
+    }
+
+    &:not(:nth-child(-n + 2)) {
+      @apply cursor-pointer transition;
+
+      &:hover {
+        @apply text-white bg-blue-dark;
+      }
+    }
+  }
+}

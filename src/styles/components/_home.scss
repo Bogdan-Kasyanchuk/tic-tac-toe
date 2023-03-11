@@ -1,0 +1,43 @@
+.c-home {
+  @apply flex flex-col gap-y-10 w-full max-w-105 items-center;
+
+  &__title {
+    @apply text-4xl font-semibold text-center uppercase;
+  }
+
+  &__choice {
+    @apply flex flex-col gap-y-5 w-full;
+
+    &-type {
+      @apply flex items-center gap-x-5;
+    }
+
+    &-new {
+      @apply flex flex-col gap-y-5 pl-5;
+
+      &-turn {
+        @apply flex items-center gap-x-5;
+      }
+    }
+
+    &-join {
+      @apply pl-5;
+    }
+  }
+
+  &__generate-id {
+    @apply flex flex-col gap-y-5;
+
+    &-button {
+      @apply text-lg px-2 font-semibold py-0.5 w-fit;
+    }
+
+    &-text {
+      @apply text-2xl font-semibold text-white;
+    }
+  }
+
+  &__button {
+    @apply max-w-80 mx-auto w-full;
+  }
+}

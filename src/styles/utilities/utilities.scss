@@ -1,0 +1,36 @@
+.u-trans {
+  @apply opacity-0 transition;
+
+  &.entering,
+  &.entered {
+    @apply opacity-100;
+  }
+
+  &.exiting,
+  &.exited {
+    @apply opacity-0;
+  }
+}
+
+.u-fade {
+  &-enter {
+    @apply opacity-0;
+  }
+
+  &-exit {
+    @apply opacity-100;
+  }
+
+  &-enter-active {
+    @apply opacity-100;
+  }
+
+  &-exit-active {
+    @apply opacity-0;
+  }
+
+  &-enter-active,
+  &-exit-active {
+    @apply transition duration-75;
+  }
+}

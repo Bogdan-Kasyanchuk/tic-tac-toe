@@ -1,0 +1,8 @@
+.c-statistics {
+  @apply flex items-center gap-x-5 justify-end;
+
+  &__title {
+    @apply text-2xl font-semibold flex items-center gap-x-5;
+    @apply md:text-4xl;
+  }
+}

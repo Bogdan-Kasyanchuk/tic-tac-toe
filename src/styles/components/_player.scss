@@ -1,0 +1,46 @@
+.c-player {
+  @apply flex items-center gap-x-5;
+  @apply md:gap-x-8;
+
+  &__avatar {
+    @apply w-7 h-7 rounded-full border border-white overflow-hidden ml-2.5;
+    @apply md:w-10 md:h-10 md:ml-5;
+
+    img {
+      @apply w-full h-full object-cover;
+    }
+  }
+
+  &__title {
+    @apply text-2xl font-semibold truncate max-w-37.5 mr-auto;
+    @apply md:text-4xl md:max-w-105 md:leading-tight;
+  }
+
+  &__type-1 {
+    @apply border-4 rounded-full h-8 w-8 border-green;
+    @apply md:h-11 md:w-11;
+  }
+
+  &__score {
+    @apply text-3xl font-semibold w-9 text-right leading-none;
+    @apply md:text-5xl md:w-14;
+  }
+
+  &__type-2 {
+    @apply relative flex items-center justify-center h-8 w-8;
+    @apply md:h-11 md:w-11;
+
+    &-inner {
+      @apply absolute w-10 h-1 bg-red;
+      @apply md:w-14;
+
+      &:first-child {
+        @apply rotate-45;
+      }
+
+      &:last-child {
+        @apply -rotate-45;
+      }
+    }
+  }
+}

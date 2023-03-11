@@ -1,0 +1,22 @@
+.c-app {
+  @apply w-full;
+  @apply md:w-175;
+
+  &__player-wrapper {
+    @apply flex flex-col gap-y-5 mb-2.5 border-b-2 pb-2.5;
+    @apply md:mb-5 md:pb-5;
+  }
+
+  &__board {
+    @apply my-8 w-60 h-60;
+    @apply md:w-125 md:h-125;
+  }
+
+  &__button-wrapper {
+    @apply flex justify-evenly;
+  }
+
+  &__button {
+    @apply basis-1/3;
+  }
+}

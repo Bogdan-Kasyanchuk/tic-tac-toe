@@ -1,0 +1,11 @@
+.c-button {
+  @apply px-4 py-1 text-2xl uppercase bg-blue-50 transition;
+
+  &:hover {
+    @apply bg-blue-200;
+  }
+
+  &--login-google {
+    @apply px-8 py-4;
+  }
+}

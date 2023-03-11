@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './utilities/utilities';
+
+@import './components/base';
+@import './components/button';
+@import './components/select';
+@import './components/text';
+@import './components/radio';
+@import './components/waiting';
+@import './components/overlay';
+@import './components/modal';
+@import './components/header';
+@import './components/container';
+@import './components/app';
+@import './components/home';
+@import './components/board';
+@import './components/player';
+@import './components/statistics';

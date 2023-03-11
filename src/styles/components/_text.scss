@@ -1,0 +1,19 @@
+.c-text {
+  @apply text-lg leading-snug font-semibold;
+
+  &__label {
+    @apply inline-block mb-2.5 uppercase cursor-pointer;
+  }
+
+  &__input {
+    @apply w-full outline-0 rounded-none bg-white py-1.5 px-3 leading-6.5 border border-white transition;
+
+    &::placeholder {
+      @apply text-black opacity-30;
+    }
+
+    &:focus {
+      @apply outline-1 outline outline-black border-black;
+    }
+  }
+}
