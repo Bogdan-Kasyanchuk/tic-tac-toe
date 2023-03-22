@@ -1,11 +1,10 @@
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: 'tic-tac-toe-30f4b.firebaseapp.com',
-  projectId: 'tic-tac-toe-30f4b',
-  storageBucket: 'tic-tac-toe-30f4b.appspot.com',
-  messagingSenderId: '431614817332',
-  appId: '1:431614817332:web:6a24320134c47360d28661',
-  measurementId: 'G-LNML3WXHPS',
+  authDomain: 'tic-tac-toe-4bcfd.firebaseapp.com',
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: 'tic-tac-toe-4bcfd.appspot.com',
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
 };
 
 export default firebaseConfig;
