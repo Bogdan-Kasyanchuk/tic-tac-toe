@@ -7,4 +7,5 @@ export interface IUseUser {
   user: User | null | undefined;
   displayName: TUser['name'];
   photoURL: TUser['avatar'];
+  loading: boolean;
 }

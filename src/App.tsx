@@ -1,10 +1,8 @@
-import { collection } from 'firebase/firestore';
 import { FC } from 'react';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { Toaster } from 'react-hot-toast';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import db from 'service/firebaseDB';
+import useUser from 'hooks/useUser';
 
 import bg from 'assets/bg.jpg';
 
@@ -20,13 +18,15 @@ import NavBar from 'components/NavBar';
 import Spinner from 'components/Spinner';
 
 const App: FC = () => {
-  const [loading] = useCollectionData(collection(db, 'games'));
+  const { loading } = useUser();
 
   return (
     <div className='app-bg'>
       <img className='app-bg__image' src={bg} alt='Фон' />
       <Toaster position='top-right' />
       {loading ? (
+        <Spinner />
+      ) : (
         <>
           <NavBar />
           <Container>
@@ -59,8 +59,6 @@ const App: FC = () => {
             </Routes>
           </Container>
         </>
-      ) : (
-        <Spinner />
       )}
     </div>
   );
