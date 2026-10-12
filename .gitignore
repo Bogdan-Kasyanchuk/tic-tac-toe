@@ -105,3 +105,10 @@ dist
 
 # Local Netlify folder
 .netlify
+
+# Vite / Convex
+*.local
+.env.local
+
+# Superpowers plan workspace
+.superpowers
