@@ -1105,7 +1105,7 @@ git commit -m "feat: add games table with transactional enter and get"
     - В обох випадках через `ROUND_END_DELAY_MS` запускається `internal.games.finishRound`.
   - `internal.games.finishRound({ gameId: Id<'games'> })`: якщо `result !== null`, ставить `freshRound()`, інакше нічого не робить.
 
-- [ ] **Step 1: Падаючі тести** (дописати в `games.test.ts`)
+- [x] **Step 1: Падаючі тести** (дописати в `games.test.ts`)
 
 Імпорт `vitest` стає `import { afterEach, describe, expect, test, vi } from 'vitest';`.
 
@@ -1212,12 +1212,12 @@ describe('makeMove', () => {
 });
 ```
 
-- [ ] **Step 2: Тести мають впасти**
+- [x] **Step 2: Тести мають впасти**
 
 Run: `npm run test:once -- --project convex convex/games.test.ts`
 Expected: FAIL, бо в модулі немає функції `makeMove`.
 
-- [ ] **Step 3: Реалізація** (дописати в `convex/games.ts`)
+- [x] **Step 3: Реалізація** (дописати в `convex/games.ts`)
 
 Імпорти стають такими:
 
@@ -1330,12 +1330,12 @@ export const finishRound = internalMutation({
 });
 ```
 
-- [ ] **Step 4: Тести проходять**
+- [x] **Step 4: Тести проходять**
 
 Run: `npm run lint:fix && npm run test:once -- --project convex && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Коміт**
+- [x] **Step 5: Коміт**
 
 ```bash
 git add convex

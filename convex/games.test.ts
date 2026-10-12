@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { api } from './_generated/api';
 import { emptyBoard } from './rules';
@@ -15,6 +15,21 @@ const startGame = async () => {
     await bob.client.mutation(api.games.enter, { code: CODE });
 
     return { t, alice, bob };
+};
+
+afterEach(() => {
+    vi.useRealTimers();
+});
+
+type Started = Awaited<ReturnType<typeof startGame>>;
+
+// Alice — circle і ходить першою; далі ходи чергуються
+const play = async ({ alice, bob }: Started, cells: number[]) => {
+    for (const [ index, cell ] of cells.entries()) {
+        const player = index % 2 === 0 ? alice : bob;
+
+        await player.client.mutation(api.games.makeMove, { code: CODE, cell });
+    }
 };
 
 describe('enter', () => {
@@ -88,5 +103,91 @@ describe('get', () => {
         expect(await t.query(api.games.get, { code: CODE })).toBeNull();
         expect(await carol.client.query(api.games.get, { code: CODE })).toBeNull();
         expect(await carol.client.query(api.games.get, { code: 'missing' })).toBeNull();
+    });
+});
+
+describe('makeMove', () => {
+    test('rejects a move before the second player joins', async () => {
+        const t = setup();
+        const alice = await asUser(t, 'Alice');
+
+        await alice.client.mutation(api.games.enter, { code: CODE, mark: 'circle' });
+
+        await expect(alice.client.mutation(api.games.makeMove, { code: CODE, cell: 0 }))
+            .rejects.toThrow('Waiting for the second player');
+    });
+
+    test('rejects outsiders, moves out of turn and invalid cells', async () => {
+        const game = await startGame();
+        const carol = await asUser(game.t, 'Carol');
+
+        await expect(carol.client.mutation(api.games.makeMove, { code: CODE, cell: 0 }))
+            .rejects.toThrow('Not a player');
+        await expect(game.bob.client.mutation(api.games.makeMove, { code: CODE, cell: 0 }))
+            .rejects.toThrow('Not your turn');
+
+        await play(game, [ 0 ]);
+
+        await expect(game.alice.client.mutation(api.games.makeMove, { code: CODE, cell: 1 }))
+            .rejects.toThrow('Not your turn');
+
+        for (const cell of [ 0, 9, -1, 1.5 ]) {
+            await expect(game.bob.client.mutation(api.games.makeMove, { code: CODE, cell }))
+                .rejects.toThrow('Invalid move');
+        }
+    });
+
+    test('places the mark and passes the turn', async () => {
+        const game = await startGame();
+
+        await play(game, [ 4 ]);
+
+        const state = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(state?.board[ 4 ]).toBe('circle');
+        expect(state?.turn).toBe('cross');
+        expect(state?.result).toBeNull();
+    });
+
+    test('ends the round on a win and resets the board after the delay', async () => {
+        vi.useFakeTimers();
+
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+
+        const won = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(won?.result).toEqual({ kind: 'win', mark: 'circle', line: 'horizontal', cells: [ 0, 1, 2 ] });
+        expect(won?.circle?.score).toBe(1);
+        await expect(game.bob.client.mutation(api.games.makeMove, { code: CODE, cell: 8 }))
+            .rejects.toThrow('Round is over');
+
+        await game.t.finishAllScheduledFunctions(vi.runAllTimers);
+
+        const next = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(next?.board).toEqual(emptyBoard());
+        expect(next?.result).toBeNull();
+        expect(next?.turn).toBe('circle');
+        expect(next?.circle?.score).toBe(1);
+    });
+
+    test('ends the round on a draw without scoring', async () => {
+        vi.useFakeTimers();
+
+        const game = await startGame();
+
+        await play(game, [ 0, 1, 2, 4, 3, 5, 7, 6, 8 ]);
+
+        const drawn = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(drawn?.result).toEqual({ kind: 'draw' });
+        expect(drawn?.circle?.score).toBe(0);
+        expect(drawn?.cross?.score).toBe(0);
+
+        await game.t.finishAllScheduledFunctions(vi.runAllTimers);
+
+        expect((await game.alice.client.query(api.games.get, { code: CODE }))?.board).toEqual(emptyBoard());
     });
 });
