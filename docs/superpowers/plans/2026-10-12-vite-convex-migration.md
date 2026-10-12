@@ -199,6 +199,7 @@ export default defineConfig({
         "isolatedModules": true,
         "skipLibCheck": true,
         "noEmit": true,
+        "allowImportingTsExtensions": true,
         "types": [ "vite/client", "node" ],
         "paths": {
             "@/*": [ "./src/*" ],
@@ -436,7 +437,7 @@ npm install -D convex-test@^0.0.61 vitest@^5.0.3 @edge-runtime/vm@^5
 "test:once": "vitest run"
 ```
 
-- [ ] **Step 2: 👤 Проєкт Convex**
+- [x] **Step 2: 👤 Проєкт Convex**
 
 ```bash
 npx convex dev
@@ -444,7 +445,7 @@ npx convex dev
 
 Залогінитись, створити проєкт `tic-tac-toe`. Команда створить `convex/`, `convex/_generated/` і `.env.local` з `VITE_CONVEX_URL`. Лишити її працювати в окремому терміналі: вона пушить функції й перегенеровує типи на кожне збереження.
 
-- [ ] **Step 3: 👤 Ініціалізація Convex Auth**
+- [x] **Step 3: 👤 Ініціалізація Convex Auth**
 
 ```bash
 npx @convex-dev/auth
@@ -452,7 +453,7 @@ npx @convex-dev/auth
 
 На запит `SITE_URL` відповісти `http://localhost:5173`. Команда згенерує JWT-ключі, `convex/auth.config.ts`, `convex/auth.ts`, `convex/http.ts` і поправить `convex/tsconfig.json`.
 
-- [ ] **Step 4: 👤 Google OAuth client**
+- [x] **Step 4: 👤 Google OAuth client**
 
 У [Google Auth Platform](https://console.cloud.google.com/auth/overview) створити клієнт типу «Web application»:
 - Authorized JavaScript origins: `http://localhost:5173`.
@@ -463,7 +464,7 @@ npx convex env set AUTH_GOOGLE_ID <client id>
 npx convex env set AUTH_GOOGLE_SECRET <client secret>
 ```
 
-- [ ] **Step 5: Провайдер Google**
+- [x] **Step 5: Провайдер Google**
 
 ```ts
 // convex/auth.ts
@@ -475,7 +476,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 });
 ```
 
-- [ ] **Step 6: Схема, тестове оточення і падаючий тест**
+- [x] **Step 6: Схема, тестове оточення і падаючий тест**
 
 ```ts
 // convex/schema.ts
@@ -491,7 +492,7 @@ export default defineSchema({
 // vitest.config.ts
 import { defineConfig, mergeConfig } from 'vitest/config';
 
-import viteConfig from './vite.config';
+import viteConfig from './vite.config.ts';
 
 export default mergeConfig(
     viteConfig,
@@ -527,8 +528,8 @@ import { convexTest } from 'convex-test';
 
 import schema from './schema';
 
-// Файли з кількома крапками (*.test.ts, test.setup.ts, auth.config.ts) у modules не потрапляють
-export const modules = import.meta.glob('./**/!(*.*.*)*.*s');
+// Vite 8 не підтримує extglob `!(…)` із документації convex-test, тому виключення — окремими шаблонами
+export const modules = import.meta.glob([ './**/*.*s', '!./**/*.test.ts', '!./test.setup.ts' ]);
 
 export const setup = () => convexTest(schema, modules);
 
@@ -570,12 +571,12 @@ test('me returns the name and avatar of the signed-in user', async () => {
 });
 ```
 
-- [ ] **Step 7: Тест має впасти**
+- [x] **Step 7: Тест має впасти**
 
 Run: `npm run test:once -- --project convex`
 Expected: FAIL, бо convex-test не знаходить модуль `users` (файлу `convex/users.ts` ще немає).
 
-- [ ] **Step 8: Реалізація**
+- [x] **Step 8: Реалізація**
 
 ```ts
 // convex/users.ts
@@ -606,12 +607,14 @@ export const me = query({
 });
 ```
 
-- [ ] **Step 9: Тест проходить**
+- [x] **Step 9: Тест проходить**
+
+TypeScript 6 більше не підхоплює `@types/*` автоматично, тому в згенерований `convex/tsconfig.json` треба додати `"types": ["node"]`, інакше `process.env` в `auth.config.ts` не типізується.
 
 Run: `npm run lint:fix && npm run test:once -- --project convex && npm run typecheck`
 Expected: PASS, 2 тести. `npx convex dev` у сусідньому терміналі показує «Convex functions ready».
 
-- [ ] **Step 10: Коміт**
+- [x] **Step 10: Коміт**
 
 ```bash
 git add -A
