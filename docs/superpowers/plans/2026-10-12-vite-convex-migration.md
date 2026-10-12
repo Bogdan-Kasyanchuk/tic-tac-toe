@@ -1571,7 +1571,7 @@ git commit -m "feat: add clear, new session and leave mutations"
 | `.c-modal__close-button` | `relative z-21 flex h-8 w-8 items-center justify-center self-end bg-blue-50 transition hover:bg-blue-200 before:absolute before:h-0.5 before:w-4/5 before:rotate-45 before:bg-black after:absolute after:h-0.5 after:w-4/5 after:-rotate-45 after:bg-black` |
 | `.c-modal__content` / `__button-wrapper` | `text-center text-3xl text-white` / `flex flex-wrap justify-around gap-5` |
 
-- [ ] **Step 1: Утиліти**
+- [x] **Step 1: Утиліти**
 
 ```ts
 // src/lib/errorMessage.ts
@@ -1616,7 +1616,7 @@ const useEscapeKey = (handler: () => void) => {
 export default useEscapeKey;
 ```
 
-- [ ] **Step 2: Базові компоненти**
+- [x] **Step 2: Базові компоненти**
 
 Кожен компонент лежить у своїй теці з `index.ts`: `export { default } from './Overlay';` тощо.
 
@@ -1707,7 +1707,7 @@ const Spinner: FC = () => (
 export default Spinner;
 ```
 
-- [ ] **Step 3: Модалка і меню**
+- [x] **Step 3: Модалка і меню**
 
 ```tsx
 // src/components/Modal/Modal.tsx
@@ -1833,7 +1833,7 @@ export default UserMenu;
 
 Константи `ITEM` і `ACTION` — це повні рядки класів, тож сканер Tailwind їх бачить. Шаблонний рядок тут безпечний: інтерполюється константа, а не обрізок класу.
 
-- [ ] **Step 4: Шапка**
+- [x] **Step 4: Шапка**
 
 Логіка `onOk`: закрити модалку, перейти на `/`, вийти з гри (якщо стоїмо на `/game/:id`), а для `logOut` ще й `signOut()`. Навігація йде до `leave`, щоб сторінка гри не встигла показати спінер для гри, якої для нас уже немає.
 
@@ -1985,7 +1985,7 @@ const NavBar: FC = () => {
 export default NavBar;
 ```
 
-- [ ] **Step 5: Маршрути і логін**
+- [x] **Step 5: Маршрути і логін**
 
 ```tsx
 // src/routes/PrivateRoute/PrivateRoute.tsx
@@ -2077,7 +2077,7 @@ const HomePage: FC = () => <h2 className="text-center text-4xl font-semibold upp
 export default HomePage;
 ```
 
-- [ ] **Step 6: `App.tsx` і `main.tsx`**
+- [x] **Step 6: `App.tsx` і `main.tsx`**
 
 ```tsx
 // src/App.tsx
@@ -2160,7 +2160,7 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-- [ ] **Step 7: Автоматичні перевірки**
+- [x] **Step 7: Автоматичні перевірки**
 
 Run: `npm run lint:fix && npm run lint && npm run typecheck && npm run test:once`
 Expected: усе зелене.
@@ -2174,7 +2174,7 @@ Expected: усе зелене.
 - LOGOUT відкриває модалку: Esc, клік по фону, хрестик і CANCEL її закривають; OK виходить з акаунта;
 - курсор-рука на кнопках, hover на кнопках світло-блакитний.
 
-- [ ] **Step 9: Коміт**
+- [x] **Step 9: Коміт**
 
 ```bash
 git add -A
