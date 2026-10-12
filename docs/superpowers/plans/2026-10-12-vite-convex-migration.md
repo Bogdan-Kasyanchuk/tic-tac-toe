@@ -32,7 +32,7 @@
 - Node `>=22.12` (вимога Vite 8).
 - TypeScript `~6.0.3`, **не 7.x**: `typescript-eslint@8.71` має peer `typescript <6.1.0`.
 - ESLint `^9`, **не 10**: `eslint-plugin-import@2.32` не підтримує ESLint 10, а конфіг береться з `jackpot-sounds`, де стоїть ESLint 9.
-- `@auth/core@0.41.1`: версія, яку вказує документація Convex Auth (peer `^0.41.1`).
+- `@auth/core@^0.41.3`: документація Convex Auth вказує 0.41.1, але в ній критичні вразливості (GHSA-x445-f3h2-j279 та ін.); 0.41.3 їх виправляє і задовольняє peer `^0.41.1`.
 - React `^19.2.7`: peer `react-router@8`, плюс потрібен стабільний `useEffectEvent`.
 - Роутер імпортується з `react-router` (не `react-router-dom`), декларативний режим `BrowserRouter` / `Routes` / `Route`.
 - Tailwind 4 без `tailwind.config.js` і без SCSS. Токени живуть у `@theme` в `src/index.css`.
@@ -420,10 +420,10 @@ git commit -m "chore: replace CRA with Vite 8, TS 6, Tailwind 4 and flat ESLint"
   - `setup(): TestConvex<typeof schema>` і `asUser(t, name): Promise<{ userId: Id<'users'>, client: TestConvexForDataModel }>` з `convex/test.setup.ts`.
   - Скрипти `dev:convex`, `test`, `test:once`; `typecheck` тепер перевіряє і `convex/`.
 
-- [ ] **Step 1: Залежності й скрипти**
+- [x] **Step 1: Залежності й скрипти**
 
 ```bash
-npm install convex@^1.46.0 @convex-dev/auth@^0.0.96 @auth/core@0.41.1
+npm install convex@^1.46.0 @convex-dev/auth@^0.0.96 @auth/core@^0.41.3
 npm install -D convex-test@^0.0.61 vitest@^5.0.3 @edge-runtime/vm@^5
 ```
 
