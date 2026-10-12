@@ -1355,7 +1355,7 @@ git commit -m "feat: validate moves on the server and schedule round reset"
   - `api.games.newSession({ code })`: `freshRound()` і рахунки обох гравців `0`.
   - `api.games.leave({ code })`: викликача прибирає зі слоту, рахунок суперника стає `0`, ставиться `freshRound()`. Якщо викликач був у грі сам, гра видаляється. Для неіснуючої гри чи стороннього — тихо нічого не робить.
 
-- [ ] **Step 1: Падаючі тести** (дописати в `games.test.ts`)
+- [x] **Step 1: Падаючі тести** (дописати в `games.test.ts`)
 
 ```ts
 describe('clearBoard and newSession', () => {
@@ -1449,12 +1449,12 @@ describe('leave', () => {
 });
 ```
 
-- [ ] **Step 2: Тести мають впасти**
+- [x] **Step 2: Тести мають впасти**
 
 Run: `npm run test:once -- --project convex convex/games.test.ts`
 Expected: FAIL, бо в модулі немає `clearBoard`, `newSession` і `leave`.
 
-- [ ] **Step 3: Реалізація** (дописати в `convex/games.ts`)
+- [x] **Step 3: Реалізація** (дописати в `convex/games.ts`)
 
 ```ts
 const resetScore = (player: Doc<'games'>['circle']) => (player ? { ...player, score: 0 } : null);
@@ -1517,12 +1517,12 @@ export const leave = mutation({
 });
 ```
 
-- [ ] **Step 4: Тести проходять**
+- [x] **Step 4: Тести проходять**
 
 Run: `npm run lint:fix && npm run test:once -- --project convex && npm run typecheck`
 Expected: PASS, усі тести convex.
 
-- [ ] **Step 5: Коміт**
+- [x] **Step 5: Коміт**
 
 ```bash
 git add convex

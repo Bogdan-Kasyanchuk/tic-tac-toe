@@ -191,3 +191,93 @@ describe('makeMove', () => {
         expect((await game.alice.client.query(api.games.get, { code: CODE }))?.board).toEqual(emptyBoard());
     });
 });
+
+describe('clearBoard and newSession', () => {
+    test('clear keeps the scores', async () => {
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+        await game.bob.client.mutation(api.games.clearBoard, { code: CODE });
+
+        const state = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(state?.board).toEqual(emptyBoard());
+        expect(state?.result).toBeNull();
+        expect(state?.circle?.score).toBe(1);
+    });
+
+    // Review Focus 2: Clear у вікні 1.5 с після перемоги
+    test('the scheduled reset does not wipe a round started after Clear', async () => {
+        vi.useFakeTimers();
+
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+        await game.alice.client.mutation(api.games.clearBoard, { code: CODE });
+        await play(game, [ 4 ]);
+        await game.t.finishAllScheduledFunctions(vi.runAllTimers);
+
+        expect((await game.alice.client.query(api.games.get, { code: CODE }))?.board[ 4 ]).toBe('circle');
+    });
+
+    test('new session resets the scores', async () => {
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+        await game.alice.client.mutation(api.games.newSession, { code: CODE });
+
+        const state = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(state?.circle?.score).toBe(0);
+        expect(state?.cross?.score).toBe(0);
+        expect(state?.board).toEqual(emptyBoard());
+    });
+
+    test('outsiders cannot clear or restart', async () => {
+        const { t } = await startGame();
+        const carol = await asUser(t, 'Carol');
+
+        await expect(carol.client.mutation(api.games.clearBoard, { code: CODE })).rejects.toThrow('Not a player');
+        await expect(carol.client.mutation(api.games.newSession, { code: CODE })).rejects.toThrow('Not a player');
+    });
+});
+
+describe('leave', () => {
+    // Review Focus 3: суперник виходить посеред раунду
+    test('frees the slot, resets the round and the scores, and blocks the leaver', async () => {
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+        await game.bob.client.mutation(api.games.leave, { code: CODE });
+
+        const state = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(state?.cross).toBeNull();
+        expect(state?.circle?.score).toBe(0);
+        expect(state?.board).toEqual(emptyBoard());
+        expect(await game.bob.client.query(api.games.get, { code: CODE })).toBeNull();
+        await expect(game.bob.client.mutation(api.games.makeMove, { code: CODE, cell: 0 }))
+            .rejects.toThrow('Not a player');
+
+        const carol = await asUser(game.t, 'Carol');
+
+        expect(await carol.client.mutation(api.games.enter, { code: CODE })).toBe('joined');
+    });
+
+    test('deletes the game when the last player leaves', async () => {
+        const t = setup();
+        const alice = await asUser(t, 'Alice');
+
+        await alice.client.mutation(api.games.enter, { code: CODE, mark: 'circle' });
+        await alice.client.mutation(api.games.leave, { code: CODE });
+
+        await expect(alice.client.mutation(api.games.enter, { code: CODE })).rejects.toThrow('Not game');
+    });
+
+    test('ignores unknown games', async () => {
+        const t = setup();
+        const alice = await asUser(t, 'Alice');
+
+        await expect(alice.client.mutation(api.games.leave, { code: 'missing' })).resolves.toBeNull();
+    });
+});

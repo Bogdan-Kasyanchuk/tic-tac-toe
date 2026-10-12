@@ -231,3 +231,62 @@ export const finishRound = internalMutation({
         await ctx.db.patch('games', gameId, freshRound());
     }
 });
+
+const resetScore = (player: Doc<'games'>[ 'circle' ]) => (player ? { ...player, score: 0 } : null);
+
+export const clearBoard = mutation({
+    args: { code: v.string() },
+    handler: async (ctx, { code }) => {
+        const userId = await requireUserId(ctx);
+        const game = await requireGame(ctx, code);
+
+        requireMark(game, userId);
+        await ctx.db.patch('games', game._id, freshRound());
+
+        return null;
+    }
+});
+
+export const newSession = mutation({
+    args: { code: v.string() },
+    handler: async (ctx, { code }) => {
+        const userId = await requireUserId(ctx);
+        const game = await requireGame(ctx, code);
+
+        requireMark(game, userId);
+        await ctx.db.patch('games', game._id, {
+            ...freshRound(),
+            circle: resetScore(game.circle),
+            cross: resetScore(game.cross)
+        });
+
+        return null;
+    }
+});
+
+export const leave = mutation({
+    args: { code: v.string() },
+    handler: async (ctx, { code }) => {
+        const userId = await requireUserId(ctx);
+        const game = await findGame(ctx, code);
+        const mark = game ? markOf(game, userId) : null;
+
+        if (!game || !mark) {
+            return null;
+        }
+
+        if (game[ otherMark(mark) ] === null) {
+            await ctx.db.delete('games', game._id);
+
+            return null;
+        }
+
+        await ctx.db.patch('games', game._id, {
+            ...freshRound(),
+            circle: mark === 'circle' ? null : resetScore(game.circle),
+            cross: mark === 'cross' ? null : resetScore(game.cross)
+        });
+
+        return null;
+    }
+});
