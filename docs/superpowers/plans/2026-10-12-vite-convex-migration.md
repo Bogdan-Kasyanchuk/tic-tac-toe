@@ -634,7 +634,7 @@ git commit -m "feat: add Convex backend with Google auth and users.me"
   - константи `BOARD_SIZE = 9`, `ROUND_END_DELAY_MS = 1500`;
   - функції `emptyBoard(): Cell[]`, `otherMark(mark: Mark): Mark`, `findWinLine(board: Cell[]): WinLine | null`, `isBoardFull(board: Cell[]): boolean`.
 
-- [ ] **Step 1: Падаючі тести**
+- [x] **Step 1: Падаючі тести**
 
 Порядок ліній і їхні назви — як у `legacy/helpers/checkWinner.ts`: спершу рядки, потім стовпці, потім діагоналі `[0,4,8]` і `[2,4,6]`; перемагає перша знайдена лінія.
 
@@ -702,12 +702,12 @@ describe('isBoardFull', () => {
 });
 ```
 
-- [ ] **Step 2: Тести мають впасти**
+- [x] **Step 2: Тести мають впасти**
 
 Run: `npm run test:once -- --project convex convex/rules.test.ts`
 Expected: FAIL з «Failed to resolve import "./rules"».
 
-- [ ] **Step 3: Реалізація**
+- [x] **Step 3: Реалізація**
 
 ```ts
 // convex/rules.ts
@@ -750,12 +750,12 @@ export const findWinLine = (board: Cell[]): WinLine | null => {
 export const isBoardFull = (board: Cell[]): boolean => board.every(cell => cell !== '');
 ```
 
-- [ ] **Step 4: Тести проходять**
+- [x] **Step 4: Тести проходять**
 
 Run: `npm run lint:fix && npm run test:once -- --project convex`
 Expected: PASS (rules + users).
 
-- [ ] **Step 5: Коміт**
+- [x] **Step 5: Коміт**
 
 ```bash
 git add convex/rules.ts convex/rules.test.ts
