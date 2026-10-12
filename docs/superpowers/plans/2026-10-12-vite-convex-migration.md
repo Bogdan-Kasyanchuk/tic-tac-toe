@@ -2165,7 +2165,7 @@ createRoot(document.getElementById('root')!).render(
 Run: `npm run lint:fix && npm run lint && npm run typecheck && npm run test:once`
 Expected: усе зелене.
 
-- [ ] **Step 8: Ручна перевірка** (`npm run dev` + `npm run dev:convex`)
+- [x] **Step 8: Ручна перевірка** (`npm run dev` + `npm run dev:convex`)
 
 Очікується:
 - на `/` шапка з градієнтом і кнопкою LOGIN, фон як у старій версії;
