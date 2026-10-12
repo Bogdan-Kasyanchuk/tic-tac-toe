@@ -7,8 +7,10 @@ import bg from '@/assets/bg.jpg';
 import Container from '@/components/Container';
 import NavBar from '@/components/NavBar';
 import Spinner from '@/components/Spinner';
+import GamePage from '@/pages/GamePage';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
+import PrivateRoute from '@/routes/PrivateRoute';
 import PublicRoute from '@/routes/PublicRoute';
 
 const App: FC = () => {
@@ -36,6 +38,10 @@ const App: FC = () => {
                                 <Route
                                     path="/login"
                                     element={ <PublicRoute restricted><LoginPage /></PublicRoute> }
+                                />
+                                <Route
+                                    path="/game/:gameId"
+                                    element={ <PrivateRoute><GamePage /></PrivateRoute> }
                                 />
                                 <Route
                                     path="*"

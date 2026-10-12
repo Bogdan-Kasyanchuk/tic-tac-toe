@@ -2450,7 +2450,7 @@ git commit -m "feat: port home page to inline Tailwind"
 | `.c-overlay--waiting` | Overlay + `top-15 bg-transparent` |
 | `.c-waiting` / `__title` / `__text` | `flex w-[85vw] max-w-100 flex-col items-center border border-white bg-blue-dark p-5` / `text-center text-2xl text-white` / `text-xl text-white` |
 
-- [ ] **Step 1: Падаючий тест для ліній перемоги**
+- [x] **Step 1: Падаючий тест для ліній перемоги**
 
 Позиції крайніх клітинок — це колишні `nth-child`-правила з `legacy/styles/components/_board.scss`, переписані на індекси 0–8: `nth-child(3n+1)` → `index % 3 === 0`, `nth-child(3n)` → `index % 3 === 2`, `nth-child(-n+3)` → `index < 3`, `nth-child(n+7)` → `index >= 6`.
 
@@ -2502,7 +2502,7 @@ describe('winLineClassName', () => {
 Run: `npm run test:once -- --project frontend`
 Expected: FAIL з «Failed to resolve import "./winLine"».
 
-- [ ] **Step 2: `winLine.ts`**
+- [x] **Step 2: `winLine.ts`**
 
 ```ts
 // src/components/Cell/winLine.ts
@@ -2560,7 +2560,7 @@ export const winLineClassName = (line: Line, index: number): string => cn([
 Run: `npm run lint:fix && npm run test:once -- --project frontend`
 Expected: PASS.
 
-- [ ] **Step 3: Типи, анімації, дрібні компоненти**
+- [x] **Step 3: Типи, анімації, дрібні компоненти**
 
 ```ts
 // src/types/game.ts
@@ -2905,7 +2905,7 @@ export default Cell;
 
 Поки лінія згасає, `AnimatePresence` тримає останній відрендерений елемент з його старим `className`, тому лінія не стрибає.
 
-- [ ] **Step 4: GamePage**
+- [x] **Step 4: GamePage**
 
 ```tsx
 // src/pages/GamePage/GamePage.tsx
@@ -3064,7 +3064,7 @@ const GamePage: FC = () => {
 export default GamePage;
 ```
 
-- [ ] **Step 5: Маршрут у `App.tsx`**
+- [x] **Step 5: Маршрут у `App.tsx`**
 
 Додати імпорти `GamePage` з `@/pages/GamePage` і `PrivateRoute` з `@/routes/PrivateRoute`, а перед маршрутом `path="*"` вставити:
 
@@ -3075,7 +3075,7 @@ export default GamePage;
 />
 ```
 
-- [ ] **Step 6: Автоматичні перевірки**
+- [x] **Step 6: Автоматичні перевірки**
 
 Run: `npm run lint:fix && npm run lint && npm run typecheck && npm run test:once`
 Expected: зелене.
