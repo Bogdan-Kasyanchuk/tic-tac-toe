@@ -778,7 +778,7 @@ git commit -m "feat: add pure tic-tac-toe rules with draw detection"
   - Внутрішні хелпери в `games.ts` для задач 5 і 6: `requireUserId(ctx)`, `findGame(ctx, code)`, `markOf(game, userId)`, `freshRound()`. Хелпери `requireGame` і `requireMark` з'являються в задачі 5, де їх уперше використовують: невикористаний код не пройде lint.
   - `Result = { kind: 'win', mark: Mark, line: Line, cells: number[] } | { kind: 'draw' }`.
 
-- [ ] **Step 1: Валідатори і схема**
+- [x] **Step 1: Валідатори і схема**
 
 ```ts
 // convex/validators.ts
@@ -832,7 +832,7 @@ export default defineSchema({
 });
 ```
 
-- [ ] **Step 2: Падаючі тести**
+- [x] **Step 2: Падаючі тести**
 
 ```ts
 // convex/games.test.ts
@@ -930,12 +930,12 @@ describe('get', () => {
 });
 ```
 
-- [ ] **Step 3: Тести мають впасти**
+- [x] **Step 3: Тести мають впасти**
 
 Run: `npm run test:once -- --project convex convex/games.test.ts`
 Expected: FAIL, бо convex-test не знаходить модуль `games`.
 
-- [ ] **Step 4: Реалізація**
+- [x] **Step 4: Реалізація**
 
 ```ts
 // convex/games.ts
@@ -1076,12 +1076,12 @@ export const get = query({
 });
 ```
 
-- [ ] **Step 5: Тести проходять**
+- [x] **Step 5: Тести проходять**
 
 Run: `npm run lint:fix && npm run test:once -- --project convex && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Коміт**
+- [x] **Step 6: Коміт**
 
 ```bash
 git add convex
