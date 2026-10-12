@@ -2207,7 +2207,7 @@ git commit -m "feat: add app shell with Convex auth, header, modal and login"
 
 Іконка лежить усередині `label`, тобто не є сусідом `input`, тому `peer-checked:` не спрацює. Замість нього `group` на обгортці і `group-has-checked:`.
 
-- [ ] **Step 1: RadioInput**
+- [x] **Step 1: RadioInput**
 
 ```tsx
 // src/components/RadioInput/RadioInput.tsx
@@ -2246,7 +2246,7 @@ const RadioInput: FC<RadioInputProps> = ({ id, name, value, label, checked, onCh
 export default RadioInput;
 ```
 
-- [ ] **Step 2: HomePage**
+- [x] **Step 2: HomePage**
 
 ```tsx
 // src/pages/HomePage/HomePage.tsx
@@ -2393,7 +2393,7 @@ const HomePage: FC = () => {
 export default HomePage;
 ```
 
-- [ ] **Step 3: Перевірки**
+- [x] **Step 3: Перевірки**
 
 Run: `npm run lint:fix && npm run lint && npm run typecheck`
 Expected: зелене.
@@ -2404,7 +2404,7 @@ Expected: зелене.
 - у режимі JOIN поле фокусується з чорною рамкою, плейсхолдер блідий;
 - START з порожнім ID показує toast, а з ID переходить на `/game/<id>?mark=circle` (поки що з редиректом на `/`, бо маршруту гри ще немає).
 
-- [ ] **Step 4: Коміт**
+- [x] **Step 4: Коміт**
 
 ```bash
 git add src
