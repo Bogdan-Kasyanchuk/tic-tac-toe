@@ -20,7 +20,9 @@ export default mergeConfig(
                     test: {
                         name: 'frontend',
                         include: [ 'src/**/*.test.{ts,tsx}' ],
-                        environment: 'node'
+                        environment: 'jsdom',
+                        // react-loader-spinner тягне styled-components; без інлайну Node віддає не той default-експорт
+                        server: { deps: { inline: [ 'react-loader-spinner' ] } }
                     }
                 }
             ]

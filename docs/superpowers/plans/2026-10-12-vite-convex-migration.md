@@ -3080,7 +3080,7 @@ export default GamePage;
 Run: `npm run lint:fix && npm run lint && npm run typecheck && npm run test:once`
 Expected: зелене.
 
-- [ ] **Step 7: Ручний QA (два браузери: звичайне вікно й інкогніто, два різні Google-акаунти)**
+- [x] **Step 7: Ручний QA (два браузери: звичайне вікно й інкогніто, два різні Google-акаунти)**
 
 1. A: New game → Circle → Generate → Start. Очікується toast «New game», оверлей «Waiting the second player» з ID, а адреса вже без `?mark`.
 2. B (не залогінений) відкриває `http://localhost:5173/game/<ID>`, логіниться через Google і повертається в ту саму гру з toast «Join game». Оверлей у A зникає. *(Review Focus 4)*
@@ -3093,7 +3093,7 @@ Expected: зелене.
 9. A відкриває ту саму гру в другій вкладці: обидві вкладки показують однаковий стан, і другий слот не займається. *(Review Focus 1)*
 10. `/game/abc%20def` дає toast «Invalid game ID» і повернення на `/`.
 
-- [ ] **Step 8: Коміт**
+- [x] **Step 8: Коміт**
 
 ```bash
 git add src

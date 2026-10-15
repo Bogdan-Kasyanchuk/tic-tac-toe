@@ -13,6 +13,9 @@ import cn from '@/lib/cn';
 import errorMessage from '@/lib/errorMessage';
 import { api } from '@convex/_generated/api';
 
+// Один id на всі toast-и входу: у dev StrictMode викликає enter двічі, і toast оновлюється, а не дублюється
+const ENTER_TOAST = 'game-enter';
+
 const onError = (error: unknown) => {
     toast.error(errorMessage(error));
 };
@@ -37,16 +40,16 @@ const GamePage: FC = () => {
             enter({ code: gameId, mark })
                 .then(status => {
                     if (status === 'created') {
-                        toast.success('New game');
+                        toast.success('New game', { id: ENTER_TOAST });
                         navigate(`/game/${ encodeURIComponent(gameId) }`, { replace: true });
                     }
 
                     if (status === 'joined') {
-                        toast.success('Join game');
+                        toast.success('Join game', { id: ENTER_TOAST });
                     }
                 })
                 .catch((error: unknown) => {
-                    onError(error);
+                    toast.error(errorMessage(error), { id: ENTER_TOAST });
                     navigate('/');
                 });
         },
