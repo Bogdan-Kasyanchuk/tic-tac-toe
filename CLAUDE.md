@@ -26,6 +26,10 @@
 - Google OAuth — один клієнт для dev і prod. Змінив Client secret у Google — онови `AUTH_GOOGLE_SECRET` і в dev (`npx convex env set …`), і на prod (`… --prod`).
 - Логіни в Convex, Google Cloud, Netlify і будь-які секрети робить власник; Claude у сесії лише каже, що саме зробити. Пушить на GitHub теж власник.
 
+## Поточна робота
+
+Редизайн (shadcn/ui, темна тема) і вхід поштою з паролем — план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`, виконання Native. Дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US. Продовжувати з першого кроку без галочки.
+
 ## Історія
 
 Переписано з CRA + Firebase + SCSS у жовтні 2026; план і рішення — `docs/superpowers/plans/2026-10-12-vite-convex-migration.md`.
