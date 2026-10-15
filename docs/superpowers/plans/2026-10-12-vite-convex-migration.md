@@ -3108,7 +3108,7 @@ git commit -m "feat: port game page with server-driven state and animations"
 - Delete: `legacy/`
 - Modify: `netlify.toml`, `README.md`
 
-- [ ] **Step 1: Прибрати старий код**
+- [x] **Step 1: Прибрати старий код**
 
 ```bash
 git rm -r legacy
@@ -3116,7 +3116,7 @@ git rm -r legacy
 
 Прибрати `'legacy/**'` з `globalIgnores` в `eslint.config.mjs`.
 
-- [ ] **Step 2: `netlify.toml`**
+- [x] **Step 2: `netlify.toml`**
 
 ```toml
 [build]
@@ -3147,7 +3147,7 @@ npx convex env set --prod AUTH_GOOGLE_SECRET <client secret>
    - origin `https://<site>.netlify.app`;
    - redirect URI `https://<prod-deployment>.convex.site/api/auth/callback/google`.
 
-- [ ] **Step 4: README**
+- [x] **Step 4: README**
 
 ```markdown
 # tic-tac-toe
@@ -3172,7 +3172,7 @@ npx convex env set --prod AUTH_GOOGLE_SECRET <client secret>
 Деплой — Netlify, команда збірки `npx convex deploy --cmd 'npm run build'`.
 ```
 
-- [ ] **Step 5: Фінальна ревізія формату й тести**
+- [x] **Step 5: Фінальна ревізія формату й тести**
 
 ```bash
 node .claude/skills/tailwind-format/scripts/scan_classnames.mjs src

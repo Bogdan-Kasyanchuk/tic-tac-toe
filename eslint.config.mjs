@@ -9,7 +9,7 @@ import globals from 'globals';
 import tsEslint from 'typescript-eslint';
 
 export default defineConfig([
-    globalIgnores([ 'dist/**', 'legacy/**', 'convex/_generated/**', '.claude/**', '.superpowers/**' ]),
+    globalIgnores([ 'dist/**', 'convex/_generated/**', '.claude/**', '.superpowers/**' ]),
     js.configs.recommended,
     tsEslint.configs.recommended,
     reactHooks.configs.flat.recommended,
