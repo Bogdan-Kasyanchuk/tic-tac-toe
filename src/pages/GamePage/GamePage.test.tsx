@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { FunctionReference } from 'convex/server';
 import { getFunctionName } from 'convex/server';
 import { ConvexError } from 'convex/values';
@@ -12,11 +12,21 @@ import type { GameView } from '@/types/game';
 import GamePage from './GamePage';
 
 const enter = vi.fn();
+const makeMove = vi.fn();
+const otherMutation = vi.fn();
 let queryResult: GameView | null | undefined;
 
 vi.mock('convex/react', () => ({
     useQuery: () => queryResult,
-    useMutation: (ref: FunctionReference<'mutation'>) => (getFunctionName(ref) === 'games:enter' ? enter : vi.fn())
+    useMutation: (ref: FunctionReference<'mutation'>) => {
+        const name = getFunctionName(ref);
+
+        if (name === 'games:enter') {
+            return enter;
+        }
+
+        return name === 'games:makeMove' ? makeMove : otherMutation;
+    }
 }));
 
 const GAME: GameView = {
@@ -56,6 +66,7 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     enter.mockReset();
+    makeMove.mockReset();
 });
 
 // QA, задача 9, пункт 10: у dev StrictMode запускає ефект входу двічі, і обидва виклики падають
@@ -88,4 +99,23 @@ test('goes home when the player loses the seat while the page is open', async ()
 
     expect(await screen.findByText('home')).toBeTruthy();
     expect(await screen.findByText('Not game')).toBeTruthy();
+});
+
+// Review Focus 5: подвійний клік по клітинці — рівно один хід, поки перший ще в дорозі
+test('sends a single move on a double click while the first move is in flight', async () => {
+    enter.mockResolvedValue('already');
+    makeMove.mockReturnValue(new Promise(() => {}));
+    queryResult = GAME;
+
+    const { container } = render(app('/game/g1'));
+
+    expect(await screen.findByText('Alice')).toBeTruthy();
+
+    const cell = container.querySelector('.grid-cols-3')!.children[ 4 ];
+
+    fireEvent.click(cell);
+    fireEvent.click(cell);
+
+    expect(makeMove).toHaveBeenCalledTimes(1);
+    expect(makeMove).toHaveBeenCalledWith({ code: 'g1', cell: 4 });
 });
