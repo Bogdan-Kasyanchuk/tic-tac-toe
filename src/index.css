@@ -1,4 +1,5 @@
-@import 'tailwindcss';
+/* Класи шукаємо лише в src: інакше Tailwind підхоплює приклади з docs/ і .claude/ */
+@import 'tailwindcss' source('.');
 
 /* Tailwind 4 за замовчуванням вмикає hover лише на пристроях із курсором; у старій версії hover був скрізь */
 @custom-variant hover (&:hover);
