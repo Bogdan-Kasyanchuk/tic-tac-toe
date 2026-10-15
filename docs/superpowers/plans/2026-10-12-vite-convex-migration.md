@@ -3131,6 +3131,7 @@ git rm -r legacy
 
 - [ ] **Step 3: 👤 Продакшн**
 
+0. Підключити наявний сайт до GitHub, як у `next-filmoteka` (рішення 2026-10-15): Netlify → сайт → Site configuration → Build & deploy → Link repository → `Bogdan-Kasyanchuk/tic-tac-toe`, production branch `main`. Раніше сайт деплоївся вручну через `netlify deploy -p`; тепер кожен пуш у `main` деплоїть і фронт, і функції Convex (`netlify.toml`).
 1. Дашборд Convex → prod-деплоймент → Settings → General → Generate Production Deploy Key (з правом `deployment:deploy`).
 2. Netlify → Site configuration → Environment variables:
    - додати `CONVEX_DEPLOY_KEY` з цим ключем **лише для контексту Production** (Scopes/Deploy contexts → Production): Convex CLI відмовляється деплоїти з продакшн-ключем, коли Netlify збирає deploy preview, і PR отримав би червону перевірку;
