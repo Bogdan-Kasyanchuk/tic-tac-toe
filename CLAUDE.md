@@ -1,20 +1,31 @@
 # tic-tac-toe
 
-## Активна міграція
+Хрестики-нолики на двох гравців онлайн: https://bogkas-tic-tac-toe.netlify.app
 
-Іде переписування з CRA + Firebase + SCSS на Vite + React 19 + Tailwind 4 + Convex у гілці `migrate/vite-convex`.
+## Стек і структура
 
-- План: `docs/superpowers/plans/2026-10-12-vite-convex-migration.md`.
-- Прогрес — чекбокси в плані: `- [x]` означає виконано. Продовжувати з першого `- [ ]`.
-- Після кожного виконаного кроку ставити `- [x]` і комітити план разом із кодом.
-- Кроки з 👤 (логіни в Convex, Google Cloud, Netlify, секрети) виконує власник: на них зупинитись і сказати, що саме зробити.
-- Виконання — Native (`superpowers:executing-plans`): задачі реалізуються в сесії по черзі, в кінці одна рецензія всієї гілки.
-- Журнал виконання (рішення, що відступають від плану, і завершені задачі) — `.superpowers/sdd/2026-10-12-vite-convex-migration/progress.md`, у git не потрапляє.
+- Фронт: Vite 8, React 19, TypeScript 6, Tailwind CSS 4 (класи інлайн у JSX, токени в `@theme` у `src/index.css`), React Router 8 (декларативний режим, імпорт з `react-router`).
+- Бекенд: Convex (`convex/`). Вся ігрова логіка — серверні мутації в `convex/games.ts`, чисті правила — `convex/rules.ts`. Вхід через Google (Convex Auth). Гравець визначається за `userId`.
+- Клієнт тільки підписується на `games.get` і викликає мутації; нічого не валідує всерйоз.
 
-## Де зупинились (2026-10-15)
+## Команди
 
-- Задачі 1–9 виконано, QA власника пройдено. У задачі 10 зроблено кроки 1, 2, 4, 5.
-- Фінальну рецензію гілки проведено. Три важливі зауваження й п'ять відкладених дрібниць виправлено (деталі в журналі, рядки `Final:`).
-- Наступне — задача 10, крок 3 (👤): продакшн у Convex, Google і Netlify. Робить власник за інструкцією в плані.
-- Деплой: Netlify, підключений до GitHub (як `next-filmoteka`); збірка `npx convex deploy --cmd 'npm run build'` з `netlify.toml` оновлює і функції Convex, і фронт. Потрібен лише `CONVEX_DEPLOY_KEY` у Netlify (Production).
-- Після нього крок 6: пуш (власник пушить сам, у сесії немає доступу до GitHub), PR у `main`, перевірка на продакшні. Далі `superpowers:finishing-a-development-branch`.
+- `npx convex dev` — бекенд у режимі розробки (dev-деплоймент `compassionate-cobra-24`); `npm run dev` — фронт на http://localhost:5173.
+- `npm run test:once` — Vitest: функції Convex через `convex-test` (edge-runtime) і фронт (jsdom).
+- `npm run lint`, `npm run lint:fix`, `npm run typecheck` (три tsconfig: `src`, конфіги Vite/Vitest, `convex`), `npm run build`.
+
+## Конвенції
+
+- Стиль коду — ESLint + `@stylistic` (як у `jackpot-sounds`): 4 пробіли, `[ a ]`, `${ a }`, атрибути JSX у подвійних лапках. Prettier не використовується, бо схлопує `cn([…])`. Після правок — `npm run lint:fix`.
+- Класи Tailwind і стрілки — за скілом `tailwind-format` (`.claude/skills/tailwind-format/`, там і сканери для ревізії).
+- Нова поведінка — з тестом, що спершу падає.
+
+## Деплой і секрети
+
+- Netlify підключений до GitHub: кожен пуш у `main` запускає `npx convex deploy --cmd 'npm run build'` (`netlify.toml`) — оновлює функції Convex на prod (`fantastic-wildcat-279`) і фронт. У Netlify потрібен лише `CONVEX_DEPLOY_KEY` (контекст Production).
+- Google OAuth — один клієнт для dev і prod. Змінив Client secret у Google — онови `AUTH_GOOGLE_SECRET` і в dev (`npx convex env set …`), і на prod (`… --prod`).
+- Логіни в Convex, Google Cloud, Netlify і будь-які секрети робить власник; Claude у сесії лише каже, що саме зробити. Пушить на GitHub теж власник.
+
+## Історія
+
+Переписано з CRA + Firebase + SCSS у жовтні 2026; план і рішення — `docs/superpowers/plans/2026-10-12-vite-convex-migration.md`.

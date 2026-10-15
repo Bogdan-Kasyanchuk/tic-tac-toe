@@ -3129,7 +3129,7 @@ git rm -r legacy
   status = 200
 ```
 
-- [ ] **Step 3: 👤 Продакшн**
+- [x] **Step 3: 👤 Продакшн**
 
 0. Підключити наявний сайт до GitHub, як у `next-filmoteka` (рішення 2026-10-15): Netlify → сайт → Site configuration → Build & deploy → Link repository → `Bogdan-Kasyanchuk/tic-tac-toe`, production branch `main`. Раніше сайт деплоївся вручну через `netlify deploy -p`; тепер кожен пуш у `main` деплоїть і фронт, і функції Convex (`netlify.toml`).
 1. Дашборд Convex → prod-деплоймент → Settings → General → Generate Production Deploy Key (з правом `deployment:deploy`).
@@ -3191,7 +3191,7 @@ npm run lint && npm run typecheck && npm run test:once && npm run build
 - Кожного кандидата від `scan_arrows` звірити з сигнатурою; void-стрілок без блокового тіла лишитись не повинно.
 - Lint, typecheck, тести й build зелені.
 
-- [ ] **Step 6: Коміт, пуш, деплой**
+- [x] **Step 6: Коміт, пуш, деплой**
 
 ```bash
 git add -A
