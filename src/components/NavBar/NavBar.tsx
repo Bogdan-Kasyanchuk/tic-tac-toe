@@ -43,12 +43,17 @@ const NavBar: FC = () => {
             if (gameCode) {
                 await leave({ code: gameCode });
             }
-
-            if (type === 'logOut') {
-                await signOut();
-            }
         } catch (error) {
             toast.error(errorMessage(error));
+        }
+
+        // Підтверджений Logout розлогінює, навіть якщо вихід із гри не вдався
+        if (type === 'logOut') {
+            try {
+                await signOut();
+            } catch (error) {
+                toast.error(errorMessage(error));
+            }
         }
     };
 

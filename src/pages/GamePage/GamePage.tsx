@@ -56,6 +56,26 @@ const GamePage: FC = () => {
         [ enter, gameId, mark, navigate ]
     );
 
+    // undefined — запит ще вантажиться; null після того, як гра вже була, — місце звільнили (інша вкладка) або гру видалили
+    const wasInGame = useRef(false);
+
+    useEffect(
+        () => {
+            if (game) {
+                wasInGame.current = true;
+
+                return;
+            }
+
+            if (game === null && wasInGame.current) {
+                wasInGame.current = false;
+                toast.error('Not game', { id: ENTER_TOAST });
+                navigate('/');
+            }
+        },
+        [ game, navigate ]
+    );
+
     // Review Focus 5: подвійний клік не шле другий хід, поки перший не повернувся
     const onSelect = (cell: number) => {
         if (!game || !game.circle || !game.cross || game.result || game.turn !== game.me || isMoving.current) {

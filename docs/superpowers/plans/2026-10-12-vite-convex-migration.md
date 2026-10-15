@@ -3133,8 +3133,10 @@ git rm -r legacy
 
 1. Дашборд Convex → prod-деплоймент → Settings → General → Generate Production Deploy Key (з правом `deployment:deploy`).
 2. Netlify → Site configuration → Environment variables:
-   - додати `CONVEX_DEPLOY_KEY` з цим ключем;
-   - видалити старі `REACT_APP_*`.
+   - додати `CONVEX_DEPLOY_KEY` з цим ключем **лише для контексту Production** (Scopes/Deploy contexts → Production): Convex CLI відмовляється деплоїти з продакшн-ключем, коли Netlify збирає deploy preview, і PR отримав би червону перевірку;
+   - deploy previews або вимкнути (Site configuration → Build & deploy → Deploy Previews → None), або дати їм окремий Preview Deploy Key з дашборду Convex;
+   - видалити старі `REACT_APP_*`;
+   - якщо в налаштуваннях сайту задано `NODE_VERSION`, прибрати його: версію Node тепер задає `netlify.toml` (22).
 3. Налаштувати Convex Auth на prod-деплойменті. На запит `SITE_URL` відповісти `https://<site>.netlify.app`. Потім задати ключі Google:
 
 ```bash

@@ -7,16 +7,48 @@ import { Toaster } from 'react-hot-toast';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import type { GameView } from '@/types/game';
+
 import GamePage from './GamePage';
 
 const enter = vi.fn();
+let queryResult: GameView | null | undefined;
 
 vi.mock('convex/react', () => ({
-    useQuery: () => undefined,
+    useQuery: () => queryResult,
     useMutation: (ref: FunctionReference<'mutation'>) => (getFunctionName(ref) === 'games:enter' ? enter : vi.fn())
 }));
 
+const GAME: GameView = {
+    code: 'g1',
+    board: [ '', '', '', '', '', '', '', '', '' ],
+    turn: 'circle',
+    result: null,
+    me: 'circle',
+    circle: { name: 'Alice', avatar: '', score: 0 },
+    cross: { name: 'Bob', avatar: '', score: 0 }
+};
+
+const app = (path: string) => (
+    <StrictMode>
+        <MemoryRouter initialEntries={ [ path ] }>
+            <Toaster />
+            <Routes>
+                <Route
+                    path="/game/:gameId"
+                    element={ <GamePage /> }
+                />
+                <Route
+                    path="/"
+                    element={ <p>home</p> }
+                />
+            </Routes>
+        </MemoryRouter>
+    </StrictMode>
+);
+
 beforeEach(() => {
+    queryResult = undefined;
     // react-hot-toast читає prefers-reduced-motion, а в jsdom matchMedia немає
     window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
@@ -30,23 +62,7 @@ afterEach(() => {
 test('shows a single error toast when entering a game fails twice under StrictMode', async () => {
     enter.mockRejectedValue(new ConvexError('Invalid game ID'));
 
-    render(
-        <StrictMode>
-            <MemoryRouter initialEntries={ [ '/game/abc%20def' ] }>
-                <Toaster />
-                <Routes>
-                    <Route
-                        path="/game/:gameId"
-                        element={ <GamePage /> }
-                    />
-                    <Route
-                        path="/"
-                        element={ <p>home</p> }
-                    />
-                </Routes>
-            </MemoryRouter>
-        </StrictMode>
-    );
+    render(app('/game/abc%20def'));
 
     await waitFor(() => {
         expect(enter).toHaveBeenCalledTimes(2);
@@ -56,4 +72,20 @@ test('shows a single error toast when entering a game fails twice under StrictMo
     });
 
     expect(await screen.findAllByText('Invalid game ID')).toHaveLength(1);
+});
+
+// Фінальна рецензія, №1: місце звільнили в іншій вкладці — сторінка не має зависнути на спінері
+test('goes home when the player loses the seat while the page is open', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    const view = render(app('/game/g1'));
+
+    expect(await screen.findByText('Alice')).toBeTruthy();
+
+    queryResult = null;
+    view.rerender(app('/game/g1'));
+
+    expect(await screen.findByText('home')).toBeTruthy();
+    expect(await screen.findByText('Not game')).toBeTruthy();
 });
