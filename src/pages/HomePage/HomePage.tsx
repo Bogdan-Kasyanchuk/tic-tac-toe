@@ -15,6 +15,12 @@ const HomePage: FC = () => {
     const [ mark, setMark ] = useState<Mark>('circle');
     const navigate = useNavigate();
 
+    // ID нової гри генерується, ID для приєднання вводиться: при перемиканні старе значення не переноситься
+    const selectType = (next: GameType) => {
+        setType(next);
+        setCode('');
+    };
+
     const onStart = () => {
         const trimmed = code.trim();
 
@@ -42,7 +48,7 @@ const HomePage: FC = () => {
                         checked={ type === 'new' }
                         onChange={
                             () => {
-                                setType('new');
+                                selectType('new');
                             }
                         }
                     />
@@ -54,7 +60,7 @@ const HomePage: FC = () => {
                         checked={ type === 'join' }
                         onChange={
                             () => {
-                                setType('join');
+                                selectType('join');
                             }
                         }
                     />

@@ -86,6 +86,19 @@ describe('enter', () => {
         expect((await alice.client.query(api.games.get, { code: CODE }))?.cross).toBeNull();
     });
 
+    // Відкладена дрібниця №2: «New game» із чужим ID не має тихо приєднувати до існуючої гри
+    test('rejects creating a game with an ID that is already taken', async () => {
+        const t = setup();
+        const alice = await asUser(t, 'Alice');
+        const bob = await asUser(t, 'Bob');
+
+        await alice.client.mutation(api.games.enter, { code: CODE, mark: 'circle' });
+
+        await expect(bob.client.mutation(api.games.enter, { code: CODE, mark: 'cross' }))
+            .rejects.toThrow('Game ID is already taken');
+        expect((await alice.client.query(api.games.get, { code: CODE }))?.cross).toBeNull();
+    });
+
     test('rejects a third player', async () => {
         const { t } = await startGame();
         const carol = await asUser(t, 'Carol');

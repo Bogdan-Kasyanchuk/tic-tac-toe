@@ -114,6 +114,11 @@ export const enter = mutation({
             return 'already' as const;
         }
 
+        // Знак передають лише при створенні гри: чужий ID для нової гри — помилка, а не тихе приєднання
+        if (args.mark) {
+            throw new ConvexError('Game ID is already taken');
+        }
+
         if (game.circle === null) {
             await ctx.db.patch('games', game._id, { circle: player });
 
