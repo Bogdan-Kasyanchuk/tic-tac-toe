@@ -220,6 +220,27 @@ describe('clearBoard and newSession', () => {
         expect((await game.alice.client.query(api.games.get, { code: CODE }))?.board[ 4 ]).toBe('circle');
     });
 
+    // Відкладена дрібниця №1: скид від першої перемоги не має завершити наступний раунд раніше часу
+    test('a stale scheduled reset does not cut short a round that ended after Clear', async () => {
+        vi.useFakeTimers();
+
+        const game = await startGame();
+
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+        vi.advanceTimersByTime(1000);
+        await game.alice.client.mutation(api.games.clearBoard, { code: CODE });
+        await play(game, [ 0, 3, 1, 4, 2 ]);
+
+        // Скид першого раунду (на 1500 мс) уже настав, другого (на 2500 мс) — ще ні
+        vi.advanceTimersByTime(600);
+        await game.t.finishInProgressScheduledFunctions();
+
+        const state = await game.alice.client.query(api.games.get, { code: CODE });
+
+        expect(state?.result).toEqual({ kind: 'win', mark: 'circle', line: 'horizontal', cells: [ 0, 1, 2 ] });
+        expect(state?.circle?.score).toBe(2);
+    });
+
     test('new session resets the scores', async () => {
         const game = await startGame();
 

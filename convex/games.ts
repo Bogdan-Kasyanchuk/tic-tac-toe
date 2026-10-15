@@ -70,6 +70,14 @@ const freshRound = () => ({
     result: null
 });
 
+// Кожен скид поля збільшує номер раунду, тож запланований finishRound від старого раунду нічого не робить
+const roundOf = (game: Doc<'games'>) => game.round ?? 0;
+
+const nextRound = (game: Doc<'games'>) => ({
+    ...freshRound(),
+    round: roundOf(game) + 1
+});
+
 export const enter = mutation({
     args: {
         code: v.string(),
@@ -94,6 +102,7 @@ export const enter = mutation({
             await ctx.db.insert('games', {
                 code,
                 ...freshRound(),
+                round: 0,
                 circle: args.mark === 'circle' ? player : null,
                 cross: args.mark === 'cross' ? player : null
             });
@@ -200,14 +209,14 @@ export const makeMove = mutation({
                     ? { circle: { ...game.circle, score: game.circle.score + 1 } }
                     : { cross: { ...game.cross, score: game.cross.score + 1 } })
             });
-            await ctx.scheduler.runAfter(ROUND_END_DELAY_MS, internal.games.finishRound, { gameId: game._id });
+            await ctx.scheduler.runAfter(ROUND_END_DELAY_MS, internal.games.finishRound, { gameId: game._id, round: roundOf(game) });
 
             return null;
         }
 
         if (isBoardFull(board)) {
             await ctx.db.patch('games', game._id, { board, result: { kind: 'draw' } });
-            await ctx.scheduler.runAfter(ROUND_END_DELAY_MS, internal.games.finishRound, { gameId: game._id });
+            await ctx.scheduler.runAfter(ROUND_END_DELAY_MS, internal.games.finishRound, { gameId: game._id, round: roundOf(game) });
 
             return null;
         }
@@ -219,16 +228,19 @@ export const makeMove = mutation({
 });
 
 export const finishRound = internalMutation({
-    args: { gameId: v.id('games') },
-    handler: async (ctx, { gameId }) => {
+    args: {
+        gameId: v.id('games'),
+        round: v.number()
+    },
+    handler: async (ctx, { gameId, round }) => {
         const game = await ctx.db.get('games', gameId);
 
-        // Раунд уже скинули вручну (Clear/New) або гру видалили
-        if (!game || !game.result) {
+        // Раунд уже скинули вручну (Clear/New/вихід) або гру видалили
+        if (!game || !game.result || roundOf(game) !== round) {
             return;
         }
 
-        await ctx.db.patch('games', gameId, freshRound());
+        await ctx.db.patch('games', gameId, nextRound(game));
     }
 });
 
@@ -241,7 +253,7 @@ export const clearBoard = mutation({
         const game = await requireGame(ctx, code);
 
         requireMark(game, userId);
-        await ctx.db.patch('games', game._id, freshRound());
+        await ctx.db.patch('games', game._id, nextRound(game));
 
         return null;
     }
@@ -255,7 +267,7 @@ export const newSession = mutation({
 
         requireMark(game, userId);
         await ctx.db.patch('games', game._id, {
-            ...freshRound(),
+            ...nextRound(game),
             circle: resetScore(game.circle),
             cross: resetScore(game.cross)
         });
@@ -282,7 +294,7 @@ export const leave = mutation({
         }
 
         await ctx.db.patch('games', game._id, {
-            ...freshRound(),
+            ...nextRound(game),
             circle: mark === 'circle' ? null : resetScore(game.circle),
             cross: mark === 'cross' ? null : resetScore(game.cross)
         });

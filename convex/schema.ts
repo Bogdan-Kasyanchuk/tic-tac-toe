@@ -12,6 +12,8 @@ export default defineSchema({
         turn: markValidator,
         circle: v.union(playerValidator, v.null()),
         cross: v.union(playerValidator, v.null()),
-        result: v.union(resultValidator, v.null())
+        result: v.union(resultValidator, v.null()),
+        // Номер раунду для finishRound; optional, бо ігри, створені до його появи, поля не мають
+        round: v.optional(v.number())
     }).index('by_code', [ 'code' ])
 });
