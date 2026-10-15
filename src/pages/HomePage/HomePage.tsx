@@ -37,7 +37,7 @@ const HomePage: FC = () => {
 
     return (
         <div className="flex w-full max-w-105 flex-col items-center gap-y-10">
-            <h2 className="text-center text-4xl font-semibold uppercase">Authorization</h2>
+            <h2 className="text-center text-4xl font-semibold uppercase">Authoriz</h2>
             <div className="flex w-full flex-col gap-y-5">
                 <div className="flex items-center gap-x-5">
                     <RadioInput
