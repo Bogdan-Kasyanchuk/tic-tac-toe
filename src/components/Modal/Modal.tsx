@@ -1,40 +1,45 @@
-import { FC, MouseEvent } from 'react';
+import type { FC, MouseEvent, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-import useKeyDown from 'hooks/useKeyDown';
+import Button from '@/components/Button';
+import Overlay from '@/components/Overlay';
+import useEscapeKey from '@/hooks/useEscapeKey';
 
-import Button from 'components/Button';
+type ModalProps = {
+    children: ReactNode,
+    onClose: () => void,
+    onOk: () => void
+};
 
-import { IModalProps } from 'interfaces';
+const Modal: FC<ModalProps> = ({ children, onClose, onOk }) => {
+    useEscapeKey(onClose);
 
-const modalRoot = document.querySelector('#root-modal') as HTMLDivElement;
+    const onClickBackdrop = (event: MouseEvent<HTMLDivElement>) => {
+        if (event.currentTarget === event.target) {
+            onClose();
+        }
+    };
 
-const Modal: FC<IModalProps> = ({ modalHundler, onOk, children }) => {
-  useKeyDown(modalHundler);
-
-  const onClickBackdrop = (e: MouseEvent<HTMLDivElement>) => {
-    if (e.currentTarget === e.target) {
-      modalHundler();
-    }
-  };
-
-  return createPortal(
-    <div className='c-overlay' onClick={onClickBackdrop}>
-      <div className='c-modal'>
-        <button className='c-modal__close-button' onClick={modalHundler} aria-label='Close modal' />
-        <div className='c-modal__content'>{children}</div>
-        <div className='c-modal__button-wrapper'>
-          <Button className='c-modal__button' onClick={onOk}>
-            Ok
-          </Button>
-          <Button className='c-modal__button' onClick={modalHundler}>
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>,
-    modalRoot,
-  );
+    return createPortal(
+        <Overlay onClick={ onClickBackdrop }>
+            <div className="flex w-[85vw] max-w-125 flex-col gap-y-10 border border-white bg-blue-dark p-5">
+                <button
+                    type="button"
+                    aria-label="Close modal"
+                    className="relative z-21 flex h-8 w-8 items-center justify-center self-end bg-blue-50 transition before:absolute before:h-0.5 before:w-4/5 before:rotate-45 before:bg-black after:absolute after:h-0.5 after:w-4/5 after:-rotate-45 after:bg-black hover:bg-blue-200"
+                    onClick={ onClose }
+                />
+                <div className="text-center text-3xl text-white">
+                    { children }
+                </div>
+                <div className="flex flex-wrap justify-around gap-5">
+                    <Button onClick={ onOk }>Ok</Button>
+                    <Button onClick={ onClose }>Cancel</Button>
+                </div>
+            </div>
+        </Overlay>,
+        document.getElementById('root-modal')!
+    );
 };
 
 export default Modal;

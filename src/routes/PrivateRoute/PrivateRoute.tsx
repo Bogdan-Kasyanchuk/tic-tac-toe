@@ -1,15 +1,22 @@
-import { FC } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useConvexAuth } from 'convex/react';
+import type { FC, ReactElement } from 'react';
+import { Navigate, useLocation } from 'react-router';
 
-import useUser from 'hooks/useUser';
+const PrivateRoute: FC<{ children: ReactElement }> = ({ children }) => {
+    const { isAuthenticated } = useConvexAuth();
+    const location = useLocation();
 
-import { IRouteProps } from 'interfaces';
+    if (isAuthenticated) {
+        return children;
+    }
 
-const PrivateRoute: FC<Pick<IRouteProps, 'children'>> = ({ children }) => {
-  const { user } = useUser();
-  const { state } = useLocation();
-
-  return user ? children : <Navigate to='/login' state={state} />;
+    return (
+        <Navigate
+            to="/login"
+            state={ { from: location.pathname + location.search } }
+            replace
+        />
+    );
 };
 
 export default PrivateRoute;

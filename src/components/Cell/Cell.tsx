@@ -1,56 +1,52 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import useData from 'hooks/useData';
-import useTurn from 'hooks/useTurn';
+import Fade from '@/components/Fade';
+import cn from '@/lib/cn';
+import type { Cell as CellValue, WinLine } from '@convex/rules';
 
-import TransitionWrapper from 'components/TransitionWrapper';
+import { winLineClassName } from './winLine';
 
-import { ICellProps } from 'interfaces';
+type CellProps = {
+    index: number,
+    value: CellValue,
+    winLine: WinLine | null,
+    onSelect: (index: number) => void
+};
 
-import type { TLineWinner } from 'types';
+const Cell: FC<CellProps> = ({ index, value, winLine, onSelect }) => {
+    const line = value && winLine?.cells.includes(index) ? winLine.line : null;
 
-const Cell: FC<ICellProps> = ({ id, type }) => {
-  const { idWinner, lineWinner } = useData();
-  const { setTurn } = useTurn();
-
-  const winnerCell = (): TLineWinner =>
-    type && lineWinner && idWinner?.includes(id) ? lineWinner : '';
-
-  return (
-    <div className={`c-board__cell ${type && 'pointer-events-none'}`} onClick={() => setTurn(id)}>
-      <TransitionWrapper inProp={type === 'circle'}>
-        {(s) => <div className={`c-board__cell-circle u-trans ${s}`} />}
-      </TransitionWrapper>
-      <TransitionWrapper inProp={type === 'cross'}>
-        {(s) => (
-          <div className={`c-board__cell-cross-wrapper u-trans ${s}`}>
-            <div className='c-board__cell-cross' />
-            <div className='c-board__cell-cross' />
-          </div>
-        )}
-      </TransitionWrapper>
-      <TransitionWrapper inProp={winnerCell() === 'horizontal'}>
-        {(s) => (
-          <div className={`c-board__cell-active c-board__cell-active--horizontal u-trans ${s}`} />
-        )}
-      </TransitionWrapper>
-      <TransitionWrapper inProp={winnerCell() === 'vertical'}>
-        {(s) => (
-          <div className={`c-board__cell-active c-board__cell-active--vertical u-trans ${s}`} />
-        )}
-      </TransitionWrapper>
-      <TransitionWrapper inProp={winnerCell() === 'rotate_45'}>
-        {(s) => (
-          <div className={`c-board__cell-active c-board__cell-active--rotate_45 u-trans ${s}`} />
-        )}
-      </TransitionWrapper>
-      <TransitionWrapper inProp={winnerCell() === 'rotate_-45'}>
-        {(s) => (
-          <div className={`c-board__cell-active c-board__cell-active--rotate_-45 u-trans ${s}`} />
-        )}
-      </TransitionWrapper>
-    </div>
-  );
+    // Поки лінія згасає, AnimatePresence тримає останній елемент зі старим className, тож лінія не стрибає
+    return (
+        <div
+            className={
+                cn('relative flex cursor-pointer items-center justify-center bg-blue-50 transition hover:bg-blue-200', {
+                    'pointer-events-none': value !== ''
+                })
+            }
+            onClick={
+                () => {
+                    onSelect(index);
+                }
+            }
+        >
+            <Fade
+                show={ value === 'circle' }
+                className="h-3/4 w-3/4 rounded-full border-4 border-green"
+            />
+            <Fade
+                show={ value === 'cross' }
+                className="relative -top-0.5 w-full"
+            >
+                <div className="absolute h-1 w-full rotate-45 bg-red" />
+                <div className="absolute h-1 w-full -rotate-45 bg-red" />
+            </Fade>
+            <Fade
+                show={ line !== null }
+                className={ line ? winLineClassName(line, index) : '' }
+            />
+        </div>
+    );
 };
 
 export default Cell;

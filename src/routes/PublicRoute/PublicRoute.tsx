@@ -1,19 +1,25 @@
-import { FC } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useConvexAuth } from 'convex/react';
+import type { FC, ReactElement } from 'react';
+import { Navigate } from 'react-router';
 
-import useUser from 'hooks/useUser';
+type PublicRouteProps = {
+    children: ReactElement,
+    restricted?: boolean
+};
 
-import { IRouteProps } from 'interfaces';
+const PublicRoute: FC<PublicRouteProps> = ({ children, restricted = false }) => {
+    const { isAuthenticated } = useConvexAuth();
 
-const PublicRoute: FC<IRouteProps> = ({ children, restricted = false }) => {
-  const { user } = useUser();
-  const { state } = useLocation();
+    if (isAuthenticated && restricted) {
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+    }
 
-  const shouldRedirect = user && restricted;
-
-  if (shouldRedirect && state) return <Navigate to={`/game/${state.id}`} state={state} />;
-
-  return shouldRedirect ? <Navigate to='/' /> : children;
+    return children;
 };
 
 export default PublicRoute;

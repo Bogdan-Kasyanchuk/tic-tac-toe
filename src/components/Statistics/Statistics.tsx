@@ -1,32 +1,50 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import SwitchTransitionWrapper from 'components/SwitchTransitionWrapper';
+import FadeSwitch from '@/components/FadeSwitch';
+import MarkIcon from '@/components/MarkIcon';
+import cn from '@/lib/cn';
+import type { GameView } from '@/types/game';
+import type { Mark } from '@convex/rules';
 
-import { IStatisticsProps } from 'interfaces';
+type StatisticsProps = {
+    turn: Mark,
+    result: GameView[ 'result' ]
+};
 
-const Statistics: FC<IStatisticsProps> = ({ lineWinner, typeTurn }) => {
-  return (
-    <div className='c-statistics'>
-      <SwitchTransitionWrapper inProp={!!lineWinner}>
-        <p className='c-statistics__title'>
-          {lineWinner ? 'Winner' : 'Turn'}
-          <span>&#10142;</span>
-        </p>
-      </SwitchTransitionWrapper>
-      <SwitchTransitionWrapper
-        inProp={(lineWinner && typeTurn === 'cross') || (!lineWinner && typeTurn === 'circle')}
-      >
-        {(lineWinner && typeTurn === 'cross') || (!lineWinner && typeTurn === 'circle') ? (
-          <div className='c-player__type-1' />
-        ) : (
-          <div className='c-player__type-2'>
-            <div className='c-player__type-2-inner' />
-            <div className='c-player__type-2-inner' />
-          </div>
-        )}
-      </SwitchTransitionWrapper>
-    </div>
-  );
+const LABEL = { win: 'Winner', draw: 'Draw' } as const;
+
+const shownMark = (turn: Mark, result: GameView[ 'result' ]): Mark | null => {
+    if (!result) {
+        return turn;
+    }
+
+    return result.kind === 'win' ? result.mark : null;
+};
+
+const Statistics: FC<StatisticsProps> = ({ turn, result }) => {
+    const label = result ? LABEL[ result.kind ] : 'Turn';
+    const mark = shownMark(turn, result);
+
+    return (
+        <div className="flex items-center justify-end gap-x-5">
+            <FadeSwitch switchKey={ label }>
+                <p
+                    className={
+                        cn([
+                            'flex items-center gap-x-5 text-2xl font-semibold',
+                            'md:text-4xl'
+                        ])
+                    }
+                >
+                    { label }
+                    { mark && <span>&#10142;</span> }
+                </p>
+            </FadeSwitch>
+            <FadeSwitch switchKey={ mark ?? 'none' }>
+                { mark && <MarkIcon mark={ mark } /> }
+            </FadeSwitch>
+        </div>
+    );
 };
 
 export default Statistics;

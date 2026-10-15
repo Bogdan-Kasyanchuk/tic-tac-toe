@@ -1,123 +1,150 @@
-import { FC, useState } from 'react';
-import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { useAuthActions } from '@convex-dev/auth/react';
+import { useConvexAuth, useMutation } from 'convex/react';
+import { type FC, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useMatch, useNavigate } from 'react-router';
 
-import { checkGame, deleteGame, updateGame } from 'service/firebaseOperations';
+import Button from '@/components/Button';
+import Modal from '@/components/Modal';
+import UserMenu from '@/components/UserMenu';
+import cn from '@/lib/cn';
+import errorMessage from '@/lib/errorMessage';
+import { api } from '@convex/_generated/api';
 
-import useUser from 'hooks/useUser';
+type ModalType = 'logOut' | 'goHome';
 
-import generateFields from 'helpers/generateFields';
-
-import Button from 'components/Button';
-import Modal from 'components/Modal';
-import UserMenu from 'components/UserMenu';
+const HEADER_BUTTON = 'px-3.5 py-0.5 text-lg';
 
 const NavBar: FC = () => {
-  const { state } = useLocation();
-  const { user, auth, displayName } = useUser();
-  const matchLogin = useMatch('/login');
-  const matchGames = useMatch('/game/:gameId');
-  const navigate = useNavigate();
-  const [isMenu, setIsMenu] = useState<boolean>(false);
-  const [isModal, setIsModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<'logOut' | 'goHome'>('logOut');
+    const { isAuthenticated } = useConvexAuth();
+    const { signOut } = useAuthActions();
+    const leave = useMutation(api.games.leave);
+    const matchLogin = useMatch('/login');
+    const matchGame = useMatch('/game/:gameId');
+    const navigate = useNavigate();
+    const [ isMenu, setIsMenu ] = useState(false);
+    const [ modalType, setModalType ] = useState<ModalType | null>(null);
 
-  const deleteOrUpdateGame = async () => {
-    if (matchGames && state.type === 'new') {
-      deleteGame(state.id);
-    } else {
-      let checkUser;
+    const gameCode = matchGame?.params.gameId;
 
-      await checkGame(state.id).then((docSnap) => {
-        checkUser = displayName === docSnap?.data()?.users.circle.name ? 'circle' : 'cross';
-      });
+    const openModal = (type: ModalType) => {
+        setModalType(type);
+        setIsMenu(false);
+    };
 
-      updateGame(state.id, {
-        'users.quantityUsers': 1,
-        [`users.${checkUser}.name`]: '',
-        [`users.${checkUser}.avatar`]: '',
-        [`users.${checkUser}.turn`]: '',
-        fields: generateFields(),
-        'users.circle.countWinner': 0,
-        'users.cross.countWinner': 0,
-        typeTurn: 'circle',
-        idWinner: [],
-        lineWinner: '',
-      });
-    }
-  };
+    // Спершу йдемо на `/`, щоб сторінка гри не показала спінер для гри, якої для нас уже немає
+    const onOk = async () => {
+        const type = modalType;
 
-  const onLogOut = () => {
-    deleteOrUpdateGame();
-    setIsModal(false);
-    auth.signOut();
-  };
+        setModalType(null);
+        navigate('/');
 
-  const onGoHome = () => {
-    deleteOrUpdateGame();
-    setIsModal(false);
-    navigate(`/`);
-  };
+        try {
+            if (gameCode) {
+                await leave({ code: gameCode });
+            }
+        } catch (error) {
+            toast.error(errorMessage(error));
+        }
 
-  return (
-    <div>
-      <header className='c-header'>
-        <Link to='/'>
-          <h1 className='c-header__title'>Tic-Tac-Toe</h1>
-        </Link>
-        <div className='c-header__menu'>
-          {user ? (
-            matchGames ? (
-              <div className='c-select'>
-                <Button className='c-header__button' onClick={() => setIsMenu(!isMenu)}>
-                  Menu
-                </Button>
-                {isMenu && (
-                  <UserMenu
-                    logOutHandler={() => {
-                      setModalType('logOut');
-                      setIsModal(true);
-                      setIsMenu(false);
-                    }}
-                    goHomeHandler={() => {
-                      setModalType('goHome');
-                      setIsModal(true);
-                      setIsMenu(false);
-                    }}
-                    menuHundler={() => {
-                      setIsMenu(false);
-                    }}
-                  />
-                )}
-              </div>
-            ) : (
-              <Button className='c-header__button' onClick={() => setIsModal(true)}>
-                Logout
-              </Button>
-            )
-          ) : matchLogin ? (
-            <Link to='/'>
-              <Button className='c-header__button'>Home</Button>
-            </Link>
-          ) : (
-            <Link to='/login'>
-              <Button className='c-header__button'>Login</Button>
-            </Link>
-          )}
+        // Підтверджений Logout розлогінює, навіть якщо вихід із гри не вдався
+        if (type === 'logOut') {
+            try {
+                await signOut();
+            } catch (error) {
+                toast.error(errorMessage(error));
+            }
+        }
+    };
+
+    return (
+        <div>
+            <header className="flex items-center justify-between gap-x-5 border-b-4 border-black bg-linear-to-r/srgb from-blue-dark px-5 py-3">
+                <Link to="/">
+                    <h1
+                        className={
+                            cn([
+                                'text-2xl font-semibold text-white uppercase',
+                                'md:text-3xl'
+                            ])
+                        }
+                    >
+                        Tic-Tac-Toe
+                    </h1>
+                </Link>
+                <div className="flex items-center gap-x-5">
+                    { isAuthenticated && gameCode && (
+                        <div className="relative">
+                            <Button
+                                className={ HEADER_BUTTON }
+                                onClick={
+                                    () => {
+                                        setIsMenu(!isMenu);
+                                    }
+                                }
+                            >
+                                Menu
+                            </Button>
+                            { isMenu && (
+                                <UserMenu
+                                    gameCode={ gameCode }
+                                    onClose={
+                                        () => {
+                                            setIsMenu(false);
+                                        }
+                                    }
+                                    onGoHome={
+                                        () => {
+                                            openModal('goHome');
+                                        }
+                                    }
+                                    onLogOut={
+                                        () => {
+                                            openModal('logOut');
+                                        }
+                                    }
+                                />
+                            ) }
+                        </div>
+                    ) }
+                    { isAuthenticated && !gameCode && (
+                        <Button
+                            className={ HEADER_BUTTON }
+                            onClick={
+                                () => {
+                                    openModal('logOut');
+                                }
+                            }
+                        >
+                            Logout
+                        </Button>
+                    ) }
+                    { !isAuthenticated && (
+                        <Link to={ matchLogin ? '/' : '/login' }>
+                            <Button className={ HEADER_BUTTON }>
+                                { matchLogin ? 'Home' : 'Login' }
+                            </Button>
+                        </Link>
+                    ) }
+                </div>
+            </header>
+            { modalType && (
+                <Modal
+                    onOk={ onOk }
+                    onClose={
+                        () => {
+                            setModalType(null);
+                        }
+                    }
+                >
+                    { modalType === 'logOut'
+                        ? 'Are you sure what you want to go out? '
+                        : 'Are you sure you want to go to the home page? ' }
+                    The current game will be ended!
+                </Modal>
+            ) }
         </div>
-      </header>
-      {isModal && (
-        <Modal
-          modalHundler={() => setIsModal(false)}
-          onOk={modalType === 'logOut' ? onLogOut : onGoHome}
-        >
-          {modalType === 'logOut'
-            ? 'Are you sure what you want to go out? '
-            : 'Are you sure you want to go to the home page? '}
-          The current game will be ended!
-        </Modal>
-      )}
-    </div>
-  );
+    );
 };
 
 export default NavBar;
