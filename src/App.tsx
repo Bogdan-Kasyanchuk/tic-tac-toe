@@ -1,12 +1,12 @@
 import { useConvexAuth } from 'convex/react';
 import type { FC } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { Navigate, Route, Routes } from 'react-router';
 
 import bg from '@/assets/bg.jpg';
 import Container from '@/components/Container';
 import NavBar from '@/components/NavBar';
 import Spinner from '@/components/Spinner';
+import { Toaster } from '@/components/ui/sonner';
 import GamePage from '@/pages/GamePage';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
@@ -23,7 +23,7 @@ const App: FC = () => {
                 alt="Фон"
                 className="absolute -z-1 h-full w-full object-cover"
             />
-            <Toaster position="top-right" />
+            <Toaster />
             { isLoading
                 ? <Spinner />
                 : (

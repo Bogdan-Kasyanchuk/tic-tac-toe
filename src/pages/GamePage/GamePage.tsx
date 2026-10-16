@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from 'convex/react';
 import { type FC, useEffect, useRef } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { toast } from 'sonner';
 
 import Button from '@/components/Button';
 import Cell from '@/components/Cell';

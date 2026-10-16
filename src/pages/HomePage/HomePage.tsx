@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { type FC, useState } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 import Button from '@/components/Button';
 import RadioInput from '@/components/RadioInput';

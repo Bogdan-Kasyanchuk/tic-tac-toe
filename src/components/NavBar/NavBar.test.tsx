@@ -1,8 +1,9 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ConvexError } from 'convex/values';
-import { Toaster } from 'react-hot-toast';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+
+import { Toaster } from '@/components/ui/sonner';
 
 import NavBar from './NavBar';
 
@@ -20,8 +21,6 @@ vi.mock('@convex-dev/auth/react', () => ({
 }));
 
 beforeEach(() => {
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
-
     const modalRoot = document.createElement('div');
 
     modalRoot.id = 'root-modal';

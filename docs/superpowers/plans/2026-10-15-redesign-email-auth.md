@@ -11,7 +11,7 @@
 
 **Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`, `@playwright/test` (e2e), Playwright MCP (перевірки в браузері під час роботи).
 
-**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — ще не розпочато, починати із задачі 1. Галочки `- [x]` у кроках показують, що вже зроблено.
+**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — роботу ведемо на гілці `redesign`. Галочки `- [x]` у кроках показують, що вже зроблено.
 
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, його копія лежить у репозиторії в `docs/design/` (екрани `*.dc.html`; точні кольори, відступи й тексти беруться звідти). Рішення з розмови зведені в розділ «Рішення».
 
@@ -151,14 +151,14 @@ playwright.config.ts          проєкти desktop (1280px) і phone (390px)
   - токени кольорів: `background foreground card popover primary secondary muted accent border input ring destructive danger danger-bg danger-border field line label subtle placeholder link link-hover circle cross cross-soft`;
   - шрифти `font-sans`, `font-mono`, `font-display`.
 
-- [ ] **Step 1: Встанови залежності**
+- [x] **Step 1: Встанови залежності**
 
 ```bash
 npm i lucide-react sonner @fontsource-variable/geist @fontsource-variable/geist-mono @fontsource-variable/bricolage-grotesque
 npm i -D @testing-library/user-event
 ```
 
-- [ ] **Step 2: Додай іменований `cn`**
+- [x] **Step 2: Додай іменований `cn`**
 
 `src/lib/cn.ts`:
 
@@ -172,7 +172,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 export default cn;
 ```
 
-- [ ] **Step 3: Створи `components.json`**
+- [x] **Step 3: Створи `components.json`**
 
 ```json
 {
@@ -198,7 +198,7 @@ export default cn;
 }
 ```
 
-- [ ] **Step 4: Перепиши токени в `src/index.css`**
+- [x] **Step 4: Перепиши токени в `src/index.css`**
 
 Старі кольори (`blue-50`, `blue-200`, `blue-700`, `blue-dark`, `stone-300`, `red`, `green`) поки лишаються в блоці legacy: на них ще тримаються старі `HomePage` і `GamePage` до задач 7–8. Скид `--color-*: initial` і власні брейкпоінти прибираються: shadcn використовує `sm:`, `black`, `white` зі стандартної палітри.
 
@@ -323,7 +323,7 @@ export default cn;
 
 `tw-animate-css` встановить `shadcn add` на кроці 5; якщо ні, встанови його окремо: `npm i tw-animate-css`.
 
-- [ ] **Step 5: Згенеруй базові компоненти shadcn**
+- [x] **Step 5: Згенеруй базові компоненти shadcn**
 
 ```bash
 npx shadcn@latest add button input label sonner -y
@@ -332,7 +332,7 @@ npx shadcn@latest add button input label sonner -y
 Якщо CLI пропонує переписати `src/index.css` або `cn.ts`, відмовся: токени вже стоять. Потім:
 - `npm uninstall next-themes`: sonner від shadcn тягне його, нам теми не потрібні.
 
-- [ ] **Step 6: Підлаштуй `button.tsx` під канвас**
+- [x] **Step 6: Підлаштуй `button.tsx` під канвас**
 
 У згенерованому `src/components/ui/button.tsx` лиши тіло компонента (`Slot` / `asChild`) і заміни конфіг `cva`:
 
@@ -367,7 +367,7 @@ const buttonVariants = cva(
 );
 ```
 
-- [ ] **Step 7: Підлаштуй `input.tsx`, `label.tsx`, `sonner.tsx`**
+- [x] **Step 7: Підлаштуй `input.tsx`, `label.tsx`, `sonner.tsx`**
 
 `input.tsx`: клас інпута замінити на
 
@@ -402,7 +402,7 @@ const Toaster = (props: ToasterProps) => (
 export { Toaster };
 ```
 
-- [ ] **Step 8: Переведи toast-и на sonner**
+- [x] **Step 8: Переведи toast-и на sonner**
 
 Скрізь у `src`:
 - `import toast from 'react-hot-toast'` → `import { toast } from 'sonner'`;
@@ -414,7 +414,7 @@ export { Toaster };
 npm uninstall react-hot-toast
 ```
 
-- [ ] **Step 9: Тестове середовище jsdom**
+- [x] **Step 9: Тестове середовище jsdom**
 
 `src/test/viewport.ts`:
 
@@ -462,7 +462,7 @@ beforeEach(() => {
 
 У `vitest.config.ts`, проєкт `frontend`, додай `setupFiles: [ './src/test/setup.ts' ]`. З тестів прибери ручні `window.matchMedia = …` у `beforeEach`: їх тепер ставить setup.
 
-- [ ] **Step 10: ESLint для `src/components/ui`**
+- [x] **Step 10: ESLint для `src/components/ui`**
 
 `button.tsx` експортує `buttonVariants` поруч із компонентом, через що спрацьовує правило `react-refresh/only-export-components`. Додай в `eslint.config.mjs` окремий блок:
 
@@ -475,18 +475,18 @@ beforeEach(() => {
 },
 ```
 
-- [ ] **Step 11: `index.html`**
+- [x] **Step 11: `index.html`**
 
 Прибери три рядки Google Fonts (`preconnect` ×2 і `css2?family=Open+Sans`) і зміни `theme-color` на `#0d0f1f`. `<div id="root-modal">` поки лишається: на нього спирається старий `Modal`, обидва видаляються в задачі 3.
 
-- [ ] **Step 12: Перевір**
+- [x] **Step 12: Перевір**
 
 Run: `npm run lint:fix && npm run typecheck && npm run test:once && npm run build`
 Expected: усе зелене. Старі сторінки тимчасово темні з чорним текстом. Це нормально, їх замінять задачі 3–8.
 
 Прожени сканери скіла `tailwind-format` по `src/components/ui/*.tsx` і виправ групування класів, якщо вони щось знайдуть.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 git add -A

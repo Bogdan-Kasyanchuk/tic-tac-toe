@@ -3,10 +3,10 @@ import type { FunctionReference } from 'convex/server';
 import { getFunctionName } from 'convex/server';
 import { ConvexError } from 'convex/values';
 import { StrictMode } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { Toaster } from '@/components/ui/sonner';
 import type { GameView } from '@/types/game';
 
 import GamePage from './GamePage';
@@ -59,8 +59,6 @@ const app = (path: string) => (
 
 beforeEach(() => {
     queryResult = undefined;
-    // react-hot-toast читає prefers-reduced-motion, а в jsdom matchMedia немає
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
 
 afterEach(() => {

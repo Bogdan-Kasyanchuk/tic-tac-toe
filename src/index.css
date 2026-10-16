@@ -1,31 +1,106 @@
 /* Класи шукаємо лише в src: інакше Tailwind підхоплює приклади з docs/ і .claude/ */
 @import 'tailwindcss' source('.');
+@import 'tw-animate-css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import '@fontsource-variable/bricolage-grotesque';
 
 /* Tailwind 4 за замовчуванням вмикає hover лише на пристроях із курсором; у старій версії hover був скрізь */
 @custom-variant hover (&:hover);
 
-@theme {
-    --breakpoint-*: initial;
-    --breakpoint-xs: 22.5rem;
-    --breakpoint-md: 48rem;
-    --breakpoint-lg: 64rem;
-    --breakpoint-xl: 90rem;
+:root {
+    --radius: 0.625rem;
 
-    --color-*: initial;
-    --color-white: #fff;
-    --color-black: #000;
+    /* Палітра канвасу «Tic-Tac-Toe redesign», аркуш Components */
+    --background: #0d0f1f;
+    --foreground: #edefff;
+    --card: #151830;
+    --card-foreground: #edefff;
+    --popover: #1d2142;
+    --popover-foreground: #edefff;
+    --primary: #edefff;
+    --primary-foreground: #0d0f1f;
+    --secondary: #1d2142;
+    --secondary-foreground: #edefff;
+    --muted: #121530;
+    --muted-foreground: #a3a8cf;
+    --accent: #262b55;
+    --accent-foreground: #edefff;
+    --destructive: #ff7a7a;
+    --border: #2b3060;
+    --input: #2b3060;
+    --ring: #6c8cff;
+
+    --danger: #ff9b9b;
+    --danger-bg: #2a1520;
+    --danger-border: #5a2a36;
+    --field: #10132a;
+    --line: #22264d;
+    --label: #d6d9f5;
+    --subtle: #8086b3;
+    --placeholder: #6b7099;
+    --link: #a9bcff;
+    --link-hover: #d3ddff;
+    --circle: #6c8cff;
+    --cross: #ffa24c;
+    --cross-soft: #3a2e2a;
+}
+
+@theme inline {
+    --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+    --font-display: 'Bricolage Grotesque Variable', 'Geist Variable', sans-serif;
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-danger: var(--danger);
+    --color-danger-bg: var(--danger-bg);
+    --color-danger-border: var(--danger-border);
+    --color-field: var(--field);
+    --color-line: var(--line);
+    --color-label: var(--label);
+    --color-subtle: var(--subtle);
+    --color-placeholder: var(--placeholder);
+    --color-link: var(--link);
+    --color-link-hover: var(--link-hover);
+    --color-circle: var(--circle);
+    --color-cross: var(--cross);
+    --color-cross-soft: var(--cross-soft);
+}
+
+/* Legacy: тримає старі HomePage/GamePage до задач 7–8, видаляється в задачі 10 */
+@theme {
+    --color-blue-dark: #1b1c3a;
     --color-red: #ff0000;
     --color-green: #008000;
-    --color-blue-50: #eff6ff;
-    --color-blue-200: #bfdbfe;
-    --color-blue-700: #1d4ed8;
-    --color-blue-dark: #1b1c3a;
-    --color-stone-300: #d6d3d1;
-
-    --font-sans: 'Open Sans', sans-serif;
 }
 
 @layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
     /* Tailwind 4 прибрав cursor: pointer у кнопок, у Tailwind 3 він був */
     button:not(:disabled),
     [role='button']:not(:disabled) {
@@ -33,10 +108,9 @@
     }
 
     body {
-        @apply text-base leading-none font-normal text-black;
+        @apply min-h-dvh bg-background font-sans text-foreground antialiased;
         -webkit-text-size-adjust: 100%;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
     }
 }

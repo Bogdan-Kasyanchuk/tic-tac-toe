@@ -1,14 +1,10 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { Toaster } from 'react-hot-toast';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, expect, test } from 'vitest';
+
+import { Toaster } from '@/components/ui/sonner';
 
 import HomePage from './HomePage';
-
-beforeEach(() => {
-    // react-hot-toast читає prefers-reduced-motion, а в jsdom matchMedia немає
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
-});
 
 afterEach(() => {
     cleanup();

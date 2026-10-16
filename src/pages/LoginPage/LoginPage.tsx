@@ -1,7 +1,7 @@
 import { useAuthActions } from '@convex-dev/auth/react';
 import type { FC } from 'react';
-import toast from 'react-hot-toast';
 import { useLocation } from 'react-router';
+import { toast } from 'sonner';
 
 import Button from '@/components/Button';
 import errorMessage from '@/lib/errorMessage';
