@@ -1,20 +1,13 @@
+import { LoaderCircle } from 'lucide-react';
 import type { FC } from 'react';
-import { Oval } from 'react-loader-spinner';
-
-import Overlay from '@/components/Overlay';
 
 const Spinner: FC = () => (
-    <Overlay>
-        <Oval
-            height={ 100 }
-            width={ 100 }
-            color="#bfdbfe"
-            secondaryColor="#bfdbfe"
-            strokeWidth={ 4 }
-            strokeWidthSecondary={ 4 }
-            ariaLabel="oval-loading"
+    <div className="flex grow items-center justify-center py-20">
+        <LoaderCircle
+            aria-label="Loading"
+            className="size-8 animate-spin text-muted-foreground"
         />
-    </Overlay>
+    </div>
 );
 
 export default Spinner;

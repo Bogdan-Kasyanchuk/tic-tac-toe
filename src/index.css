@@ -44,6 +44,7 @@
     --circle: #6c8cff;
     --cross: #ffa24c;
     --cross-soft: #3a2e2a;
+    --overlay: rgb(8 9 22 / 0.72);
 }
 
 @theme inline {
@@ -87,6 +88,7 @@
     --color-circle: var(--circle);
     --color-cross: var(--cross);
     --color-cross-soft: var(--cross-soft);
+    --color-overlay: var(--overlay);
 }
 
 /* Legacy: тримає старі HomePage/GamePage до задач 7–8, видаляється в задачі 10 */

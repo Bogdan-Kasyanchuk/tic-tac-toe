@@ -940,7 +940,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `<Logo />`;
   - `<AppLayout />` (рендерить `<Outlet />`).
 
-- [ ] **Step 1: Згенеруй компоненти**
+- [x] **Step 1: Згенеруй компоненти**
 
 ```bash
 npx shadcn@latest add dropdown-menu sheet alert-dialog avatar -y
@@ -952,7 +952,7 @@ npm run lint:fix
 - **alert-dialog:** контент — `rounded-2xl border-border bg-card`, оверлей — `bg-[#080916]/70`. Це єдиний hex у класах: прозорість саме цього відтінку токеном не задати. Або заведи `--overlay: rgb(8 9 22 / 0.72)` і клас `bg-(--overlay)`.
 - **sheet:** контент справа — `w-82 border-l-border bg-card`.
 
-- [ ] **Step 2: Хуки**
+- [x] **Step 2: Хуки**
 
 `src/hooks/useMediaQuery.ts`:
 
@@ -1032,7 +1032,7 @@ const useLeaveGame = (gameCode: string | null) => {
 export default useLeaveGame;
 ```
 
-- [ ] **Step 3: Тест інвайта (падає)**
+- [x] **Step 3: Тест інвайта (падає)**
 
 `src/lib/invite.test.ts`:
 
@@ -1097,7 +1097,7 @@ test('stays quiet when the person closes the share sheet', async () => {
 Run: `npx vitest run src/lib/invite.test.ts`
 Expected: FAIL, бо модуля `./invite` ще немає.
 
-- [ ] **Step 4: Реалізуй `src/lib/invite.ts` і `src/lib/initials.ts`**
+- [x] **Step 4: Реалізуй `src/lib/invite.ts` і `src/lib/initials.ts`**
 
 ```ts
 import { toast } from 'sonner';
@@ -1151,7 +1151,7 @@ export default (name: string) => name
 Run: `npx vitest run src/lib/invite.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Дрібні компоненти**
+- [x] **Step 5: Дрібні компоненти**
 
 `Logo/Logo.tsx`: знак 32×32 (квадрат `rounded-[9px]` з фоном `fill-secondary`, нолик `stroke-circle`, хрестик `stroke-cross`) і напис.
 
@@ -1317,7 +1317,7 @@ export default Spinner;
 - `npm uninstall react-loader-spinner`;
 - з `vitest.config.ts` прибери `server: { deps: { inline: [ 'react-loader-spinner' ] } }` разом із коментарем.
 
-- [ ] **Step 6: `LeaveGameDialog`**
+- [x] **Step 6: `LeaveGameDialog`**
 
 ```tsx
 import type { FC } from 'react';
@@ -1376,7 +1376,7 @@ const LeaveGameDialog: FC<LeaveGameDialogProps> = ({ intent, onCancel, onConfirm
 export default LeaveGameDialog;
 ```
 
-- [ ] **Step 7: `AccountMenu` (десктоп) і `MobileMenu` (телефон)**
+- [x] **Step 7: `AccountMenu` (десктоп) і `MobileMenu` (телефон)**
 
 Спільні пропси: `{ gameCode: string | null, onRequest: (intent: LeaveIntent) => void }`. Обидва беруть `me` з `useQuery(api.users.me)`.
 
@@ -1523,7 +1523,7 @@ export default AccountMenu;
 
 Стан `open` керований: кожна дія спершу `setOpen(false)`, потім `onRequest(…)`. Додай `SheetDescription className="sr-only"` «Account and game», бо Radix попереджає без опису.
 
-- [ ] **Step 8: Тест шапки (падає)**
+- [x] **Step 8: Тест шапки (падає)**
 
 `src/components/AppHeader/AppHeader.test.tsx` — перенесений тест зі старого `NavBar.test.tsx` плюс нові сценарії:
 
@@ -1651,7 +1651,7 @@ test('the phone menu offers to share the invite link', async () => {
 Run: `npx vitest run src/components/AppHeader`
 Expected: FAIL, бо `./AppHeader` ще не існує.
 
-- [ ] **Step 9: `AppHeader` і `AppLayout`**
+- [x] **Step 9: `AppHeader` і `AppLayout`**
 
 `AppHeader/AppHeader.tsx`:
 
@@ -1776,7 +1776,7 @@ const AppLayout: FC = () => (
 export default AppLayout;
 ```
 
-- [ ] **Step 10: Маршрути й `PublicRoute`**
+- [x] **Step 10: Маршрути й `PublicRoute`**
 
 `PublicRoute` повертає людину туди, звідки вона прийшла. Інакше після входу поштою він кидав би на `/` раніше, ніж сторінка встигне перейти на `from`:
 
@@ -1846,7 +1846,7 @@ const App: FC = () => {
 - прибери `<div id="root-modal">` з `index.html`;
 - перевір, що старі `HomePage` і `GamePage` не імпортують видалене: `GamePage` імпортує лише `Button`, `Cell`, `Player`, `Spinner`, `Statistics`, `Waiting`. Якщо `Waiting` тягне `Overlay`, тимчасово заміни `Overlay` в ньому на звичайний `div` з тими самими класами — `Waiting` все одно видаляється в задачі 8.
 
-- [ ] **Step 11: Тест `PublicRoute` (падає, потім проходить)**
+- [x] **Step 11: Тест `PublicRoute` (падає, потім проходить)**
 
 `src/routes/PublicRoute/PublicRoute.test.tsx`:
 
@@ -1889,11 +1889,11 @@ test('a signed-in visitor on an auth page goes back to where they came from', ()
 Run: `npm run test:once`
 Expected: PASS. Тест `NavBar.test.tsx` видалено разом із `NavBar`, його сценарій тепер у `AppHeader.test.tsx`.
 
-- [ ] **Step 12: Перевірка в браузері — у задачі 5**
+- [x] **Step 12: Перевірка в браузері — у задачі 5**
 
 Поки немає реєстрації поштою, увійти можна лише через Google, а це вручну. Шапку й меню Claude перевірить у задачі 5 під тестовим користувачем. Якщо хочеш побачити шапку раніше, увійди сам через Google на `npm run dev`.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 git add -A

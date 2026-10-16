@@ -2,9 +2,7 @@ import { useConvexAuth } from 'convex/react';
 import type { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
-import bg from '@/assets/bg.jpg';
-import Container from '@/components/Container';
-import NavBar from '@/components/NavBar';
+import AppLayout from '@/components/AppLayout';
 import Spinner from '@/components/Spinner';
 import { Toaster } from '@/components/ui/sonner';
 import GamePage from '@/pages/GamePage';
@@ -17,46 +15,38 @@ const App: FC = () => {
     const { isLoading } = useConvexAuth();
 
     return (
-        <div className="relative mx-auto flex h-full min-h-screen max-w-480 flex-col bg-linear-to-r/srgb from-stone-300">
-            <img
-                src={ bg }
-                alt="Фон"
-                className="absolute -z-1 h-full w-full object-cover"
-            />
+        <>
             <Toaster />
             { isLoading
                 ? <Spinner />
                 : (
-                    <>
-                        <NavBar />
-                        <Container>
-                            <Routes>
-                                <Route
-                                    path="/"
-                                    element={ <PublicRoute><HomePage /></PublicRoute> }
+                    <Routes>
+                        <Route
+                            path="/login"
+                            element={ <PublicRoute restricted><LoginPage /></PublicRoute> }
+                        />
+                        <Route element={ <PrivateRoute><AppLayout /></PrivateRoute> }>
+                            <Route
+                                path="/"
+                                element={ <HomePage /> }
+                            />
+                            <Route
+                                path="/game/:gameId"
+                                element={ <GamePage /> }
+                            />
+                        </Route>
+                        <Route
+                            path="*"
+                            element={
+                                <Navigate
+                                    to="/"
+                                    replace
                                 />
-                                <Route
-                                    path="/login"
-                                    element={ <PublicRoute restricted><LoginPage /></PublicRoute> }
-                                />
-                                <Route
-                                    path="/game/:gameId"
-                                    element={ <PrivateRoute><GamePage /></PrivateRoute> }
-                                />
-                                <Route
-                                    path="*"
-                                    element={
-                                        <Navigate
-                                            to="/"
-                                            replace
-                                        />
-                                    }
-                                />
-                            </Routes>
-                        </Container>
-                    </>
+                            }
+                        />
+                    </Routes>
                 ) }
-        </div>
+        </>
     );
 };
 
