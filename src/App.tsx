@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import GamePage from '@/pages/GamePage';
 import HomePage from '@/pages/HomePage';
 import SignInPage from '@/pages/SignInPage';
+import SignUpPage from '@/pages/SignUpPage';
 import PrivateRoute from '@/routes/PrivateRoute';
 import PublicRoute from '@/routes/PublicRoute';
 
@@ -24,6 +25,10 @@ const App: FC = () => {
                         <Route
                             path="/login"
                             element={ <PublicRoute restricted><SignInPage /></PublicRoute> }
+                        />
+                        <Route
+                            path="/signup"
+                            element={ <PublicRoute restricted><SignUpPage /></PublicRoute> }
                         />
                         <Route element={ <PrivateRoute><AppLayout /></PrivateRoute> }>
                             <Route

@@ -2312,7 +2312,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `useFrom`, `authError`, `MIN_PASSWORD_LENGTH` і тексти з `@convex/authRules`, `AuthSplitLayout`, `GoogleButton`, `PasswordInput`, `FieldError`, `OrDivider`.
 - Produces: `passwordStrength(password: string): 0 | 1 | 2 | 3`.
 
-- [ ] **Step 1: Тест сили пароля (падає)**
+- [x] **Step 1: Тест сили пароля (падає)**
 
 `src/lib/passwordStrength.test.ts`:
 
@@ -2334,7 +2334,7 @@ test.each([
 Run: `npx vitest run src/lib/passwordStrength.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 2: `src/lib/passwordStrength.ts`**
+- [x] **Step 2: `src/lib/passwordStrength.ts`**
 
 ```ts
 import { MIN_PASSWORD_LENGTH } from '@convex/authRules';
@@ -2360,7 +2360,7 @@ export default passwordStrength;
 Run: `npx vitest run src/lib/passwordStrength.test.ts`
 Expected: PASS.
 
-- [ ] **Step 3: Тести реєстрації (падають)**
+- [x] **Step 3: Тести реєстрації (падають)**
 
 `src/pages/SignUpPage/SignUpPage.test.tsx`:
 
@@ -2459,7 +2459,7 @@ test('an email used with Google says to continue with Google', async () => {
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: FAIL, бо `./SignUpPage` ще немає.
 
-- [ ] **Step 4: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
+- [x] **Step 4: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2614,7 +2614,7 @@ export default SignUpPage;
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: PASS.
 
-- [ ] **Step 5: Маршрут**
+- [x] **Step 5: Маршрут**
 
 В `App.tsx` поруч із `/login`:
 
@@ -2628,7 +2628,7 @@ Expected: PASS.
 Run: `npm run lint:fix && npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 6: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 6: Перевірка в браузері (Claude, Playwright MCP)**
 
 На `npm run dev`, адреса `e2e-check-<час>@e2e.test`:
 1. `/game/e2e-check-1?mark=circle` без входу → перекидає на `/login` → «Create an account» → ім'я, пошта, пароль → одразу в грі `e2e-check-1` з «Waiting for an opponent».
@@ -2643,7 +2643,7 @@ Expected: PASS.
 npx convex run testing:deleteE2eUsers
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A

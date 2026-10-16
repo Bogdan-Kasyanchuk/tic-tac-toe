@@ -25,7 +25,7 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="secondary"
-                    className="rounded-full bg-card pr-3 pl-1.5"
+                    className="group rounded-full bg-card pr-3 pl-1.5 text-sm"
                 >
                     <UserAvatar
                         name={ name }
@@ -33,7 +33,7 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
                         size="sm"
                     />
                     { name }
-                    <ChevronDown className="text-muted-foreground" />
+                    <ChevronDown className="text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -54,18 +54,22 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
                 <DropdownMenuSeparator />
                 { gameCode && (
                     <>
+                        <DropdownMenuLabel className="px-2.5 pt-2 pb-0 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+                            Game ID
+                        </DropdownMenuLabel>
                         <DropdownMenuItem
+                            className="mx-1 mt-2 mb-1 h-11 min-h-0 rounded-lg border border-border bg-field pr-0.5 pl-3 focus:border-ring focus:bg-field"
                             onSelect={
                                 () => {
                                     void copyText(gameCode, 'Game ID copied');
                                 }
                             }
                         >
-                            <span className="flex min-w-0 flex-col gap-1">
-                                <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">Game ID</span>
-                                <span className="truncate font-mono">{ gameCode }</span>
+                            <span className="min-w-0 flex-1 truncate font-mono text-sm font-medium">{ gameCode }</span>
+                            <span className="sr-only">Copy game ID</span>
+                            <span className="flex size-10 items-center justify-center rounded-md bg-secondary">
+                                <Copy />
                             </span>
-                            <Copy className="ml-auto" />
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onSelect={

@@ -31,7 +31,7 @@ const AppHeader: FC = () => {
             <div
                 className={
                     cn([
-                        'mx-auto flex h-18 max-w-280 items-center justify-between gap-4 px-5',
+                        'flex h-18 items-center justify-between gap-4 px-5',
                         'md:px-8'
                     ])
                 }
