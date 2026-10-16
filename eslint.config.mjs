@@ -27,7 +27,7 @@ export default defineConfig([
             parserOptions: {
                 // Конфіги Vite/Vitest живуть у tsconfig.node.json, а не в кореневому tsconfig для src
                 projectService: {
-                    allowDefaultProject: [ 'vite.config.ts', 'vitest.config.ts' ],
+                    allowDefaultProject: [ 'vite.config.ts', 'vitest.config.ts', 'playwright.config.ts', 'e2e/*.ts' ],
                     defaultProject: 'tsconfig.node.json'
                 },
                 tsconfigRootDir: import.meta.dirname

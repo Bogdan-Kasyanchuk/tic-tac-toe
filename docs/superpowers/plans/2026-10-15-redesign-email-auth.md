@@ -3586,7 +3586,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Тести йдуть проти `npm run dev` і dev-деплойменту Convex, тож `npx convex dev` має бути запущений. Сценаріїв, яких тут немає: входу через Google (справжній вхід Google не автоматизується) і системного меню «Поділитися».
 
-- [ ] **Step 1: Встанови Playwright**
+- [x] **Step 1: Встанови Playwright**
 
 ```bash
 npm i -D @playwright/test
@@ -3595,7 +3595,7 @@ npx playwright install chromium
 
 У `package.json` додай скрипт `"test:e2e": "playwright test"`. У `.gitignore` додай `playwright-report/` і `test-results/`.
 
-- [ ] **Step 2: `playwright.config.ts`**
+- [x] **Step 2: `playwright.config.ts`**
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -3627,7 +3627,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 3: TypeScript і ESLint для `e2e/`**
+- [x] **Step 3: TypeScript і ESLint для `e2e/`**
 
 - У `tsconfig.node.json` у `include` додай `"playwright.config.ts"` і `"e2e"`.
 - В `eslint.config.mjs` у `projectService.allowDefaultProject` додай `'playwright.config.ts'` і `'e2e/*.ts'`. Файлів разом із конфігами Vite/Vitest буде 7, а ліміт typescript-eslint за замовчуванням — 8.
@@ -3635,7 +3635,7 @@ export default defineConfig({
 Run: `npm run typecheck && npm run lint`
 Expected: PASS.
 
-- [ ] **Step 4: Прибирання й хелпери**
+- [x] **Step 4: Прибирання й хелпери**
 
 `e2e/teardown.ts`:
 
@@ -3706,7 +3706,7 @@ export const chooseMenuItem = async (page: Page, name: string, item: string) => 
 
 Пароль шукається з `{ exact: true }`, бо в поля є ще кнопка «Show password».
 
-- [ ] **Step 5: `e2e/auth.spec.ts`**
+- [x] **Step 5: `e2e/auth.spec.ts`**
 
 ```ts
 import { expect, type Page, test } from '@playwright/test';
@@ -3767,7 +3767,7 @@ test('a game link survives sign-up', async ({ page }) => {
 ```
 
 
-- [ ] **Step 6: `e2e/game.spec.ts`**
+- [x] **Step 6: `e2e/game.spec.ts`**
 
 ```ts
 import { expect, test } from '@playwright/test';
@@ -3833,7 +3833,7 @@ test('two players join through the lobby, win a round, draw one and leave', asyn
 
 Клітинка суперника стає активною лише після того, як дійде його черга. `click()` у Playwright сам чекає, поки кнопка стане enabled, тож затримки між ходами не потрібні.
 
-- [ ] **Step 7: Прожени**
+- [x] **Step 7: Прожени**
 
 `npx convex dev` запущений у фоні. Далі:
 
@@ -3842,7 +3842,7 @@ Expected: усі тести зелені в обох проєктах; у кін
 
 Якщо тест падає, відкрий трейс (`npx playwright show-trace test-results/…/trace.zip`). Виправ причину в коді застосунку, а не підганяй тест під помилку.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A
