@@ -9,13 +9,15 @@
 - **Фронт.** Компоненти shadcn/ui (Radix + Tailwind 4) з токенами теми в `src/index.css`. Сторінки входу живуть окремо від застосунку з шапкою; для `/` і `/game/:id` є спільний layout.
 - **Десктоп і телефон.** На ширині від `md` (48rem) показуються дропдаун і модальні діалоги, на телефоні — бургер-меню (Sheet) і нижня панель (Drawer).
 
-**Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`.
+**Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`, `@playwright/test` (e2e), Playwright MCP (перевірки в браузері під час роботи).
 
 **Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — ще не розпочато, починати із задачі 1. Галочки `- [x]` у кроках показують, що вже зроблено.
 
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, його копія лежить у репозиторії в `docs/design/` (екрани `*.dc.html`; точні кольори, відступи й тексти беруться звідти). Рішення з розмови зведені в розділ «Рішення».
 
-**Зміна від 2026-10-16:** підтвердження пошти кодом і скидання пароля відкладені (розділ «Пізніше» в кінці). Номери задач не змінювались: задача 6 лишилась заглушкою. Перша версія плану з повними кроками для коду й скидання — у коміті `5a16c71`.
+**Зміни від 2026-10-16:**
+- Підтвердження пошти кодом і скидання пароля відкладені (розділ «Пізніше» в кінці). Задача 6 лишилась заглушкою, щоб номери не зсувались. Перша версія плану з повними кроками для коду й скидання — у коміті `5a16c71`.
+- Ручні перевірки замінені: e2e-тестами на Playwright (нова задача 9, прибирання стало задачею 10) і перевірками в браузері, які Claude робить сам через Playwright MCP. Тестові користувачі прибираються командою, а не в дашборді.
 
 ## Рішення
 
@@ -62,15 +64,19 @@
 - Перемикання десктоп/телефон — `md` (48rem): у класах і в хуку `useMediaQuery(DESKTOP)`.
 - Правила пароля й пошти живуть у `convex/authRules.ts` (`MIN_PASSWORD_LENGTH = 8`, `normalizeEmail`, `validatePassword`, тексти помилок). Фронт імпортує їх через `@convex/authRules`.
 - **Convex приховує на prod повідомлення звичайних `Error`.** Усе, що має побачити людина, сервер кидає як `ConvexError('текст')`. Клієнт показує `error.data`, а для будь-якої іншої помилки — запасний текст сценарію.
+- **Перевірки в браузері робить Claude** через Playwright MCP (`mcp__plugin_playwright_playwright__*`) на `npm run dev`, з `npx convex dev`, запущеним у фоні:
+  - знімки на 1280px і 390px звіряються з `docs/design/<Ім'я>.dc.html`;
+  - власника кличемо лише для входу через Google і системного меню «Поділитися».
+- **Тестові користувачі** — лише адреси `e2e-…@e2e.test` (в e2e-тестах і в перевірках Claude). Прибирання: `npx convex run testing:deleteE2eUsers`. Чужі чи справжні адреси у форми не вводяться.
 - Логіни в Convex і Netlify і будь-які секрети робить власник (👤). Claude лише каже, що зробити. Пушить на GitHub теж власник.
 - Кожен коміт закінчується рядком `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - Після кожної задачі: `npm run lint:fix && npm run typecheck && npm run test:once` — усе зелене.
 
 ## Review Focus
 
-1. **Реєстрація на пошту, яка вже має акаунт з паролем.** Людина бачить «An account with this email already exists. Sign in instead» і на prod теж, а не безлике «Server Error». Тести — задачі 2 і 5; перевірка на prod — задача 9.
-2. **Реєстрація на пошту, на яку вже входили через Google.** Друга людина не створюється, звучить порада увійти через Google. Тест — задача 2.
-3. **Пряме посилання на гру → реєстрація.** Після реєстрації людина повертається на `/game/:id`, тобто `from` переживає перехід `/login → /signup`. Тести — задачі 3 і 5.
+1. **Реєстрація на пошту, яка вже має акаунт з паролем.** Людина бачить «An account with this email already exists. Sign in instead» і на prod теж, а не безлике «Server Error». Тести — задачі 2, 5 і 9; перевірка на prod — задача 10.
+2. **Реєстрація на пошту, на яку вже входили через Google.** Друга людина не створюється, звучить порада увійти через Google. Тести — задачі 2 і 5.
+3. **Пряме посилання на гру → реєстрація.** Після реєстрації людина повертається на `/game/:id`, тобто `from` переживає перехід `/login → /signup`. Тести — задачі 3, 5 і 9.
 4. **Скасоване меню «Поділитися» на телефоні** (`AbortError`): без toast-а про помилку й без копіювання. На десктопі без `navigator.share` лінк копіюється. Тест — задача 3.
 5. **Клік по логотипу посеред гри.** Має з'явитися підтвердження, а не тихий перехід у лобі, після якого місце в грі лишається зайнятим. Тест — задача 3.
 
@@ -100,6 +106,7 @@ convex/
 ├─ authRules.ts / .test.ts    MIN_PASSWORD_LENGTH, normalizeEmail, validatePassword, EmailStatus, takenEmailMessage
 ├─ emailPassword.ts           ConvexCredentials id 'password': signUp з перевіркою пошти, signIn
 ├─ users.ts / users.test.ts   me → { name, email, avatar }; internal emailStatus
+├─ testing.ts / .test.ts      internal deleteE2eUsers — прибирання користувачів @e2e.test
 └─ test.setup.ts              asUser додає email
 src/
 ├─ index.css               токени теми, шрифти, base
@@ -114,6 +121,8 @@ src/
 │  ├─ MarkIcon  MarkPicker  Board  BoardCell  PlayerCard  TurnStatus  WaitingForOpponent
 │  └─ Fade  FadeSwitch  Spinner     (лишаються; Spinner переписаний)
 └─ pages/  SignInPage  SignUpPage  HomePage  GamePage
+e2e/                          Playwright: helpers.ts, auth.spec.ts, game.spec.ts, teardown.ts
+playwright.config.ts          проєкти desktop (1280px) і phone (390px)
 ```
 
 Видаляються:
@@ -285,7 +294,7 @@ export default cn;
     --color-cross-soft: var(--cross-soft);
 }
 
-/* Legacy: тримає старі HomePage/GamePage до задач 7–8, видаляється в задачі 9 */
+/* Legacy: тримає старі HomePage/GamePage до задач 7–8, видаляється в задачі 10 */
 @theme {
     --color-blue-dark: #1b1c3a;
     --color-red: #ff0000;
@@ -491,7 +500,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 2: Бекенд — реєстрація та вхід поштою з паролем, перевірка зайнятої пошти
 
 **Files:**
-- Create: `convex/authRules.ts`, `convex/authRules.test.ts`, `convex/emailPassword.ts`
+- Create: `convex/authRules.ts`, `convex/authRules.test.ts`, `convex/emailPassword.ts`, `convex/testing.ts`, `convex/testing.test.ts`
 - Modify: `convex/auth.ts`, `convex/users.ts`, `convex/users.test.ts`, `convex/test.setup.ts`, `package.json`
 
 **Interfaces:**
@@ -505,6 +514,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
     - тексти `EMAIL_TAKEN`, `EMAIL_LINKED_TO_GOOGLE`, `WRONG_CREDENTIALS`, `TOO_MANY_ATTEMPTS`;
   - `internal.users.emailStatus({ email: string }) → EmailStatus`;
   - `api.users.me` → `{ name: string, email: string, avatar: string } | null`;
+  - `internal.testing.deleteE2eUsers({}) → number` — видаляє користувачів з поштою на `@e2e.test` разом з акаунтами, сесіями, refresh-токенами й іграми, де вони сидять; повертає кількість;
   - провайдер з `id: 'password'`: `signIn('password', { flow: 'signUp', name, email, password })` і `signIn('password', { flow: 'signIn', email, password })`. Користувацькі помилки — лише `ConvexError` з текстами вище.
 
 Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів (розділ «Пізніше»).
@@ -778,22 +788,124 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 Run: `npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Ручна перевірка в dev**
+- [ ] **Step 8: Тест прибирання e2e-користувачів (падає)**
 
-`npx convex dev` має бути запущений і без помилок завантажити функції. У дашборді Convex (dev) → Functions → `auth:signIn` → Run з аргументами:
+`convex/testing.test.ts`:
 
-```json
-{ "provider": "password", "params": { "flow": "signUp", "name": "Test", "email": "test-1@example.com", "password": "tictac2026" } }
+```ts
+import { expect, test } from 'vitest';
+
+import { internal } from './_generated/api';
+import { emptyBoard } from './rules';
+import { setup } from './test.setup';
+
+test('removes only e2e users, with their accounts, sessions and games', async () => {
+    const t = setup();
+    const ids = await t.run(async ctx => {
+        const tester = await ctx.db.insert('users', { name: 'E2E', email: 'e2e-1@e2e.test' });
+        const real = await ctx.db.insert('users', { name: 'Alice', email: 'alice@example.com' });
+        const session = await ctx.db.insert('authSessions', { userId: tester, expirationTime: Date.now() + 60_000 });
+
+        await ctx.db.insert('authAccounts', { userId: tester, provider: 'password', providerAccountId: 'e2e-1@e2e.test', secret: 'hash' });
+        await ctx.db.insert('authAccounts', { userId: real, provider: 'password', providerAccountId: 'alice@example.com', secret: 'hash' });
+        await ctx.db.insert('authRefreshTokens', { sessionId: session, expirationTime: Date.now() + 60_000 });
+        await ctx.db.insert('games', { code: 'e2e-game', board: emptyBoard(), turn: 'circle', circle: { userId: tester, score: 0 }, cross: null, result: null });
+        await ctx.db.insert('games', { code: 'real-game', board: emptyBoard(), turn: 'circle', circle: { userId: real, score: 0 }, cross: null, result: null });
+
+        return { tester, real };
+    });
+
+    expect(await t.mutation(internal.testing.deleteE2eUsers, {})).toBe(1);
+
+    await t.run(async ctx => {
+        expect(await ctx.db.get('users', ids.tester)).toBeNull();
+        expect(await ctx.db.get('users', ids.real)).not.toBeNull();
+        expect((await ctx.db.query('authAccounts').collect()).map(account => account.providerAccountId)).toEqual([ 'alice@example.com' ]);
+        expect(await ctx.db.query('authSessions').collect()).toHaveLength(0);
+        expect(await ctx.db.query('authRefreshTokens').collect()).toHaveLength(0);
+        expect((await ctx.db.query('games').collect()).map(game => game.code)).toEqual([ 'real-game' ]);
+    });
+});
+```
+
+Якщо вставка в `authSessions` чи `authRefreshTokens` падає на валідації схеми, звір обов'язкові поля з `authTables` (`node_modules/@convex-dev/auth/dist/server/implementation/types.js`) і доповни вставку.
+
+Run: `npx vitest run convex/testing.test.ts`
+Expected: FAIL, бо `internal.testing` ще немає.
+
+- [ ] **Step 9: `convex/testing.ts`**
+
+```ts
+import { internalMutation } from './_generated/server';
+
+export const E2E_EMAIL_DOMAIN = '@e2e.test';
+
+// Прибирання після e2e-тестів і перевірок у браузері. Лише internal: викликається через `npx convex run`, з браузера недоступна
+export const deleteE2eUsers = internalMutation({
+    args: {},
+    handler: async ctx => {
+        const users = (await ctx.db.query('users').collect()).filter(user => user.email?.endsWith(E2E_EMAIL_DOMAIN));
+        const ids = new Set(users.map(user => user._id));
+
+        for (const game of await ctx.db.query('games').collect()) {
+            if ((game.circle && ids.has(game.circle.userId)) || (game.cross && ids.has(game.cross.userId))) {
+                await ctx.db.delete('games', game._id);
+            }
+        }
+
+        for (const user of users) {
+            const accounts = await ctx.db.query('authAccounts').withIndex('userIdAndProvider', q => q.eq('userId', user._id)).collect();
+            const sessions = await ctx.db.query('authSessions').withIndex('userId', q => q.eq('userId', user._id)).collect();
+
+            for (const account of accounts) {
+                await ctx.db.delete('authAccounts', account._id);
+            }
+
+            for (const session of sessions) {
+                const tokens = await ctx.db.query('authRefreshTokens').withIndex('sessionId', q => q.eq('sessionId', session._id)).collect();
+
+                for (const token of tokens) {
+                    await ctx.db.delete('authRefreshTokens', token._id);
+                }
+
+                await ctx.db.delete('authSessions', session._id);
+            }
+
+            await ctx.db.delete('users', user._id);
+        }
+
+        return users.length;
+    }
+});
+```
+
+Функція потрапить і на prod. Там вона теж безпечна: торкається лише адрес `@e2e.test`, і викликати її може тільки власник через CLI.
+
+Run: `npm run test:once`
+Expected: PASS.
+
+- [ ] **Step 10: Перевірка в dev**
+
+`npx convex dev` має бути запущений і без помилок завантажити функції. Перевір провайдер прямо через CLI:
+
+```bash
+npx convex run auth:signIn '{ "provider": "password", "params": { "flow": "signUp", "name": "E2E", "email": "e2e-cli@e2e.test", "password": "tictac2026" } }'
 ```
 
 Очікувано:
 - перший запуск повертає токени;
-- другий — помилку `An account with this email already exists. Sign in instead`;
-- `flow: "signIn"` з неправильним паролем — `Wrong email or password`.
+- повторний — помилку `An account with this email already exists. Sign in instead`;
+- `"flow": "signIn"` з паролем `wrong-pass-1` — `Wrong email or password`.
 
-Потім видали тестового користувача в Data → `users` і його рядок в `authAccounts`.
+Потім прибери тестового користувача:
 
-- [ ] **Step 9: Commit**
+```bash
+npx convex run testing:deleteE2eUsers
+```
+
+Очікувано: `1`.
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add convex package.json package-lock.json
@@ -1777,12 +1889,9 @@ test('a signed-in visitor on an auth page goes back to where they came from', ()
 Run: `npm run test:once`
 Expected: PASS. Тест `NavBar.test.tsx` видалено разом із `NavBar`, його сценарій тепер у `AppHeader.test.tsx`.
 
-- [ ] **Step 12: Ручна перевірка**
+- [ ] **Step 12: Перевірка в браузері — у задачі 5**
 
-`npm run dev`, увійди через Google:
-- Шапка: логотип і дропдаун з ім'ям.
-- У грі в меню є ID, «Copy invite link», «Back to lobby», «Sign out», а логотип просить підтвердження.
-- У DevTools на ширині 390px: бургер відкриває бокову панель.
+Поки немає реєстрації поштою, увійти можна лише через Google, а це вручну. Шапку й меню Claude перевірить у задачі 5 під тестовим користувачем. Якщо хочеш побачити шапку раніше, увійди сам через Google на `npm run dev`.
 
 - [ ] **Step 13: Commit**
 
@@ -2172,12 +2281,13 @@ Expected: PASS.
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Ручна перевірка**
+- [ ] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
 
-`npm run dev`, вийди з акаунта:
-- `/login` має вигляд як `Main` (десктоп) і `MobileSignIn` (390px), але без «Forgot password?».
-- Неправильний пароль — «Wrong email or password» під полем.
-- Google працює, як і раніше.
+На `npm run dev`, без входу:
+- `/login` на 1280px і 390px — знімки звір з `docs/design/Main.dc.html` і `docs/design/MobileSignIn.dc.html`. «Forgot password?» немає, це очікувано.
+- Неправильна пошта (`not-an-email`) — «Enter a valid email» під полем, запит не йде.
+
+Неправильний пароль для справжнього акаунта перевіриться в задачі 5, коли з'явиться реєстрація.
 
 - [ ] **Step 9: Commit**
 
@@ -2518,15 +2628,20 @@ Expected: PASS.
 Run: `npm run lint:fix && npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 6: Ручна перевірка**
+- [ ] **Step 6: Перевірка в браузері (Claude, Playwright MCP)**
 
-1. Вийди з акаунта й відкрий `/game/test-1?mark=circle` — тебе перекине на `/login`.
-2. «Create an account» → ім'я, пошта, пароль → ти одразу в грі `test-1`.
-3. Вийди й спробуй зареєструватися на ту саму пошту — «An account with this email already exists. Sign in instead».
-4. Спробуй зареєструватися на пошту свого Google-акаунта — «This email is linked to Google. Continue with Google instead».
-5. Увійди з паролем на `/login` — працює.
+На `npm run dev`, адреса `e2e-check-<час>@e2e.test`:
+1. `/game/e2e-check-1?mark=circle` без входу → перекидає на `/login` → «Create an account» → ім'я, пошта, пароль → одразу в грі `e2e-check-1` з «Waiting for an opponent».
+2. Шапка й меню з задачі 3 на 1280px і 390px — звір з дропдауном на `docs/design/Lobby.dc.html` і з `docs/design/MobileMenu.dc.html`.
+3. «Sign out» з підтвердженням → `/signup` з тією самою поштою → «An account with this email already exists. Sign in instead».
+4. `/login` з неправильним паролем → «Wrong email or password»; з правильним → лобі.
+5. `/signup` на 1280px і 390px — звір з `docs/design/SignUp.dc.html` і `docs/design/MobileSignUp.dc.html`.
 
-Тестового користувача потім видали в дашборді Convex (dev): `users` і його рядок в `authAccounts`.
+Сценарій з поштою Google-акаунта покритий тестами задач 2 і 5: справжню пошту власника у форму не вводимо. Наприкінці:
+
+```bash
+npx convex run testing:deleteE2eUsers
+```
 
 - [ ] **Step 7: Commit**
 
@@ -2541,7 +2656,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ### Task 6: Скидання пароля — відкладено
 
-Задачу перенесено в розділ «Пізніше» разом із підтвердженням пошти. Номер лишено, щоб не зсувати посилання на задачі 7–9. Переходь до задачі 7.
+Задачу перенесено в розділ «Пізніше» разом із підтвердженням пошти. Номер лишено, щоб не зсувати посилання на задачі 7–10. Переходь до задачі 7.
 
 ---
 
@@ -2820,12 +2935,13 @@ export default MarkPicker;
 Run: `npx vitest run src/pages/HomePage`
 Expected: PASS.
 
-- [ ] **Step 4: Ручна перевірка**
+- [ ] **Step 4: Перевірка в браузері (Claude, Playwright MCP)**
 
-`npm run dev`:
-- Лобі збігається з `Lobby` / `LobbyJoin` на десктопі й `MobileLobby` / `MobileLobbyJoin` на 390px.
-- Перемикання вкладок не губить вибір позначки.
-- Копіювання ID показує toast.
+Під тестовим користувачем `@e2e.test` на `npm run dev`:
+- **Лобі на 1280px і 390px.** Вкладка New — звір з `docs/design/Lobby.dc.html` і `docs/design/MobileLobby.dc.html`. Вкладка Join — з `docs/design/LobbyJoin.dc.html` і `docs/design/MobileLobbyJoin.dc.html`.
+- **Поведінка.** Перемикання вкладок не губить вибір позначки, копіювання ID показує toast.
+
+Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
 - [ ] **Step 5: Commit**
 
@@ -3429,14 +3545,17 @@ return (
 Run: `npx vitest run src/pages/GamePage && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 9: Ручна перевірка у двох вікнах**
+- [ ] **Step 9: Перевірка в браузері (Claude, Playwright MCP)**
 
-`npm run dev`, звичайне вікно й інкогніто, два різні акаунти:
-1. Перший створює гру — бачить «Waiting for an opponent». На 390px це нижня панель зі «Share invite link».
-2. Другий вставляє ID у Join — обидва бачать гру. У того, хто чекає, «Alex's turn» з анімованими крапками й темнішими порожніми клітинками.
-3. Виграш — три клітинки підсвічуються кольором переможця, плашка «You take the round», через ~1.5 с поле очищається.
-4. Нічия — «Draw. Nobody takes this one».
-5. «Back to lobby» в одного — у другого знову «Waiting for an opponent».
+Повний сценарій двох гравців автоматизує задача 9. Тут Claude звіряє вигляд.
+
+Два гравці потрібні в різних сховищах браузера. Запусти фронт з `npm run dev -- --host`: перший гравець відкриває `http://localhost:5173`, другий — `http://127.0.0.1:5173`. Це різні origin, тож у них різні сесії. Обидва — тестові користувачі `@e2e.test`.
+
+1. Перший створює гру. Діалог «Waiting for an opponent» на 1280px звір з `docs/design/Waiting.dc.html`, нижню панель на 390px — з `docs/design/MobileWaiting.dc.html`.
+2. Другий приєднується. Екран першого (його хід) звір з `docs/design/Game.dc.html` і `docs/design/MobilePlay.dc.html`, екран другого (чекає) — з `docs/design/GameOpponent.dc.html` і `docs/design/MobileOpponent.dc.html`.
+3. Виграний раунд на 390px звір з `docs/design/MobileGame.dc.html`: підсвічені клітинки, плашка «You take the round».
+
+Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
 - [ ] **Step 10: Commit**
 
@@ -3449,7 +3568,292 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 9: Прибирання, документація, перевірка на prod
+### Task 9: E2E-тести на Playwright
+
+**Files:**
+- Create: `playwright.config.ts`, `e2e/helpers.ts`, `e2e/auth.spec.ts`, `e2e/game.spec.ts`, `e2e/teardown.ts`
+- Modify: `package.json`, `.gitignore`, `tsconfig.node.json`, `eslint.config.mjs`
+
+**Interfaces:**
+- Consumes:
+  - сторінки й тексти задач 3–8: `Create account`, `Sign in`, `Ready for a round, <ім'я>?`, `Waiting for an opponent`, `Your turn`, `<ім'я>'s turn`, `You take the round`, `<ім'я> takes the round`, `Draw. Nobody takes this one`, `Back to lobby`, `Leave game`, `Open menu`;
+  - aria-label клітинок `Row R, column C: circle|cross|empty` і `data-win`;
+  - тексти помилок з `convex/authRules.ts`;
+  - `internal.testing.deleteE2eUsers`.
+- Produces:
+  - `npm run test:e2e` — усі сценарії в проєктах `desktop` (1280×860) і `phone` (390×844);
+  - змінні середовища: `E2E_BASE_URL` (інша адреса замість локального `npm run dev`) і `E2E_PROD=1` (прибирати на prod).
+
+Тести йдуть проти `npm run dev` і dev-деплойменту Convex, тож `npx convex dev` має бути запущений. Сценаріїв, яких тут немає: входу через Google (справжній вхід Google не автоматизується) і системного меню «Поділитися».
+
+- [ ] **Step 1: Встанови Playwright**
+
+```bash
+npm i -D @playwright/test
+npx playwright install chromium
+```
+
+У `package.json` додай скрипт `"test:e2e": "playwright test"`. У `.gitignore` додай `playwright-report/` і `test-results/`.
+
+- [ ] **Step 2: `playwright.config.ts`**
+
+```ts
+import { defineConfig, devices } from '@playwright/test';
+
+const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:5173';
+
+// Один воркер: обидва проєкти ходять в один dev-деплоймент Convex
+export default defineConfig({
+    testDir: 'e2e',
+    workers: 1,
+    use: {
+        baseURL,
+        trace: 'retain-on-failure'
+    },
+    projects: [
+        {
+            name: 'desktop',
+            use: { ...devices[ 'Desktop Chrome' ], viewport: { width: 1280, height: 860 } }
+        },
+        {
+            name: 'phone',
+            use: { ...devices[ 'Pixel 7' ], viewport: { width: 390, height: 844 } }
+        }
+    ],
+    webServer: process.env.E2E_BASE_URL
+        ? undefined
+        : { command: 'npm run dev', url: baseURL, reuseExistingServer: true },
+    globalTeardown: './e2e/teardown.ts'
+});
+```
+
+- [ ] **Step 3: TypeScript і ESLint для `e2e/`**
+
+- У `tsconfig.node.json` у `include` додай `"playwright.config.ts"` і `"e2e"`.
+- В `eslint.config.mjs` у `projectService.allowDefaultProject` додай `'playwright.config.ts'` і `'e2e/*.ts'`. Файлів разом із конфігами Vite/Vitest буде 7, а ліміт typescript-eslint за замовчуванням — 8.
+
+Run: `npm run typecheck && npm run lint`
+Expected: PASS.
+
+- [ ] **Step 4: Прибирання й хелпери**
+
+`e2e/teardown.ts`:
+
+```ts
+import { execFileSync } from 'node:child_process';
+
+// Після всіх тестів прибираємо користувачів @e2e.test; E2E_PROD=1 — коли тести йшли проти prod
+export default () => {
+    const prod = process.env.E2E_PROD === '1' ? [ '--prod' ] : [];
+
+    execFileSync('npx', [ 'convex', 'run', ...prod, 'testing:deleteE2eUsers' ], { stdio: 'inherit' });
+};
+```
+
+`e2e/helpers.ts`:
+
+```ts
+import { type Browser, expect, type Page, test } from '@playwright/test';
+
+export const PASSWORD = 'tictac2026';
+
+const suffix = () => `${ Date.now() }-${ Math.random().toString(36).slice(2, 7) }`;
+
+export const testEmail = (label: string) => `e2e-${ label }-${ suffix() }@e2e.test`;
+
+export const isPhone = () => test.info().project.name === 'phone';
+
+export const cell = (page: Page, row: number, column: number) => page.getByRole('button', {
+    name: new RegExp(`^Row ${ row }, column ${ column }:`)
+});
+
+// Окремий контекст — окреме сховище, тобто другий гравець з власною сесією
+export const newPlayerPage = async (browser: Browser) => {
+    const { baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor } = test.info().project.use;
+    const context = await browser.newContext({ baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor });
+
+    return context.newPage();
+};
+
+export const fillSignUp = async (page: Page, name: string, email: string) => {
+    await page.getByLabel('Name').fill(name);
+    await page.getByLabel('Email').fill(email);
+    await page.getByLabel('Password', { exact: true }).fill(PASSWORD);
+    await page.getByRole('button', { name: 'Create account' }).click();
+};
+
+export const signUp = async (page: Page, name: string, email = testEmail(name.toLowerCase())) => {
+    await page.goto('/signup');
+    await fillSignUp(page, name, email);
+    await expect(page.getByRole('heading', { name: `Ready for a round, ${ name }?` })).toBeVisible();
+
+    return email;
+};
+
+// Десктоп — дропдаун з ім'ям, телефон — бургер-меню
+export const chooseMenuItem = async (page: Page, name: string, item: string) => {
+    if (isPhone()) {
+        await page.getByRole('button', { name: 'Open menu' }).click();
+        await page.getByRole('dialog').getByRole('button', { name: item }).click();
+
+        return;
+    }
+
+    await page.getByRole('button', { name: new RegExp(name) }).click();
+    await page.getByRole('menuitem', { name: item }).click();
+};
+```
+
+Пароль шукається з `{ exact: true }`, бо в поля є ще кнопка «Show password».
+
+- [ ] **Step 5: `e2e/auth.spec.ts`**
+
+```ts
+import { expect, type Page, test } from '@playwright/test';
+
+import { EMAIL_TAKEN, WRONG_CREDENTIALS } from '../convex/authRules';
+
+import { chooseMenuItem, fillSignUp, PASSWORD, signUp, testEmail } from './helpers';
+
+const signIn = async (page: Page, email: string, password: string) => {
+    await page.getByLabel('Email').fill(email);
+    await page.getByLabel('Password', { exact: true }).fill(password);
+    await page.getByRole('button', { name: 'Sign in' }).click();
+};
+
+test('sign up, sign out and sign in again', async ({ page }) => {
+    const email = await signUp(page, 'Alice');
+
+    await chooseMenuItem(page, 'Alice', 'Sign out');
+    await expect(page).toHaveURL(/\/login$/);
+
+    await signIn(page, email, PASSWORD);
+    await expect(page.getByRole('heading', { name: 'Ready for a round, Alice?' })).toBeVisible();
+});
+
+test('a wrong password is refused', async ({ page }) => {
+    const email = await signUp(page, 'Alice');
+
+    await chooseMenuItem(page, 'Alice', 'Sign out');
+    await signIn(page, email, 'wrong-pass-1');
+
+    await expect(page.getByText(WRONG_CREDENTIALS)).toBeVisible();
+});
+
+// Review Focus 1
+test('an email can be registered only once', async ({ page }) => {
+    const email = await signUp(page, 'Alice');
+
+    await chooseMenuItem(page, 'Alice', 'Sign out');
+    await page.goto('/signup');
+    await fillSignUp(page, 'Alice', email);
+
+    await expect(page.getByText(EMAIL_TAKEN)).toBeVisible();
+});
+
+// Review Focus 3
+test('a game link survives sign-up', async ({ page }) => {
+    const code = `e2e-${ Date.now() }`;
+
+    await page.goto(`/game/${ code }?mark=circle`);
+    await expect(page).toHaveURL(/\/login$/);
+
+    await page.getByRole('link', { name: 'Create an account' }).click();
+    await fillSignUp(page, 'Alice', testEmail('link'));
+
+    await expect(page).toHaveURL(new RegExp(`/game/${ code }$`));
+    await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+});
+```
+
+
+- [ ] **Step 6: `e2e/game.spec.ts`**
+
+```ts
+import { expect, test } from '@playwright/test';
+
+import { cell, chooseMenuItem, newPlayerPage, signUp } from './helpers';
+
+test('two players join through the lobby, win a round, draw one and leave', async ({ page, browser }) => {
+    const bob = await newPlayerPage(browser);
+
+    await signUp(page, 'Alice');
+    await signUp(bob, 'Bob');
+
+    // Alice створює гру з лобі; ID беремо з адреси, куди її перекинуло
+    await page.getByRole('button', { name: /Create game/ }).click();
+    await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+
+    const code = decodeURIComponent(new URL(page.url()).pathname.split('/').pop() ?? '');
+
+    await bob.getByRole('tab', { name: 'Join a game' }).click();
+    await bob.getByLabel('Game ID').fill(code);
+    await bob.getByRole('button', { name: /Join game/ }).click();
+
+    await expect(page.getByText('Waiting for an opponent')).toBeHidden();
+    await expect(page.getByText('Your turn')).toBeVisible();
+    await expect(bob.getByText('Alice\'s turn')).toBeVisible();
+    await expect(cell(bob, 2, 2)).toBeDisabled();
+
+    // Виграш Alice першим рядком
+    await cell(page, 1, 1).click();
+    await cell(bob, 2, 1).click();
+    await cell(page, 1, 2).click();
+    await cell(bob, 2, 2).click();
+    await cell(page, 1, 3).click();
+
+    await expect(page.getByText('You take the round')).toBeVisible();
+    await expect(bob.getByText('Alice takes the round')).toBeVisible();
+    await expect(cell(page, 1, 1)).toHaveAttribute('data-win', 'circle');
+
+    // Після паузи поле очищається, і нолик знову ходить першим
+    await expect(cell(page, 1, 1)).toHaveAccessibleName(/empty$/);
+    await expect(page.getByText('Your turn')).toBeVisible();
+
+    // Нічия: O X O / O X X / X O O
+    for (const [ player, row, column ] of [
+        [ page, 1, 1 ], [ bob, 1, 2 ], [ page, 1, 3 ], [ bob, 2, 2 ], [ page, 2, 1 ],
+        [ bob, 3, 1 ], [ page, 3, 2 ], [ bob, 2, 3 ], [ page, 3, 3 ]
+    ] as const) {
+        await cell(player, row, column).click();
+    }
+
+    await expect(page.getByText('Draw. Nobody takes this one')).toBeVisible();
+
+    // Bob іде в лобі — у Alice знову очікування суперника
+    await chooseMenuItem(bob, 'Bob', 'Back to lobby');
+    await bob.getByRole('alertdialog').getByRole('button', { name: 'Leave game' }).click();
+
+    await expect(bob.getByRole('heading', { name: 'Ready for a round, Bob?' })).toBeVisible();
+    await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+
+    await bob.context().close();
+});
+```
+
+Клітинка суперника стає активною лише після того, як дійде його черга. `click()` у Playwright сам чекає, поки кнопка стане enabled, тож затримки між ходами не потрібні.
+
+- [ ] **Step 7: Прожени**
+
+`npx convex dev` запущений у фоні. Далі:
+
+Run: `npm run test:e2e`
+Expected: усі тести зелені в обох проєктах; у кінці teardown друкує кількість видалених тестових користувачів.
+
+Якщо тест падає, відкрий трейс (`npx playwright show-trace test-results/…/trace.zip`). Виправ причину в коді застосунку, а не підганяй тест під помилку.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add -A
+git commit -m "test: end-to-end sign-up, sign-in and two-player game with Playwright
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+```
+
+---
+
+### Task 10: Прибирання, документація, перевірка на prod
 
 **Files:**
 - Modify: `src/index.css`, `README.md`, `CLAUDE.md`, `package.json`, `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`
@@ -3476,26 +3880,24 @@ Expected: усе зелене.
 
 - [ ] **Step 3: Документація**
 
-- **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти).
+- **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти). Команда `npm run test:e2e` (потрібен запущений `npx convex dev`).
 - **`CLAUDE.md`:**
   - **Стек:** додай shadcn/ui (`src/components/ui`, правляться як свій код і за тими самими правилами форматування), `lucide-react`, `sonner`, `react-hook-form` + `zod`.
   - **Бекенд:** вхід поштою — власний провайдер `convex/emailPassword.ts` (`id: 'password'`); помилки для людини лише як `ConvexError`.
-  - **Конвенції:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US; кольори лише через токени в `src/index.css`.
+  - **Конвенції:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, копія в `docs/design/`; кольори лише через токени в `src/index.css`.
+  - **Команди:** `npm run test:e2e` — Playwright, проти `npm run dev` і dev-деплойменту; тестові користувачі лише `@e2e.test`, прибирання — `npx convex run testing:deleteE2eUsers`.
   - **Поточна робота:** прибери розділ або заміни на «Підтвердження пошти й скидання пароля — розділ «Пізніше» в плані 2026-10-15».
   - **Історія:** «Редизайн і вхід поштою — жовтень 2026, план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`».
 
-- [ ] **Step 4: Повна ручна перевірка (QA)**
+- [ ] **Step 4: Фінальна перевірка**
 
-На `npm run dev` і на 390px, позначай у плані:
-1. **Google-вхід з прямого посилання** `/game/:id` → назад у гру.
-2. **Реєстрація поштою з прямого посилання** → одразу назад у гру (Review Focus 3).
-3. **Повторна реєстрація на ту саму пошту** → «An account with this email already exists. Sign in instead» (Review Focus 1).
-4. **Реєстрація на пошту Google-акаунта** → «This email is linked to Google. Continue with Google instead» (Review Focus 2).
-5. **Вхід поштою:** правильний пароль працює, неправильний — «Wrong email or password».
-6. **Лобі:** копіювання ID, вставка з буфера, «Enter the game ID» на порожньому полі.
-7. **Гра у двох вікнах:** хід, виграш, нічия, Clear, New session, подвійний клік по клітинці — один хід.
-8. **Меню десктоп і телефон:** копіювання ID, інвайт (копія на десктопі, меню «Поділитися» на телефоні, скасування без помилки — Review Focus 4), «Back to lobby» і «Sign out» з підтвердженням, логотип у грі з підтвердженням (Review Focus 5).
-9. **Клавіатура:** Tab проходить усі кнопки й поля, Esc закриває меню й діалог виходу, але не діалог очікування.
+1. **Автоматично:** `npm run test:once && npm run test:e2e` — усе зелене.
+2. **Claude, Playwright MCP:**
+   - кожен екран на 1280px і 390px ще раз звірити з `docs/design/`;
+   - клавіатура: Tab проходить усі кнопки й поля, Esc закриває меню й діалог виходу, але не діалог очікування.
+3. **👤 Власник, на `npm run dev`:**
+   - вхід через Google з прямого посилання `/game/:id` → назад у гру;
+   - на телефоні (або в емуляції з Web Share) «Share invite link» відкриває системне меню, а скасування не показує помилки (Review Focus 4).
 
 - [ ] **Step 5: Commit і передача власнику**
 
@@ -3508,12 +3910,17 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Відміть усі кроки плану як виконані й скажи власнику, що гілку можна пушити: Netlify після мерджу в `main` сам розгорне Convex prod і фронт. Нових змінних середовища на prod не потрібно.
 
-- [ ] **Step 6: 👤 Перевірка на prod після деплою**
+- [ ] **Step 6: Перевірка на prod після деплою**
 
-Власник на https://bogkas-tic-tac-toe.netlify.app:
-1. Реєструється поштою, виходить.
-2. Пробує зареєструватися на ту саму пошту ще раз. Має бути «An account with this email already exists. Sign in instead», а не «Could not create the account. Try again». Друге означає, що `ConvexError` з провайдера до клієнта не дійшов, і це треба розібрати.
-3. Видаляє тестового користувача в дашборді Convex (Production): `users` і рядок в `authAccounts`.
+Сценарії входу можна прогнати проти prod. Це створює й одразу видаляє тестових користувачів `@e2e.test` у Production, тож запускати лише з дозволу власника:
+
+```bash
+E2E_BASE_URL=https://bogkas-tic-tac-toe.netlify.app E2E_PROD=1 npx playwright test e2e/auth.spec.ts --project=desktop
+```
+
+Головне, що тут перевіряється (Review Focus 1): `ConvexError` з провайдера доходить до клієнта на prod. Повторна реєстрація має показати «An account with this email already exists. Sign in instead», а не «Could not create the account. Try again».
+
+Якщо власник не хоче запускати тести на prod, він перевіряє вручну: реєструється поштою, пробує ще раз на ту саму адресу, потім видаляє тестового користувача (`npx convex run --prod testing:deleteE2eUsers`, якщо пошта на `@e2e.test`, або в дашборді Convex → Production).
 
 ---
 
