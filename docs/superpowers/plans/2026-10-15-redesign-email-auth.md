@@ -2974,7 +2974,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `gameStatus(game: GameView): { text: string, hint: string | null, tone: 'circle' | 'cross' | 'muted', waiting: boolean }`;
   - `canMove(game: GameView): boolean`.
 
-- [ ] **Step 1: Тест статусу (падає)**
+- [x] **Step 1: Тест статусу (падає)**
 
 `src/lib/gameStatus.test.ts`:
 
@@ -3038,7 +3038,7 @@ test('no moves while waiting for the second player', () => {
 Run: `npx vitest run src/lib/gameStatus.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 2: `src/lib/gameStatus.ts`**
+- [x] **Step 2: `src/lib/gameStatus.ts`**
 
 ```ts
 import { firstName } from '@/lib/initials';
@@ -3088,7 +3088,7 @@ export const gameStatus = (game: GameView): GameStatus => {
 Run: `npx vitest run src/lib/gameStatus.test.ts`
 Expected: PASS.
 
-- [ ] **Step 3: Тести сторінки гри (падають)**
+- [x] **Step 3: Тести сторінки гри (падають)**
 
 `src/pages/GamePage/GamePage.test.tsx`. Перенеси три наявні тести з такими змінами:
 - `Toaster` береться з `@/components/ui/sonner`, ручний `matchMedia` прибрано;
@@ -3149,7 +3149,7 @@ test('alone in the game, the desktop dialog offers the ID and the invite link', 
 Run: `npx vitest run src/pages/GamePage`
 Expected: FAIL.
 
-- [ ] **Step 4: Згенеруй `dialog` і `drawer`**
+- [x] **Step 4: Згенеруй `dialog` і `drawer`**
 
 ```bash
 npx shadcn@latest add dialog drawer -y
@@ -3161,7 +3161,7 @@ npm run lint:fix
 - Оверлей обох компонентів — той самий, що в alert-dialog (задача 3).
 - `DrawerContent` — `rounded-t-3xl border-t border-border bg-card`; ручка зверху `h-1 w-10 bg-border`.
 
-- [ ] **Step 5: `BoardCell` і `Board`**
+- [x] **Step 5: `BoardCell` і `Board`**
 
 `BoardCell/BoardCell.tsx`:
 
@@ -3271,7 +3271,7 @@ const Board: FC<BoardProps> = ({ game, onSelect }) => {
 export default Board;
 ```
 
-- [ ] **Step 6: `TurnStatus` і `PlayerCard`**
+- [x] **Step 6: `TurnStatus` і `PlayerCard`**
 
 **`TurnStatus`** (`status: GameStatus`): `role="status"` у `FadeSwitch switchKey={ status.text }`. Плашка — `flex h-10 items-center gap-2.5 rounded-full border border-line bg-card px-4.5 font-medium`.
 - Ліворуч: крапка `size-2.5 rounded-full` з кольором за `tone` (`bg-circle` / `bg-cross` / `bg-muted-foreground`), або при `waiting` — три крапки `size-1.5` з анімацією.
@@ -3304,7 +3304,7 @@ export default Board;
 
 Вільне місце (`player === null`): пунктирна картка `border-dashed border-border` з порожнім пунктирним кружечком і «Open seat».
 
-- [ ] **Step 7: `WaitingForOpponent`** (артборди `Waiting`, `MobileWaiting`)
+- [x] **Step 7: `WaitingForOpponent`** (артборди `Waiting`, `MobileWaiting`)
 
 ```tsx
 import { Link2, Share2 } from 'lucide-react';
@@ -3435,7 +3435,7 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
 export default WaitingForOpponent;
 ```
 
-- [ ] **Step 8: `GamePage`** (артборди `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame`)
+- [x] **Step 8: `GamePage`** (артборди `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame`)
 
 Логіка лишається: ефекти `enter` і `wasInGame` з `ENTER_TOAST`, `onSelect` з `isMoving`. Змінюються лише імпорти toast (вже sonner) і рендер:
 
@@ -3545,7 +3545,7 @@ return (
 Run: `npx vitest run src/pages/GamePage && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 9: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 9: Перевірка в браузері (Claude, Playwright MCP)**
 
 Повний сценарій двох гравців автоматизує задача 9. Тут Claude звіряє вигляд.
 
@@ -3557,7 +3557,7 @@ Expected: PASS.
 
 Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add -A
