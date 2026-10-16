@@ -107,13 +107,6 @@
     --animate-wait-dot: wait-dot 1.4s ease-in-out infinite;
 }
 
-/* Legacy: тримає старі HomePage/GamePage до задач 7–8, видаляється в задачі 10 */
-@theme {
-    --color-blue-dark: #1b1c3a;
-    --color-red: #ff0000;
-    --color-green: #008000;
-}
-
 @layer base {
     * {
         @apply border-border outline-ring/50;

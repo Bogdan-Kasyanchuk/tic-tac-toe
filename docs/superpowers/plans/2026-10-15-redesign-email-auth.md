@@ -11,7 +11,7 @@
 
 **Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`, `@playwright/test` (e2e), Playwright MCP (перевірки в браузері під час роботи).
 
-**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — роботу ведемо на гілці `redesign`. Галочки `- [x]` у кроках показують, що вже зроблено.
+**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — задачі 1–10 виконані на гілці `redesign`; лишились кроки власника в задачі 10 (крок 4, пункт 3 — Google і Web Share; крок 6 — prod після деплою). Галочки `- [x]` у кроках показують, що вже зроблено.
 
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, його копія лежить у репозиторії в `docs/design/` (екрани `*.dc.html`; точні кольори, відступи й тексти беруться звідти). Рішення з розмови зведені в розділ «Рішення».
 
@@ -3859,7 +3859,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `src/index.css`, `README.md`, `CLAUDE.md`, `package.json`, `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`
 - Delete: `src/assets/not-avatar.jpg` і все, що лишилось невикористаним
 
-- [ ] **Step 1: Прибери legacy**
+- [x] **Step 1: Прибери legacy**
 
 - З `src/index.css` видали блок `/* Legacy … */`.
 - Перевір, що нічого не посилається на старі класи, файли й пакети:
@@ -3871,14 +3871,14 @@ grep -rnE "blue-dark|bg-red|border-green|text-green|bg-blue-50|stone-300|not-ava
   Expected: порожньо.
 - Видали `src/assets/not-avatar.jpg` і теку `src/assets`, якщо вона спорожніла.
 
-- [ ] **Step 2: Ревізія формату**
+- [x] **Step 2: Ревізія формату**
 
 Прожени сканери зі скіла `.claude/skills/tailwind-format/` по всьому `src` і виправ знахідки.
 
 Run: `npm run lint:fix && npm run typecheck && npm run test:once && npm run build`
 Expected: усе зелене.
 
-- [ ] **Step 3: Документація**
+- [x] **Step 3: Документація**
 
 - **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти). Команда `npm run test:e2e` (потрібен запущений `npx convex dev`).
 - **`CLAUDE.md`:**
@@ -3899,7 +3899,7 @@ Expected: усе зелене.
    - вхід через Google з прямого посилання `/game/:id` → назад у гру;
    - на телефоні (або в емуляції з Web Share) «Share invite link» відкриває системне меню, а скасування не показує помилки (Review Focus 4).
 
-- [ ] **Step 5: Commit і передача власнику**
+- [x] **Step 5: Commit і передача власнику**
 
 ```bash
 git add -A
