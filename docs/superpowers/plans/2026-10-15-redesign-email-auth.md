@@ -519,7 +519,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів (розділ «Пізніше»).
 
-- [ ] **Step 1: Залежність**
+- [x] **Step 1: Залежність**
 
 `lucia` вже стоїть транзитивно (його використовує `@convex-dev/auth`). Закріпи його прямою залежністю, щоб імпорт не залежав від того, як npm розкладе пакети:
 
@@ -529,7 +529,7 @@ npm i lucia@^3.2.0
 
 npm попередить, що `lucia` 3 deprecated. Це очікувано: Convex Auth 0.0.96 сам на ньому працює.
 
-- [ ] **Step 2: Тест правил (падає)**
+- [x] **Step 2: Тест правил (падає)**
 
 `convex/authRules.test.ts`:
 
@@ -570,7 +570,7 @@ test('a taken email gets a message that says how to get in', () => {
 Run: `npx vitest run convex/authRules.test.ts`
 Expected: FAIL, бо модуля `./authRules` ще немає.
 
-- [ ] **Step 3: Реалізуй `convex/authRules.ts`**
+- [x] **Step 3: Реалізуй `convex/authRules.ts`**
 
 ```ts
 import { ConvexError } from 'convex/values';
@@ -612,7 +612,7 @@ export const takenEmailMessage = (status: EmailStatus): string | null => {
 Run: `npx vitest run convex/authRules.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Тест `emailStatus` і пошти в `me` (падає)**
+- [x] **Step 4: Тест `emailStatus` і пошти в `me` (падає)**
 
 У `convex/test.setup.ts` функція `asUser` вставляє ще `email: \`${ name.toLowerCase() }@example.com\``.
 
@@ -659,7 +659,7 @@ test('an email known only from Google sign-in points to Google', async () => {
 Run: `npx vitest run convex/users.test.ts`
 Expected: FAIL: немає `internal.users.emailStatus` і поля `email` у `me`.
 
-- [ ] **Step 5: `convex/users.ts`**
+- [x] **Step 5: `convex/users.ts`**
 
 У `me` додай `email: user.email ?? ''` між `name` і `avatar`. Нижче — внутрішній запит:
 
@@ -695,7 +695,7 @@ export const emailStatus = internalQuery({
 Run: `npm run test:once`
 Expected: PASS (включно з `games.test.ts`).
 
-- [ ] **Step 6: Провайдер `convex/emailPassword.ts`**
+- [x] **Step 6: Провайдер `convex/emailPassword.ts`**
 
 ```ts
 import { ConvexCredentials } from '@convex-dev/auth/providers/ConvexCredentials';
@@ -772,7 +772,7 @@ grep -n "crypto\|authorize" node_modules/@convex-dev/auth/dist/providers/ConvexC
 
 Якщо типи відрізняються (наприклад, `retrieveAccount` повертає не `null`, а кидає помилку), підлаштуй код, але не змінюй поведінку: усі помилки для людини — `ConvexError` з текстами з `authRules.ts`.
 
-- [ ] **Step 7: Підключи провайдер у `convex/auth.ts`**
+- [x] **Step 7: Підключи провайдер у `convex/auth.ts`**
 
 ```ts
 import Google from '@auth/core/providers/google';
@@ -788,7 +788,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 Run: `npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Тест прибирання e2e-користувачів (падає)**
+- [x] **Step 8: Тест прибирання e2e-користувачів (падає)**
 
 `convex/testing.test.ts`:
 
@@ -833,7 +833,7 @@ test('removes only e2e users, with their accounts, sessions and games', async ()
 Run: `npx vitest run convex/testing.test.ts`
 Expected: FAIL, бо `internal.testing` ще немає.
 
-- [ ] **Step 9: `convex/testing.ts`**
+- [x] **Step 9: `convex/testing.ts`**
 
 ```ts
 import { internalMutation } from './_generated/server';
@@ -884,7 +884,7 @@ export const deleteE2eUsers = internalMutation({
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 10: Перевірка в dev**
+- [x] **Step 10: Перевірка в dev**
 
 `npx convex dev` має бути запущений і без помилок завантажити функції. Перевір провайдер прямо через CLI:
 
@@ -905,7 +905,7 @@ npx convex run testing:deleteE2eUsers
 
 Очікувано: `1`.
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 git add convex package.json package-lock.json

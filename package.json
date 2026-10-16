@@ -30,6 +30,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "convex": "^1.46.0",
+        "lucia": "^3.2.2",
         "lucide-react": "^1.58.0",
         "motion": "^14.1.0",
         "nanoid": "^6.0.2",

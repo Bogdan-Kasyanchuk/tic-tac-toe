@@ -9,9 +9,12 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as authRules from "../authRules.js";
+import type * as emailPassword from "../emailPassword.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
 import type * as rules from "../rules.js";
+import type * as testing from "../testing.js";
 import type * as users from "../users.js";
 import type * as validators from "../validators.js";
 
@@ -23,9 +26,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  authRules: typeof authRules;
+  emailPassword: typeof emailPassword;
   games: typeof games;
   http: typeof http;
   rules: typeof rules;
+  testing: typeof testing;
   users: typeof users;
   validators: typeof validators;
 }>;
