@@ -28,7 +28,7 @@
 
 ## Поточна робота
 
-Редизайн (shadcn/ui, темна тема) і вхід поштою з паролем — план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`, виконання Native. Дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US. Продовжувати з першого кроку без галочки.
+Редизайн (shadcn/ui, темна тема) і вхід поштою з паролем (поки без підтвердження пошти й скидання пароля) — план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`, виконання Native. Дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US. Продовжувати з першого кроку без галочки.
 
 ## Історія
 

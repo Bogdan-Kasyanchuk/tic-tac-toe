@@ -2,28 +2,37 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** перенести в код новий дизайн з канвасу (темна тема, shadcn/ui, десктоп і телефон) і додати вхід поштою з паролем: реєстрацію, підтвердження пошти кодом із 6 цифр і скидання пароля.
+**Goal:** перенести в код новий дизайн з канвасу (темна тема, shadcn/ui, десктоп і телефон) і додати реєстрацію та вхід поштою з паролем, з перевіркою, що пошта ще не зареєстрована.
 
-**Architecture:** логіка гри на Convex не змінюється. Бекенд отримує провайдер `Password` з Convex Auth: коди з 6 цифр генерує й надсилає через Resend невеликий модуль `convex/otp.ts`. Фронт переходить на компоненти shadcn/ui (Radix + Tailwind 4) з токенами теми в `src/index.css`. Сторінки входу живуть окремо від застосунку з шапкою; для `/` і `/game/:id` є спільний layout. На ширині від `md` (48rem) показуються дропдаун і модальні діалоги, на телефоні — бургер-меню (Sheet) і нижня панель (Drawer).
+**Architecture:**
+- **Бекенд.** Логіка гри на Convex не змінюється. Convex Auth отримує власний провайдер `convex/emailPassword.ts` на `ConvexCredentials` з `id: 'password'` і хешуванням Scrypt, як у штатного `Password`. Під час реєстрації він перевіряє, чи пошта вже зайнята, і кидає `ConvexError` з готовим текстом: такі помилки, на відміну від звичайних `Error`, видно й на prod.
+- **Фронт.** Компоненти shadcn/ui (Radix + Tailwind 4) з токенами теми в `src/index.css`. Сторінки входу живуть окремо від застосунку з шапкою; для `/` і `/game/:id` є спільний layout.
+- **Десктоп і телефон.** На ширині від `md` (48rem) показуються дропдаун і модальні діалоги, на телефоні — бургер-меню (Sheet) і нижня панель (Drawer).
 
-**Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`Password`, `@auth/core/providers/resend`), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `input-otp`, `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`.
+**Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`.
 
-**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-15 — ще не розпочато, починати із задачі 1. Галочки `- [x]` у кроках показують, що вже зроблено.
+**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — ще не розпочато, починати із задачі 1. Галочки `- [x]` у кроках показують, що вже зроблено.
 
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US (екрани `*.dc.html`; точні кольори, відступи й тексти беруться з нього). Рішення з розмови зведені в розділ «Рішення».
 
+**Зміна від 2026-10-16:** підтвердження пошти кодом і скидання пароля відкладені (розділ «Пізніше» в кінці). Номери задач не змінювались: задача 6 лишилась заглушкою. Перша версія плану з повними кроками для коду й скидання — у коміті `5a16c71`.
+
 ## Рішення
 
-- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone» і аркуш «Components (shadcn/ui)».
+- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone» і аркуш «Components (shadcn/ui)». Екрани «Verify email» і «Reset password» поки не реалізуються.
 - Бібліотека компонентів — shadcn/ui на Radix. Файли компонентів генеруються в `src/components/ui/` і далі вважаються кодом проєкту, а не залежністю.
 - Тема тільки темна, світлої немає.
 - Вхід:
   - Google, як зараз;
-  - пошта з паролем: реєстрація → код із 6 цифр на пошту → вхід;
-  - вхід у ще не підтверджений акаунт теж надсилає код і веде на екран підтвердження;
-  - скидання пароля у два кроки: пошта → код + новий пароль;
-  - мінімальна довжина пароля — 8 символів, код діє 15 хвилин.
-- Листи надсилає Resend через `fetch` до його API, без SDK. Поки немає власного домену, відправник — `onboarding@resend.dev`, і листи доходять лише на пошту власника акаунта Resend. Адресу відправника змінює змінна `AUTH_EMAIL_FROM`.
+  - пошта з паролем: реєстрація одразу входить в акаунт, без коду на пошту;
+  - мінімальна довжина пароля — 8 символів, пошта зберігається обрізаною й у нижньому регістрі.
+- Перевірка зайнятої пошти при реєстрації — на сервері, всередині реєстрації, а не окремим публічним запитом (щоб не можна було масово перебирати адреси):
+  - пошта вже має акаунт з паролем — «An account with this email already exists. Sign in instead»;
+  - на пошту вже входили через Google — «This email is linked to Google. Continue with Google instead». Без підтвердженої пошти Convex Auth не з'єднує акаунти Google і пошти, тож дубль не створюємо.
+- Наслідки відсутності підтвердження, з якими власник погодився:
+  - можна зареєструватися на чужу адресу;
+  - забутий пароль не відновлюється самостійно, лише видаленням акаунта в дашборді Convex.
+- Посилання «Forgot password?» на сторінці входу поки немає.
 - Лобі (`/`) тепер тільки для тих, хто увійшов: привітання звертається на ім'я. Анонім потрапляє на `/login`, а після входу повертається туди, звідки прийшов.
 - Меню:
   - **Десктоп:** дропдаун з аватаром та ім'ям. У грі в ньому є ID гри (клік копіює), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
@@ -51,20 +60,17 @@
 - **Поля вводу** мають шрифт 16px (`text-base`), щоб iOS не збільшував сторінку при фокусі. На канвасі там 15px.
 - **Розміри для дотику:** інтерактивні елементи щонайменше 44×44px (`size-11` / `h-11`).
 - Перемикання десктоп/телефон — `md` (48rem): у класах і в хуку `useMediaQuery(DESKTOP)`.
-- Константи коду й пароля живуть у `convex/authRules.ts`; фронт імпортує їх через `@convex/authRules`. `convex/otp.ts` на фронт не імпортується, бо тягне `@auth/core`:
-  - код — 6 цифр, діє 15 хв;
-  - пароль — мінімум 8 символів;
-  - повторне надсилання коду — не раніше ніж через 60 с.
-- **Конвекс приховує на prod повідомлення звичайних `Error`.** Тож будь-яке зіставлення тексту помилки на клієнті — лише підказка. Завжди має бути зрозумілий запасний текст для кожного сценарію.
-- Секрети (`AUTH_RESEND_KEY`) і логіни в Resend, Convex, Netlify робить власник (👤). Claude лише каже, що зробити. Пушить на GitHub теж власник.
+- Правила пароля й пошти живуть у `convex/authRules.ts` (`MIN_PASSWORD_LENGTH = 8`, `normalizeEmail`, `validatePassword`, тексти помилок). Фронт імпортує їх через `@convex/authRules`.
+- **Convex приховує на prod повідомлення звичайних `Error`.** Усе, що має побачити людина, сервер кидає як `ConvexError('текст')`. Клієнт показує `error.data`, а для будь-якої іншої помилки — запасний текст сценарію.
+- Логіни в Convex і Netlify і будь-які секрети робить власник (👤). Claude лише каже, що зробити. Пушить на GitHub теж власник.
 - Кожен коміт закінчується рядком `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - Після кожної задачі: `npm run lint:fix && npm run typecheck && npm run test:once` — усе зелене.
 
 ## Review Focus
 
-1. **Вхід у ще не підтверджений акаунт.** Людина, що зареєструвалась і не ввела код, пробує увійти. Вона має опинитися на екрані «Check your email» зі свіжим кодом, а не побачити «Wrong email or password». Тест — задача 4.
-2. **Екран підтвердження після перезавантаження.** Пам'ять із поштою й паролем порожня. Сторінка має пояснити, що сесія входу минула, і дати посилання назад, а не викликати `signIn` з `undefined`. Тест — задача 5.
-3. **Пряме посилання на гру → реєстрація → код.** Після підтвердження людина повертається на `/game/:id`, тобто `from` переживає весь ланцюжок `/login → /signup → /verify`. Тести — задачі 4 і 5.
+1. **Реєстрація на пошту, яка вже має акаунт з паролем.** Людина бачить «An account with this email already exists. Sign in instead» і на prod теж, а не безлике «Server Error». Тести — задачі 2 і 5; перевірка на prod — задача 9.
+2. **Реєстрація на пошту, на яку вже входили через Google.** Друга людина не створюється, звучить порада увійти через Google. Тест — задача 2.
+3. **Пряме посилання на гру → реєстрація.** Після реєстрації людина повертається на `/game/:id`, тобто `from` переживає перехід `/login → /signup`. Тести — задачі 3 і 5.
 4. **Скасоване меню «Поділитися» на телефоні** (`AbortError`): без toast-а про помилку й без копіювання. На десктопі без `navigator.share` лінк копіюється. Тест — задача 3.
 5. **Клік по логотипу посеред гри.** Має з'явитися підтвердження, а не тихий перехід у лобі, після якого місце в грі лишається зайнятим. Тест — задача 3.
 
@@ -74,10 +80,9 @@
 
 | Артборд | Де в коді |
 |---|---|
-| `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`) |
+| `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`), без лінка «Forgot password?» |
 | `SignUp`, `MobileSignUp` | `src/pages/SignUpPage` (`/signup`) |
-| `VerifyEmail`, `MobileVerifyEmail` | `src/pages/VerifyEmailPage` (`/verify`) |
-| `ResetPassword`, `MobileResetPassword` | `src/pages/ResetPasswordPage` (`/reset`) |
+| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше» |
 | `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin` | `src/pages/HomePage` (`/`, вкладки New / Join) |
 | `Waiting`, `MobileWaiting` | `src/components/WaitingForOpponent` |
 | `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame` | `src/pages/GamePage` + `Board`, `PlayerCard`, `TurnStatus` |
@@ -91,25 +96,24 @@
 
 ```
 convex/
-├─ auth.ts                 + Password({ profile, validatePasswordRequirements, verify, reset })
-├─ authRules.ts / .test.ts  MIN_PASSWORD_LENGTH, CODE_LENGTH, CODE_TTL_SECONDS, RESEND_AFTER_SECONDS, normalizeEmail, validatePassword
-├─ otp.ts / otp.test.ts    generateCode, sendCodeEmail, ResendOTP, ResendOTPPasswordReset
-├─ users.ts / users.test.ts      me → { name, email, avatar }
-└─ test.setup.ts           asUser додає email
+├─ auth.ts                    providers: [ Google, EmailPassword ]
+├─ authRules.ts / .test.ts    MIN_PASSWORD_LENGTH, normalizeEmail, validatePassword, EmailStatus, takenEmailMessage
+├─ emailPassword.ts           ConvexCredentials id 'password': signUp з перевіркою пошти, signIn
+├─ users.ts / users.test.ts   me → { name, email, avatar }; internal emailStatus
+└─ test.setup.ts              asUser додає email
 src/
 ├─ index.css               токени теми, шрифти, base
 ├─ App.tsx                 маршрути: auth окремо, AppLayout для / і /game/:id
-├─ auth/                   PendingAuthProvider, pendingAuthContext, usePendingAuth
 ├─ hooks/                  useMediaQuery, useFrom, useLeaveGame
 ├─ lib/                    cn (+ named), invite, authError, gameStatus, passwordStrength, initials
 ├─ test/                   setup.ts (поліфіли jsdom), viewport.ts (mockViewport)
 ├─ components/
-│  ├─ ui/                  shadcn: button input label sonner input-otp dropdown-menu sheet alert-dialog avatar dialog drawer tabs
+│  ├─ ui/                  shadcn: button input label sonner dropdown-menu sheet alert-dialog avatar dialog drawer tabs
 │  ├─ Logo  UserAvatar  CopyButton  FieldError  PasswordInput  OrDivider  GoogleButton  HeroBoard
-│  ├─ AuthSplitLayout  AuthCardLayout  AppLayout  AppHeader  AccountMenu  MobileMenu  LeaveGameDialog
+│  ├─ AuthSplitLayout  AppLayout  AppHeader  AccountMenu  MobileMenu  LeaveGameDialog
 │  ├─ MarkIcon  MarkPicker  Board  BoardCell  PlayerCard  TurnStatus  WaitingForOpponent
 │  └─ Fade  FadeSwitch  Spinner     (лишаються; Spinner переписаний)
-└─ pages/  SignInPage  SignUpPage  VerifyEmailPage  ResetPasswordPage  HomePage  GamePage
+└─ pages/  SignInPage  SignUpPage  HomePage  GamePage
 ```
 
 Видаляються:
@@ -484,42 +488,45 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 2: Бекенд — вхід поштою з паролем і коди з 6 цифр
+### Task 2: Бекенд — реєстрація та вхід поштою з паролем, перевірка зайнятої пошти
 
 **Files:**
-- Create: `convex/authRules.ts`, `convex/authRules.test.ts`, `convex/otp.ts`, `convex/otp.test.ts`
-- Modify: `convex/auth.ts`, `convex/users.ts`, `convex/users.test.ts`, `convex/test.setup.ts`
+- Create: `convex/authRules.ts`, `convex/authRules.test.ts`, `convex/emailPassword.ts`
+- Modify: `convex/auth.ts`, `convex/users.ts`, `convex/users.test.ts`, `convex/test.setup.ts`, `package.json`
 
 **Interfaces:**
 - Produces:
-  - з `convex/authRules.ts`: `MIN_PASSWORD_LENGTH = 8`, `CODE_LENGTH = 6`, `CODE_TTL_SECONDS = 900`, `RESEND_AFTER_SECONDS = 60`, `normalizeEmail(value: unknown): string`, `validatePassword(password: string): void`;
-  - з `convex/otp.ts`: `generateCode(random?: (bytes: Uint32Array) => Uint32Array): string`;
-  - `sendCodeEmail(email: CodeEmail): Promise<void>`;
-  - `ResendOTP`, `ResendOTPPasswordReset`;
-  - `api.users.me` → `{ name: string, email: string, avatar: string } | null`.
-- Провайдер з `id: 'password'` приймає `signIn('password', params)` з `flow`: `signIn | signUp | email-verification | reset | reset-verification`.
+  - з `convex/authRules.ts`:
+    - `MIN_PASSWORD_LENGTH = 8`;
+    - `normalizeEmail(value: unknown): string` (кидає `ConvexError('Email is required')`);
+    - `validatePassword(password: string): void` (кидає `ConvexError('Password must be at least 8 characters')`);
+    - `type EmailStatus = 'free' | 'password' | 'google'`;
+    - `takenEmailMessage(status: EmailStatus): string | null`;
+    - тексти `EMAIL_TAKEN`, `EMAIL_LINKED_TO_GOOGLE`, `WRONG_CREDENTIALS`, `TOO_MANY_ATTEMPTS`;
+  - `internal.users.emailStatus({ email: string }) → EmailStatus`;
+  - `api.users.me` → `{ name: string, email: string, avatar: string } | null`;
+  - провайдер з `id: 'password'`: `signIn('password', { flow: 'signUp', name, email, password })` і `signIn('password', { flow: 'signIn', email, password })`. Користувацькі помилки — лише `ConvexError` з текстами вище.
 
-- [ ] **Step 1: 👤 Ключ Resend для dev**
+Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів (розділ «Пізніше»).
 
-Власник:
-1. Реєструється на resend.com.
-2. Відкриває API Keys → Create API key (права Sending access).
-3. Виконує в теці проєкту:
+- [ ] **Step 1: Залежність**
+
+`lucia` вже стоїть транзитивно (його використовує `@convex-dev/auth`). Закріпи його прямою залежністю, щоб імпорт не залежав від того, як npm розкладе пакети:
 
 ```bash
-npx convex env set AUTH_RESEND_KEY <ключ>
+npm i lucia@^3.2.0
 ```
 
-Ключ у чат не вставляти. Для prod той самий крок з `--prod` — у задачі 9.
+npm попередить, що `lucia` 3 deprecated. Це очікувано: Convex Auth 0.0.96 сам на ньому працює.
 
-- [ ] **Step 2: Тест правил пароля (падає)**
+- [ ] **Step 2: Тест правил (падає)**
 
 `convex/authRules.test.ts`:
 
 ```ts
 import { expect, test } from 'vitest';
 
-import { MIN_PASSWORD_LENGTH, normalizeEmail, validatePassword } from './authRules';
+import { EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN, MIN_PASSWORD_LENGTH, normalizeEmail, takenEmailMessage, validatePassword } from './authRules';
 
 test('passwords shorter than the minimum are rejected', () => {
     expect(() => {
@@ -540,6 +547,14 @@ test('emails are trimmed and lowercased', () => {
 test('a missing email is rejected', () => {
     expect(() => normalizeEmail(undefined)).toThrow('Email is required');
 });
+
+test('a taken email gets a message that says how to get in', () => {
+    expect(takenEmailMessage('free')).toBeNull();
+    expect(takenEmailMessage('password')).toBe(EMAIL_TAKEN);
+    expect(takenEmailMessage('google')).toBe(EMAIL_LINKED_TO_GOOGLE);
+    expect(EMAIL_TAKEN).toBe('An account with this email already exists. Sign in instead');
+    expect(EMAIL_LINKED_TO_GOOGLE).toBe('This email is linked to Google. Continue with Google instead');
+});
 ```
 
 Run: `npx vitest run convex/authRules.test.ts`
@@ -551,9 +566,14 @@ Expected: FAIL, бо модуля `./authRules` ще немає.
 import { ConvexError } from 'convex/values';
 
 export const MIN_PASSWORD_LENGTH = 8;
-export const CODE_LENGTH = 6;
-export const CODE_TTL_SECONDS = 15 * 60;
-export const RESEND_AFTER_SECONDS = 60;
+
+export const EMAIL_TAKEN = 'An account with this email already exists. Sign in instead';
+export const EMAIL_LINKED_TO_GOOGLE = 'This email is linked to Google. Continue with Google instead';
+export const WRONG_CREDENTIALS = 'Wrong email or password';
+export const TOO_MANY_ATTEMPTS = 'Too many attempts. Try again later';
+
+// 'google' — пошта є в users, але без акаунта з паролем: зараз так буває лише після входу через Google
+export type EmailStatus = 'free' | 'password' | 'google';
 
 // Один акаунт на адресу незалежно від регістру й випадкових пробілів
 export const normalizeEmail = (value: unknown): string => {
@@ -569,208 +589,215 @@ export const validatePassword = (password: string) => {
         throw new ConvexError(`Password must be at least ${ MIN_PASSWORD_LENGTH } characters`);
     }
 };
+
+export const takenEmailMessage = (status: EmailStatus): string | null => {
+    if (status === 'password') {
+        return EMAIL_TAKEN;
+    }
+
+    return status === 'google' ? EMAIL_LINKED_TO_GOOGLE : null;
+};
 ```
 
 Run: `npx vitest run convex/authRules.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Тест кодів і листа (падає)**
-
-`convex/otp.test.ts`:
-
-```ts
-import { afterEach, expect, test, vi } from 'vitest';
-
-import { CODE_LENGTH } from './authRules';
-import { generateCode, sendCodeEmail } from './otp';
-
-afterEach(() => {
-    vi.unstubAllGlobals();
-});
-
-test('codes are six digits', () => {
-    const code = generateCode();
-
-    expect(code).toMatch(/^\d{6}$/);
-    expect(code).toHaveLength(CODE_LENGTH);
-});
-
-test('each digit comes from the random source', () => {
-    const random = (bytes: Uint32Array) => {
-        bytes.set([ 10, 11, 12, 13, 14, 19 ]);
-
-        return bytes;
-    };
-
-    expect(generateCode(random)).toBe('012349');
-});
-
-test('the code email goes to Resend with the code in the text', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }));
-
-    vi.stubGlobal('fetch', fetchMock);
-
-    await sendCodeEmail({ apiKey: 'key', from: 'App <a@b.c>', to: 'alice@example.com', subject: 'Code', code: '123456' });
-
-    const [ url, init ] = fetchMock.mock.calls[ 0 ];
-
-    expect(url).toBe('https://api.resend.com/emails');
-    expect(init.headers.Authorization).toBe('Bearer key');
-    expect(JSON.parse(init.body)).toMatchObject({ from: 'App <a@b.c>', to: [ 'alice@example.com' ], subject: 'Code' });
-    expect(JSON.parse(init.body).text).toContain('123456');
-});
-
-test('a rejected email surfaces as an error', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 403 })));
-
-    await expect(sendCodeEmail({ apiKey: 'key', from: 'a@b.c', to: 'x@y.z', subject: 'Code', code: '1' }))
-        .rejects.toThrow('Could not send the email (403)');
-});
-```
-
-Run: `npx vitest run convex/otp.test.ts`
-Expected: FAIL, бо модуля `./otp` ще немає.
-
-- [ ] **Step 5: Реалізуй `convex/otp.ts`**
-
-```ts
-import Resend from '@auth/core/providers/resend';
-
-import { CODE_LENGTH, CODE_TTL_SECONDS } from './authRules';
-
-// Тестова адреса Resend: доходить лише на пошту власника акаунта, поки немає свого домену
-const DEFAULT_FROM = 'tic·tac·toe <onboarding@resend.dev>';
-
-const cryptoRandom = (bytes: Uint32Array) => crypto.getRandomValues(bytes);
-
-// Остача від 32-бітного числа на 10 дає практично рівномірну цифру
-export const generateCode = (random = cryptoRandom): string => Array.from(
-    random(new Uint32Array(CODE_LENGTH)),
-    value => String(value % 10)
-).join('');
-
-type CodeEmail = {
-    apiKey: string,
-    from: string,
-    to: string,
-    subject: string,
-    code: string
-};
-
-export const sendCodeEmail = async ({ apiKey, from, to, subject, code }: CodeEmail) => {
-    const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${ apiKey }`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            from,
-            to: [ to ],
-            subject,
-            text: `Your tic·tac·toe code is ${ code }. It expires in ${ CODE_TTL_SECONDS / 60 } minutes.`
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error(`Could not send the email (${ response.status })`);
-    }
-};
-
-const codeProvider = (id: string, subject: string) => Resend({
-    id,
-    apiKey: process.env.AUTH_RESEND_KEY,
-    maxAge: CODE_TTL_SECONDS,
-    generateVerificationToken: async () => generateCode(),
-    sendVerificationRequest: async ({ identifier, provider, token }) => {
-        await sendCodeEmail({
-            apiKey: provider.apiKey ?? '',
-            from: process.env.AUTH_EMAIL_FROM ?? DEFAULT_FROM,
-            to: identifier,
-            subject,
-            code: token
-        });
-    }
-});
-
-export const ResendOTP = codeProvider('resend-otp', 'Your tic·tac·toe verification code');
-
-export const ResendOTPPasswordReset = codeProvider('resend-otp-password-reset', 'Reset your tic·tac·toe password');
-```
-
-Run: `npx vitest run convex/otp.test.ts`
-Expected: PASS.
-
-- [ ] **Step 6: Підключи провайдер у `convex/auth.ts`**
-
-```ts
-import Google from '@auth/core/providers/google';
-import { Password } from '@convex-dev/auth/providers/Password';
-import { convexAuth } from '@convex-dev/auth/server';
-
-import { normalizeEmail, validatePassword } from './authRules';
-import { ResendOTP, ResendOTPPasswordReset } from './otp';
-
-export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
-    providers: [
-        Google,
-        Password({
-            profile: params => {
-                const name = typeof params.name === 'string' ? params.name.trim() : '';
-
-                // Ім'я приходить лише при signUp; в інших сценаріях не перетираємо наявне
-                return {
-                    email: normalizeEmail(params.email),
-                    ...(name ? { name } : {})
-                };
-            },
-            validatePasswordRequirements: validatePassword,
-            verify: ResendOTP,
-            reset: ResendOTPPasswordReset
-        })
-    ]
-});
-```
-
-- [ ] **Step 7: `users.me` повертає пошту (тест падає)**
+- [ ] **Step 4: Тест `emailStatus` і пошти в `me` (падає)**
 
 У `convex/test.setup.ts` функція `asUser` вставляє ще `email: \`${ name.toLowerCase() }@example.com\``.
 
-У `convex/users.test.ts` очікування другого тесту стає таким:
+У `convex/users.test.ts`:
+- очікування в тесті `me returns the name and avatar of the signed-in user` доповни полем `email: 'alice@example.com'`;
+- допиши тести:
 
 ```ts
-expect(await alice.client.query(api.users.me, {})).toEqual({
-    name: 'Alice',
-    email: 'alice@example.com',
-    avatar: 'https://example.com/Alice.png'
+import { internal } from './_generated/api';
+
+test('a fresh email is free', async () => {
+    const t = setup();
+
+    expect(await t.query(internal.users.emailStatus, { email: 'nobody@example.com' })).toBe('free');
+});
+
+// Review Focus 1: пошта з паролем уже зайнята
+test('an email with a password account is taken', async () => {
+    const t = setup();
+    const alice = await asUser(t, 'Alice');
+
+    await t.run(async ctx => {
+        await ctx.db.insert('authAccounts', {
+            userId: alice.userId,
+            provider: 'password',
+            providerAccountId: 'alice@example.com',
+            secret: 'hash'
+        });
+    });
+
+    expect(await t.query(internal.users.emailStatus, { email: 'alice@example.com' })).toBe('password');
+});
+
+// Review Focus 2: людина з Google не отримує другого акаунта на ту саму пошту
+test('an email known only from Google sign-in points to Google', async () => {
+    const t = setup();
+
+    await asUser(t, 'Alice');
+
+    expect(await t.query(internal.users.emailStatus, { email: 'alice@example.com' })).toBe('google');
 });
 ```
 
 Run: `npx vitest run convex/users.test.ts`
-Expected: FAIL, бо у відповіді немає `email`.
+Expected: FAIL: немає `internal.users.emailStatus` і поля `email` у `me`.
 
-- [ ] **Step 8: Додай `email` у `convex/users.ts`**
+- [ ] **Step 5: `convex/users.ts`**
+
+У `me` додай `email: user.email ?? ''` між `name` і `avatar`. Нижче — внутрішній запит:
 
 ```ts
-return {
-    name: user.name ?? '',
-    email: user.email ?? '',
-    avatar: user.image ?? ''
-};
+import { internalQuery } from './_generated/server';
+import type { EmailStatus } from './authRules';
+
+// Лише для провайдера пошти: публічного «чи зайнята пошта» немає, щоб адреси не можна було перебирати
+export const emailStatus = internalQuery({
+    args: { email: v.string() },
+    handler: async (ctx, { email }): Promise<EmailStatus> => {
+        const account = await ctx.db
+            .query('authAccounts')
+            .withIndex('providerAndAccountId', q => q.eq('provider', 'password').eq('providerAccountId', email))
+            .unique();
+
+        if (account) {
+            return 'password';
+        }
+
+        const user = await ctx.db
+            .query('users')
+            .withIndex('email', q => q.eq('email', email))
+            .first();
+
+        return user ? 'google' : 'free';
+    }
+});
 ```
 
+`v` імпортується з `convex/values`, `internalQuery` додається до наявного імпорту з `./_generated/server`.
+
 Run: `npm run test:once`
-Expected: PASS (усі тести, включно з `games.test.ts`).
+Expected: PASS (включно з `games.test.ts`).
 
-- [ ] **Step 9: Розгорни функції в dev і перевір вручну**
+- [ ] **Step 6: Провайдер `convex/emailPassword.ts`**
 
-У терміналі має працювати `npx convex dev`: він сам завантажить нові функції. Перевір у логах Convex, що немає помилок про `AUTH_RESEND_KEY`.
+```ts
+import { ConvexCredentials } from '@convex-dev/auth/providers/ConvexCredentials';
+import { createAccount, retrieveAccount } from '@convex-dev/auth/server';
+import { ConvexError } from 'convex/values';
+import { Scrypt } from 'lucia';
 
-- [ ] **Step 10: Commit**
+import { internal } from './_generated/api';
+import type { DataModel } from './_generated/dataModel';
+import { normalizeEmail, takenEmailMessage, TOO_MANY_ATTEMPTS, validatePassword, WRONG_CREDENTIALS } from './authRules';
+
+const scrypt = new Scrypt();
+
+// Замість Password: перевірка пошти тут асинхронна, а помилки — ConvexError, які видно й на prod.
+// id і Scrypt ті самі, що в Password, тож пізніше перейти на нього можна без міграції акаунтів
+export const EmailPassword = ConvexCredentials<DataModel>({
+    id: 'password',
+    authorize: async (params, ctx) => {
+        const email = normalizeEmail(params.email);
+        const password = typeof params.password === 'string' ? params.password : '';
+
+        if (params.flow === 'signUp') {
+            validatePassword(password);
+
+            const taken = takenEmailMessage(await ctx.runQuery(internal.users.emailStatus, { email }));
+
+            if (taken) {
+                throw new ConvexError(taken);
+            }
+
+            const name = typeof params.name === 'string' ? params.name.trim() : '';
+            const { user } = await createAccount(ctx, {
+                provider: 'password',
+                account: { id: email, secret: password },
+                profile: { email, ...(name ? { name } : {}) }
+            });
+
+            return { userId: user._id };
+        }
+
+        if (params.flow === 'signIn') {
+            // retrieveAccount кидає звичайні Error (InvalidAccountId, InvalidSecret, TooManyFailedAttempts) — на prod їх не видно
+            const retrieved = await retrieveAccount(ctx, {
+                provider: 'password',
+                account: { id: email, secret: password }
+            }).catch((error: unknown) => {
+                const tooMany = error instanceof Error && error.message.includes('TooManyFailedAttempts');
+
+                throw new ConvexError(tooMany ? TOO_MANY_ATTEMPTS : WRONG_CREDENTIALS);
+            });
+
+            if (!retrieved) {
+                throw new ConvexError(WRONG_CREDENTIALS);
+            }
+
+            return { userId: retrieved.user._id };
+        }
+
+        throw new ConvexError('Unsupported sign-in flow');
+    },
+    crypto: {
+        hashSecret: async password => scrypt.hash(password),
+        verifySecret: async (password, hash) => scrypt.verify(hash, password)
+    }
+});
+```
+
+Перед тим як писати, звір сигнатури з установленою версією:
 
 ```bash
-git add convex
-git commit -m "feat(convex): email and password sign-in with 6-digit codes via Resend
+grep -n "export declare function createAccount\|export declare function retrieveAccount" -A30 node_modules/@convex-dev/auth/dist/server/implementation/index.d.ts
+grep -n "crypto\|authorize" node_modules/@convex-dev/auth/dist/providers/ConvexCredentials.d.ts
+```
+
+Якщо типи відрізняються (наприклад, `retrieveAccount` повертає не `null`, а кидає помилку), підлаштуй код, але не змінюй поведінку: усі помилки для людини — `ConvexError` з текстами з `authRules.ts`.
+
+- [ ] **Step 7: Підключи провайдер у `convex/auth.ts`**
+
+```ts
+import Google from '@auth/core/providers/google';
+import { convexAuth } from '@convex-dev/auth/server';
+
+import { EmailPassword } from './emailPassword';
+
+export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
+    providers: [ Google, EmailPassword ]
+});
+```
+
+Run: `npm run typecheck && npm run test:once`
+Expected: PASS.
+
+- [ ] **Step 8: Ручна перевірка в dev**
+
+`npx convex dev` має бути запущений і без помилок завантажити функції. У дашборді Convex (dev) → Functions → `auth:signIn` → Run з аргументами:
+
+```json
+{ "provider": "password", "params": { "flow": "signUp", "name": "Test", "email": "test-1@example.com", "password": "tictac2026" } }
+```
+
+Очікувано:
+- перший запуск повертає токени;
+- другий — помилку `An account with this email already exists. Sign in instead`;
+- `flow: "signIn"` з неправильним паролем — `Wrong email or password`.
+
+Потім видали тестового користувача в Data → `users` і його рядок в `authAccounts`.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add convex package.json package-lock.json
+git commit -m "feat(convex): email and password sign-up with a taken-email check
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
@@ -1768,24 +1795,20 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 4: Вхід — сторінка Sign in, пам'ять незавершеного входу, тексти помилок
+### Task 4: Вхід — сторінка Sign in і тексти помилок
 
 **Files:**
 - Create:
-  - `src/auth/pendingAuthContext.ts`, `src/auth/PendingAuthProvider.tsx`, `src/auth/usePendingAuth.ts`;
   - `src/lib/authError.ts`, `src/lib/authError.test.ts`;
   - `src/components/{AuthSplitLayout,HeroBoard,GoogleButton,PasswordInput,FieldError,OrDivider}/…`;
   - `src/pages/SignInPage/{SignInPage.tsx,index.ts,SignInPage.test.tsx}`.
-- Modify: `src/main.tsx`, `src/App.tsx`, `src/routes/PrivateRoute/PrivateRoute.test.tsx`, `package.json`
+- Modify: `src/App.tsx`, `src/routes/PrivateRoute/PrivateRoute.test.tsx`, `package.json`
 - Delete: `src/pages/LoginPage`
 
 **Interfaces:**
-- Consumes: `useFrom()`, `Button`, `Input`, `Label`, `Logo`, Convex Auth `signIn(provider, params) → Promise<{ signingIn: boolean }>`.
+- Consumes: `useFrom()`, `Button`, `Input`, `Label`, `Logo`, Convex Auth `signIn(provider, params) → Promise<{ signingIn: boolean }>`, тексти з `@convex/authRules`.
 - Produces:
-  - `type Pending = { email: string, password?: string }`;
-  - `<PendingAuthProvider initial?>`;
-  - `usePendingAuth(): { pending: Pending | null, setPending: (value: Pending | null) => void }`;
-  - `type AuthFlow = 'signIn' | 'signUp' | 'email-verification' | 'reset' | 'reset-verification'`;
+  - `type AuthFlow = 'signIn' | 'signUp'`;
   - `authError(error: unknown, flow: AuthFlow): string`;
   - `<AuthSplitLayout hero headline lead footnote>`, `<GoogleButton label />`, `<PasswordInput … />`, `<FieldError>`, `<OrDivider />`.
 
@@ -1795,141 +1818,49 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 npm i react-hook-form zod @hookform/resolvers
 ```
 
-- [ ] **Step 2: Пам'ять незавершеного входу**
-
-Пароль живе лише в пам'яті React: потрібен, щоб «Resend code» міг повторити вхід. Після перезавантаження його немає, і це очікувано (Review Focus 2).
-
-`src/auth/pendingAuthContext.ts`:
-
-```ts
-import { createContext } from 'react';
-
-export type Pending = { email: string, password?: string };
-
-export type PendingAuth = {
-    pending: Pending | null,
-    setPending: (value: Pending | null) => void
-};
-
-export const PendingAuthContext = createContext<PendingAuth | null>(null);
-```
-
-`src/auth/PendingAuthProvider.tsx`:
-
-```tsx
-import { type FC, type ReactNode, useMemo, useState } from 'react';
-
-import { type Pending, PendingAuthContext } from './pendingAuthContext';
-
-type PendingAuthProviderProps = {
-    children: ReactNode,
-    initial?: Pending | null
-};
-
-const PendingAuthProvider: FC<PendingAuthProviderProps> = ({ children, initial = null }) => {
-    const [ pending, setPending ] = useState<Pending | null>(initial);
-    const value = useMemo(() => ({ pending, setPending }), [ pending ]);
-
-    return <PendingAuthContext value={ value }>{ children }</PendingAuthContext>;
-};
-
-export default PendingAuthProvider;
-```
-
-`src/auth/usePendingAuth.ts`:
-
-```ts
-import { use } from 'react';
-
-import { PendingAuthContext } from './pendingAuthContext';
-
-const usePendingAuth = () => {
-    const context = use(PendingAuthContext);
-
-    if (!context) {
-        throw new Error('usePendingAuth must be used inside PendingAuthProvider');
-    }
-
-    return context;
-};
-
-export default usePendingAuth;
-```
-
-У `main.tsx` загорни `<BrowserRouter>` у `<PendingAuthProvider>`.
-
-- [ ] **Step 3: Тест текстів помилок (падає)**
-
-Тексти серверних помилок взяті з `node_modules/@convex-dev/auth/dist`:
-- `Invalid credentials` — `signIn` з неправильним паролем;
-- `InvalidAccountId`, `InvalidSecret`, `TooManyFailedAttempts` — `retrieveAccount`;
-- `Account … already exists` — `signUp`;
-- `Could not verify code`, `Invalid code` — коди.
-
-Перед реалізацією звір їх:
-
-```bash
-grep -rhn "throw new Error(" node_modules/@convex-dev/auth/dist/server/implementation node_modules/@convex-dev/auth/dist/providers/Password.js
-```
+- [ ] **Step 2: Тест текстів помилок (падає)**
 
 `src/lib/authError.test.ts`:
 
 ```ts
+import { ConvexError } from 'convex/values';
 import { expect, test } from 'vitest';
+
+import { EMAIL_TAKEN, WRONG_CREDENTIALS } from '@convex/authRules';
 
 import authError from './authError';
 
-test('a wrong password reads as wrong credentials', () => {
-    expect(authError(new Error('InvalidSecret'), 'signIn')).toBe('Wrong email or password');
+test('a message from the server is shown as is', () => {
+    expect(authError(new ConvexError(EMAIL_TAKEN), 'signUp')).toBe(EMAIL_TAKEN);
+    expect(authError(new ConvexError(WRONG_CREDENTIALS), 'signIn')).toBe(WRONG_CREDENTIALS);
 });
 
-test('an existing account on sign-up points to sign in', () => {
-    expect(authError(new Error('Account alice@example.com already exists'), 'signUp'))
-        .toBe('An account with this email already exists. Sign in instead');
-});
-
-test('too many attempts asks to wait', () => {
-    expect(authError(new Error('TooManyFailedAttempts'), 'signIn')).toBe('Too many attempts. Try again later');
-});
-
-// На prod Convex ховає текст звичайних Error, тож кожен сценарій має свій запасний текст
-test('a redacted server error still gets a clear message', () => {
-    expect(authError(new Error('[Request ID: 1] Server Error'), 'signUp'))
-        .toBe('Could not create the account. If you already have one, sign in instead');
-    expect(authError(new Error('[Request ID: 1] Server Error'), 'email-verification')).toBe('Wrong or expired code');
+// Мережа, збій сервера або прихований на prod Error — у кожного сценарію свій зрозумілий текст
+test('any other error gets the fallback of its flow', () => {
+    expect(authError(new Error('[Request ID: 1] Server Error'), 'signIn')).toBe('Could not sign in. Try again');
+    expect(authError(new Error('[Request ID: 1] Server Error'), 'signUp')).toBe('Could not create the account. Try again');
 });
 ```
 
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 4: Реалізуй `src/lib/authError.ts`**
+- [ ] **Step 3: Реалізуй `src/lib/authError.ts`**
 
 ```ts
-export type AuthFlow = 'signIn' | 'signUp' | 'email-verification' | 'reset' | 'reset-verification';
+import { ConvexError } from 'convex/values';
+
+export type AuthFlow = 'signIn' | 'signUp';
 
 const FALLBACK: Record<AuthFlow, string> = {
-    'signIn': 'Wrong email or password',
-    'signUp': 'Could not create the account. If you already have one, sign in instead',
-    'email-verification': 'Wrong or expired code',
-    'reset': 'Could not send the code. Check the email and try again',
-    'reset-verification': 'Wrong or expired code'
+    signIn: 'Could not sign in. Try again',
+    signUp: 'Could not create the account. Try again'
 };
 
-// Серверні тексти бачимо лише в dev: на prod Convex їх ховає, тож завжди є запасний текст сценарію
+// Провайдер пошти кидає ConvexError з готовим текстом (видно й на prod); решта помилок отримує запасний текст сценарію
 const authError = (error: unknown, flow: AuthFlow): string => {
-    const text = error instanceof Error ? error.message : '';
-
-    if (text.includes('TooManyFailedAttempts')) {
-        return 'Too many attempts. Try again later';
-    }
-
-    if (flow === 'signUp' && text.includes('already exists')) {
-        return 'An account with this email already exists. Sign in instead';
-    }
-
-    if (text.includes('at least 8 characters')) {
-        return 'Password must be at least 8 characters';
+    if (error instanceof ConvexError && typeof error.data === 'string') {
+        return error.data;
     }
 
     return FALLBACK[ flow ];
@@ -1941,7 +1872,7 @@ export default authError;
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Спільні компоненти сторінок входу**
+- [ ] **Step 4: Спільні компоненти сторінок входу**
 
 - **`FieldError`:** `<p role="alert" className="flex items-center gap-1.5 text-sm text-danger"><CircleAlert className="size-3.5" />{ children }</p>`, рендерить `null` без `children`.
 - **`OrDivider`:** рядок `flex items-center gap-3 text-sm text-subtle` — лінія `h-px flex-1 bg-border`, текст «or with email», ще одна лінія.
@@ -2024,19 +1955,16 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
 );
 ```
 
-- [ ] **Step 6: Тест сторінки входу (падає)**
+- [ ] **Step 5: Тест сторінки входу (падає)**
 
 `src/pages/SignInPage/SignInPage.test.tsx`:
 
 ```tsx
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ConvexError } from 'convex/values';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, expect, test, vi } from 'vitest';
-
-import PendingAuthProvider from '@/auth/PendingAuthProvider';
-import usePendingAuth from '@/auth/usePendingAuth';
-import useFrom from '@/hooks/useFrom';
 
 import SignInPage from './SignInPage';
 
@@ -2046,31 +1974,19 @@ vi.mock('@convex-dev/auth/react', () => ({
     useAuthActions: () => ({ signIn })
 }));
 
-const VerifyProbe = () => {
-    const { pending } = usePendingAuth();
-
-    return <p>{ `verify ${ pending?.email } ${ useFrom() }` }</p>;
-};
-
 const renderSignIn = () => render(
-    <PendingAuthProvider>
-        <MemoryRouter initialEntries={ [ { pathname: '/login', state: { from: '/game/g1' } } ] }>
-            <Routes>
-                <Route
-                    path="/login"
-                    element={ <SignInPage /> }
-                />
-                <Route
-                    path="/verify"
-                    element={ <VerifyProbe /> }
-                />
-                <Route
-                    path="/game/:gameId"
-                    element={ <p>game page</p> }
-                />
-            </Routes>
-        </MemoryRouter>
-    </PendingAuthProvider>
+    <MemoryRouter initialEntries={ [ { pathname: '/login', state: { from: '/game/g1' } } ] }>
+        <Routes>
+            <Route
+                path="/login"
+                element={ <SignInPage /> }
+            />
+            <Route
+                path="/game/:gameId"
+                element={ <p>game page</p> }
+            />
+        </Routes>
+    </MemoryRouter>
 );
 
 const fillAndSubmit = async (email: string, password: string) => {
@@ -2096,18 +2012,8 @@ test('signs in with email and password and returns to the original page', async 
     expect(await screen.findByText('game page')).toBeTruthy();
 });
 
-// Review Focus 1: непідтверджена пошта — на екран коду, а не «неправильний пароль»
-test('an unverified account goes to the code screen, keeping where to return', async () => {
-    signIn.mockResolvedValue({ signingIn: false });
-
-    renderSignIn();
-    await fillAndSubmit('alice@example.com', 'secret123');
-
-    expect(await screen.findByText('verify alice@example.com /game/g1')).toBeTruthy();
-});
-
-test('a wrong password shows an error and stays on the page', async () => {
-    signIn.mockRejectedValue(new Error('InvalidSecret'));
+test('a wrong password shows the server message and stays on the page', async () => {
+    signIn.mockRejectedValue(new ConvexError('Wrong email or password'));
 
     renderSignIn();
     await fillAndSubmit('alice@example.com', 'wrong-pass');
@@ -2137,7 +2043,7 @@ test('Google sign-in redirects back to the original page', async () => {
 Run: `npx vitest run src/pages/SignInPage`
 Expected: FAIL, бо `./SignInPage` ще немає.
 
-- [ ] **Step 7: `SignInPage`** (артборди `Main`, `MobileSignIn`)
+- [ ] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2147,7 +2053,6 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
 
-import usePendingAuth from '@/auth/usePendingAuth';
 import AuthSplitLayout from '@/components/AuthSplitLayout';
 import FieldError from '@/components/FieldError';
 import GoogleButton from '@/components/GoogleButton';
@@ -2168,7 +2073,6 @@ type Values = z.infer<typeof schema>;
 
 const SignInPage: FC = () => {
     const { signIn } = useAuthActions();
-    const { setPending } = usePendingAuth();
     const navigate = useNavigate();
     const from = useFrom();
     const [ formError, setFormError ] = useState<string | null>(null);
@@ -2178,17 +2082,8 @@ const SignInPage: FC = () => {
         setFormError(null);
 
         try {
-            const { signingIn } = await signIn('password', { email, password, flow: 'signIn' });
-
-            if (signingIn) {
-                navigate(from, { replace: true });
-
-                return;
-            }
-
-            // Пошта ще не підтверджена: Convex Auth надіслав код і чекає flow email-verification
-            setPending({ email, password });
-            navigate('/verify', { state: { from } });
+            await signIn('password', { email, password, flow: 'signIn' });
+            navigate(from, { replace: true });
         } catch (error) {
             setFormError(authError(error, 'signIn'));
         }
@@ -2225,16 +2120,7 @@ const SignInPage: FC = () => {
                     <FieldError>{ errors.email?.message }</FieldError>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-baseline justify-between">
-                        <Label htmlFor="password">Password</Label>
-                        <Link
-                            to="/reset"
-                            state={ { from } }
-                            className="text-sm text-link hover:text-link-hover"
-                        >
-                            Forgot password?
-                        </Link>
-                    </div>
+                    <Label htmlFor="password">Password</Label>
                     <PasswordInput
                         id="password"
                         autoComplete="current-password"
@@ -2274,26 +2160,26 @@ export default SignInPage;
 Run: `npx vitest run src/pages/SignInPage`
 Expected: PASS.
 
-- [ ] **Step 8: Маршрут і старий тест `PrivateRoute`**
+- [ ] **Step 7: Маршрут і старий тест `PrivateRoute`**
 
 - В `App.tsx`: `/login` тепер рендерить `<SignInPage />`.
 - Видали `src/pages/LoginPage`.
 - У `PrivateRoute.test.tsx`:
-  - імпорт `LoginPage` → `SignInPage`, загорнутий у `<PendingAuthProvider>`;
+  - імпорт `LoginPage` → `SignInPage`;
   - кнопка `'Login with google'` → `'Continue with Google'`;
   - мок `useAuthActions` лишається.
 
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 9: Ручна перевірка**
+- [ ] **Step 8: Ручна перевірка**
 
 `npm run dev`, вийди з акаунта:
-- `/login` має вигляд як `Main` (десктоп) і `MobileSignIn` (390px).
-- Неправильний пароль — помилка під полем.
+- `/login` має вигляд як `Main` (десктоп) і `MobileSignIn` (390px), але без «Forgot password?».
+- Неправильний пароль — «Wrong email or password» під полем.
 - Google працює, як і раніше.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add -A
@@ -2304,26 +2190,17 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 5: Реєстрація і підтвердження пошти кодом
+### Task 5: Реєстрація
 
 **Files:**
 - Create:
-  - `src/components/ui/input-otp.tsx`;
   - `src/lib/passwordStrength.ts`, `src/lib/passwordStrength.test.ts`;
-  - `src/components/AuthCardLayout/…`, `src/components/CodeInput/…`;
-  - `src/pages/SignUpPage/{SignUpPage.tsx,index.ts,SignUpPage.test.tsx}`;
-  - `src/pages/VerifyEmailPage/{VerifyEmailPage.tsx,index.ts,VerifyEmailPage.test.tsx}`.
+  - `src/pages/SignUpPage/{SignUpPage.tsx,index.ts,SignUpPage.test.tsx}`.
 - Modify: `src/App.tsx`
 
 **Interfaces:**
-- Consumes:
-  - `usePendingAuth`, `useFrom`, `authError`;
-  - `MIN_PASSWORD_LENGTH`, `CODE_LENGTH`, `RESEND_AFTER_SECONDS` з `@convex/authRules`;
-  - `AuthSplitLayout`, `GoogleButton`, `PasswordInput`, `FieldError`, `OrDivider`.
-- Produces:
-  - `passwordStrength(password: string): 0 | 1 | 2 | 3`;
-  - `<AuthCardLayout back={ { to, label } }>`;
-  - `<CodeInput id value onChange onComplete? invalid? />` — 6 клітинок `input-otp`.
+- Consumes: `useFrom`, `authError`, `MIN_PASSWORD_LENGTH` і тексти з `@convex/authRules`, `AuthSplitLayout`, `GoogleButton`, `PasswordInput`, `FieldError`, `OrDivider`.
+- Produces: `passwordStrength(password: string): 0 | 1 | 2 | 3`.
 
 - [ ] **Step 1: Тест сили пароля (падає)**
 
@@ -2373,70 +2250,42 @@ export default passwordStrength;
 Run: `npx vitest run src/lib/passwordStrength.test.ts`
 Expected: PASS.
 
-- [ ] **Step 3: `input-otp`, `CodeInput`, `AuthCardLayout`**
+- [ ] **Step 3: Тести реєстрації (падають)**
 
-```bash
-npx shadcn@latest add input-otp -y
-npm run lint:fix
-```
-
-Слоти мають вигляд як на артборді `Components` → InputOTP:
-- `h-14 flex-1 rounded-lg border border-border bg-field font-mono text-2xl`;
-- активний слот — `border-2 border-ring`;
-- між слотами `gap-2`, без сепаратора.
-
-`CodeInput/CodeInput.tsx`:
+`src/pages/SignUpPage/SignUpPage.test.tsx`:
 
 ```tsx
-import type { FC } from 'react';
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ConvexError } from 'convex/values';
+import { MemoryRouter, Route, Routes } from 'react-router';
+import { afterEach, expect, test, vi } from 'vitest';
 
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { CODE_LENGTH } from '@convex/authRules';
+import { EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN } from '@convex/authRules';
 
-type CodeInputProps = {
-    id: string,
-    value: string,
-    invalid?: boolean,
-    onChange: (value: string) => void,
-    onComplete?: (value: string) => void
-};
+import SignUpPage from './SignUpPage';
 
-const CodeInput: FC<CodeInputProps> = ({ id, value, invalid, onChange, onComplete }) => (
-    <InputOTP
-        id={ id }
-        maxLength={ CODE_LENGTH }
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        pattern="^[0-9]+$"
-        value={ value }
-        aria-invalid={ invalid ? true : undefined }
-        onChange={ onChange }
-        onComplete={ onComplete }
-    >
-        <InputOTPGroup className="flex w-full gap-2">
-            { Array.from({ length: CODE_LENGTH }, (_, index) => (
-                <InputOTPSlot
-                    key={ index }
-                    index={ index }
-                />
-            )) }
-        </InputOTPGroup>
-    </InputOTP>
+const signIn = vi.fn();
+
+vi.mock('@convex-dev/auth/react', () => ({
+    useAuthActions: () => ({ signIn })
+}));
+
+const renderSignUp = () => render(
+    <MemoryRouter initialEntries={ [ { pathname: '/signup', state: { from: '/game/g1' } } ] }>
+        <Routes>
+            <Route
+                path="/signup"
+                element={ <SignUpPage /> }
+            />
+            <Route
+                path="/game/:gameId"
+                element={ <p>game page</p> }
+            />
+        </Routes>
+    </MemoryRouter>
 );
 
-export default CodeInput;
-```
-
-`AuthCardLayout` (артборди `VerifyEmail`, `ResetPassword` і мобільні):
-- зверху рядок: `Logo` (лінк на `/login`) і лінк «назад» з `ArrowLeft`;
-- нижче по центру картка: `max-w-105 rounded-2xl border border-line bg-card px-9 py-10 flex flex-col gap-7`;
-- на телефоні картка без рамки й фону: `max-md:border-0 max-md:bg-transparent max-md:p-0`, групою `max-md` у `cn([…])`.
-
-- [ ] **Step 4: Тести реєстрації (падають)**
-
-`src/pages/SignUpPage/SignUpPage.test.tsx`. Обгортка й `VerifyProbe` — як у `SignInPage.test.tsx`, стартовий маршрут `/signup` зі `state: { from: '/game/g1' }`.
-
-```tsx
 const fill = async (name: string, email: string, password: string) => {
     const user = userEvent.setup();
 
@@ -2446,6 +2295,11 @@ const fill = async (name: string, email: string, password: string) => {
     await user.click(screen.getByRole('button', { name: 'Create account' }));
 };
 
+afterEach(() => {
+    cleanup();
+    signIn.mockReset();
+});
+
 test('a short password is rejected before calling the server', async () => {
     renderSignUp();
     await fill('Alice Smith', 'alice@example.com', 'short');
@@ -2454,11 +2308,12 @@ test('a short password is rejected before calling the server', async () => {
     expect(signIn).not.toHaveBeenCalled();
 });
 
-test('creates the account and asks for the emailed code', async () => {
-    signIn.mockResolvedValue({ signingIn: false });
+// Review Focus 3: після реєстрації людина повертається в гру з посилання
+test('creates the account and returns to the original page', async () => {
+    signIn.mockResolvedValue({ signingIn: true });
 
     renderSignUp();
-    await fill('Alice Smith', 'alice@example.com', 'tictac2026');
+    await fill('Alice Smith', 'Alice@Example.com', 'tictac2026');
 
     expect(signIn).toHaveBeenCalledWith('password', {
         name: 'Alice Smith',
@@ -2466,493 +2321,227 @@ test('creates the account and asks for the emailed code', async () => {
         password: 'tictac2026',
         flow: 'signUp'
     });
-    expect(await screen.findByText('verify alice@example.com /game/g1')).toBeTruthy();
+    expect(await screen.findByText('game page')).toBeTruthy();
 });
 
-test('an existing account points to sign in', async () => {
-    signIn.mockRejectedValue(new Error('Account alice@example.com already exists'));
+// Review Focus 1
+test('an email with an account says to sign in instead', async () => {
+    signIn.mockRejectedValue(new ConvexError(EMAIL_TAKEN));
 
     renderSignUp();
     await fill('Alice Smith', 'alice@example.com', 'tictac2026');
 
-    expect(await screen.findByText('An account with this email already exists. Sign in instead')).toBeTruthy();
+    expect(await screen.findByText(EMAIL_TAKEN)).toBeTruthy();
+    expect(screen.queryByText('game page')).toBeNull();
+});
+
+// Review Focus 2
+test('an email used with Google says to continue with Google', async () => {
+    signIn.mockRejectedValue(new ConvexError(EMAIL_LINKED_TO_GOOGLE));
+
+    renderSignUp();
+    await fill('Alice Smith', 'alice@example.com', 'tictac2026');
+
+    expect(await screen.findByText(EMAIL_LINKED_TO_GOOGLE)).toBeTruthy();
 });
 ```
 
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: FAIL, бо `./SignUpPage` ще немає.
 
-- [ ] **Step 5: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
+- [ ] **Step 4: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
 
-Будова та сама, що в `SignInPage`, з такими відмінностями:
-- `hero="column"`, `headline` — «Your name on<br />every scoreboard.», `lead` — «One account for every device. Sign in with Google or with your email.», `footnote` — «We only email you codes for sign-in and password reset.»;
-- заголовок «Create an account», підзаголовок «It takes less than a minute.»;
-- `GoogleButton label="Sign up with Google"`;
-- поля: `Name` (`autoComplete="nickname"`, placeholder «Shown to your opponent»), `Email`, `Password` (`PasswordInput`, `autoComplete="new-password"`);
-- під паролем індикатор: `grid grid-cols-3 gap-1.5`, три смужки `h-1 rounded-full`. Смужка `i` має `bg-circle`, якщо `i < passwordStrength(password)`, інакше `bg-border`. Пароль бери з `watch('password')`;
-- підказка під паролем — «At least 8 characters; a mix of letters and digits is stronger.» (`text-sm text-muted-foreground`), а при помилці валідації — `FieldError`;
-- кнопка «Create account», футер «Already have an account? Sign in» → `/login` зі `state={ { from } }`.
+```tsx
+import { useAuthActions } from '@convex-dev/auth/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type FC, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router';
+import { z } from 'zod';
 
-Схема:
+import AuthSplitLayout from '@/components/AuthSplitLayout';
+import FieldError from '@/components/FieldError';
+import GoogleButton from '@/components/GoogleButton';
+import OrDivider from '@/components/OrDivider';
+import PasswordInput from '@/components/PasswordInput';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import useFrom from '@/hooks/useFrom';
+import authError from '@/lib/authError';
+import cn from '@/lib/cn';
+import passwordStrength from '@/lib/passwordStrength';
+import { MIN_PASSWORD_LENGTH } from '@convex/authRules';
 
-```ts
 const schema = z.object({
     name: z.string().trim().min(1, { error: 'Enter your name' }).max(40, { error: 'Keep it under 40 characters' }),
     email: z.string().trim().toLowerCase().pipe(z.email({ error: 'Enter a valid email' })),
     password: z.string().min(MIN_PASSWORD_LENGTH, { error: `Password must be at least ${ MIN_PASSWORD_LENGTH } characters` })
 });
-```
 
-Відправка:
+type Values = z.infer<typeof schema>;
 
-```ts
-const onSubmit = handleSubmit(async ({ name, email, password }) => {
-    setFormError(null);
+const SignUpPage: FC = () => {
+    const { signIn } = useAuthActions();
+    const navigate = useNavigate();
+    const from = useFrom();
+    const [ formError, setFormError ] = useState<string | null>(null);
+    const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(schema) });
+    const strength = passwordStrength(watch('password') ?? '');
 
-    try {
-        const { signingIn } = await signIn('password', { name, email, password, flow: 'signUp' });
+    const onSubmit = handleSubmit(async ({ name, email, password }) => {
+        setFormError(null);
 
-        if (signingIn) {
+        try {
+            await signIn('password', { name, email, password, flow: 'signUp' });
             navigate(from, { replace: true });
-
-            return;
+        } catch (error) {
+            setFormError(authError(error, 'signUp'));
         }
+    });
 
-        setPending({ email, password });
-        navigate('/verify', { state: { from } });
-    } catch (error) {
-        setFormError(authError(error, 'signUp'));
-    }
-});
+    return (
+        <AuthSplitLayout
+            hero="column"
+            headline={ <>Your name on<br />every scoreboard.</> }
+            lead="One account for every device. Sign in with Google or with your email."
+            footnote="Your email is only used to sign in."
+        >
+            <div className="flex flex-col gap-2">
+                <h2 className="font-display text-3xl font-bold tracking-tight">Create an account</h2>
+                <p className="text-muted-foreground">It takes less than a minute.</p>
+            </div>
+            <GoogleButton label="Sign up with Google" />
+            <OrDivider />
+            <form
+                noValidate
+                className="flex flex-col gap-4"
+                onSubmit={ onSubmit }
+            >
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                        id="name"
+                        autoComplete="nickname"
+                        placeholder="Shown to your opponent"
+                        aria-invalid={ errors.name ? true : undefined }
+                        { ...register('name') }
+                    />
+                    <FieldError>{ errors.name?.message }</FieldError>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        aria-invalid={ errors.email ? true : undefined }
+                        { ...register('email') }
+                    />
+                    <FieldError>{ errors.email?.message }</FieldError>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <PasswordInput
+                        id="password"
+                        autoComplete="new-password"
+                        aria-describedby="password-hint"
+                        aria-invalid={ errors.password ? true : undefined }
+                        { ...register('password') }
+                    />
+                    <div
+                        aria-hidden="true"
+                        className="grid grid-cols-3 gap-1.5"
+                    >
+                        { [ 0, 1, 2 ].map(level => (
+                            <span
+                                key={ level }
+                                className={ cn('h-1 rounded-full', level < strength ? 'bg-circle' : 'bg-border') }
+                            />
+                        )) }
+                    </div>
+                    { errors.password
+                        ? <FieldError>{ errors.password.message }</FieldError>
+                        : (
+                            <p
+                                id="password-hint"
+                                className="text-sm text-muted-foreground"
+                            >
+                                At least 8 characters; a mix of letters and digits is stronger.
+                            </p>
+                        ) }
+                </div>
+                <FieldError>{ formError }</FieldError>
+                <Button
+                    type="submit"
+                    size="lg"
+                    disabled={ isSubmitting }
+                >
+                    Create account
+                </Button>
+            </form>
+            <p className="text-center text-sm text-muted-foreground">
+                Already have an account?
+                { ' ' }
+                <Link
+                    to="/login"
+                    state={ { from } }
+                    className="font-medium text-link hover:text-link-hover"
+                >
+                    Sign in
+                </Link>
+            </p>
+        </AuthSplitLayout>
+    );
+};
+
+export default SignUpPage;
 ```
 
-`formError` показуй через `FieldError` над кнопкою.
+`footnote` відходить від канвасу: там написано про коди на пошту, яких поки немає.
 
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: PASS.
 
-- [ ] **Step 6: Тести підтвердження (падають)**
+- [ ] **Step 5: Маршрут**
 
-`src/pages/VerifyEmailPage/VerifyEmailPage.test.tsx`:
-
-```tsx
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router';
-import { afterEach, expect, test, vi } from 'vitest';
-
-import PendingAuthProvider from '@/auth/PendingAuthProvider';
-import type { Pending } from '@/auth/pendingAuthContext';
-
-import VerifyEmailPage from './VerifyEmailPage';
-
-const signIn = vi.fn();
-
-vi.mock('@convex-dev/auth/react', () => ({
-    useAuthActions: () => ({ signIn })
-}));
-
-const PENDING: Pending = { email: 'alice@example.com', password: 'secret123' };
-
-const renderVerify = (pending: Pending | null) => render(
-    <PendingAuthProvider initial={ pending }>
-        <MemoryRouter initialEntries={ [ { pathname: '/verify', state: { from: '/game/g1' } } ] }>
-            <Routes>
-                <Route
-                    path="/verify"
-                    element={ <VerifyEmailPage /> }
-                />
-                <Route
-                    path="/game/:gameId"
-                    element={ <p>game page</p> }
-                />
-                <Route
-                    path="/login"
-                    element={ <p>login page</p> }
-                />
-            </Routes>
-        </MemoryRouter>
-    </PendingAuthProvider>
-);
-
-afterEach(() => {
-    cleanup();
-    signIn.mockReset();
-    vi.useRealTimers();
-});
-
-// Review Focus 3: після коду людина повертається в гру, з якої прийшла
-test('a complete code signs in and returns to the original page', async () => {
-    signIn.mockResolvedValue({ signingIn: true });
-
-    renderVerify(PENDING);
-    await userEvent.setup().type(screen.getByLabelText('Verification code'), '123456');
-
-    expect(signIn).toHaveBeenCalledWith('password', { email: 'alice@example.com', code: '123456', flow: 'email-verification' });
-    expect(await screen.findByText('game page')).toBeTruthy();
-});
-
-test('a wrong code shows an error', async () => {
-    signIn.mockRejectedValue(new Error('Could not verify code'));
-
-    renderVerify(PENDING);
-    await userEvent.setup().type(screen.getByLabelText('Verification code'), '000000');
-
-    expect(await screen.findByText('Wrong or expired code')).toBeTruthy();
-});
-
-// Review Focus 2: після перезавантаження пам'ять порожня — пояснюємо, а не шлемо порожній запит
-test('explains that the session expired when nothing is pending', () => {
-    renderVerify(null);
-
-    expect(screen.getByText('Your sign-in session expired')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Back to sign in' })).toBeTruthy();
-    expect(signIn).not.toHaveBeenCalled();
-});
-
-test('the code can be sent again after a minute', () => {
-    vi.useFakeTimers();
-    signIn.mockResolvedValue({ signingIn: false });
-
-    renderVerify(PENDING);
-
-    expect(screen.getByRole('button', { name: /Resend in/ })).toHaveProperty('disabled', true);
-
-    act(() => {
-        vi.advanceTimersByTime(60_000);
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Resend code' }));
-
-    expect(signIn).toHaveBeenCalledWith('password', { email: 'alice@example.com', password: 'secret123', flow: 'signIn' });
-});
-```
-
-Run: `npx vitest run src/pages/VerifyEmailPage`
-Expected: FAIL, бо `./VerifyEmailPage` ще немає.
-
-- [ ] **Step 7: `VerifyEmailPage`** (артборди `VerifyEmail`, `MobileVerifyEmail`)
-
-```tsx
-import { useAuthActions } from '@convex-dev/auth/react';
-import { Mail } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { toast } from 'sonner';
-
-import usePendingAuth from '@/auth/usePendingAuth';
-import AuthCardLayout from '@/components/AuthCardLayout';
-import CodeInput from '@/components/CodeInput';
-import FieldError from '@/components/FieldError';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import useFrom from '@/hooks/useFrom';
-import authError from '@/lib/authError';
-import { RESEND_AFTER_SECONDS } from '@convex/authRules';
-
-const clock = (seconds: number) => `${ Math.floor(seconds / 60) }:${ String(seconds % 60).padStart(2, '0') }`;
-
-const VerifyEmailPage: FC = () => {
-    const { signIn } = useAuthActions();
-    const { pending, setPending } = usePendingAuth();
-    const navigate = useNavigate();
-    const from = useFrom();
-    const [ code, setCode ] = useState('');
-    const [ error, setError ] = useState<string | null>(null);
-    const [ isChecking, setIsChecking ] = useState(false);
-    const [ resendAt, setResendAt ] = useState(() => Date.now() + RESEND_AFTER_SECONDS * 1000);
-    const [ now, setNow ] = useState(() => Date.now());
-
-    // Відлік від дедлайну, а не ланцюжок setTimeout: інакше фейкові таймери в тесті зсувають лише одну секунду
-    useEffect(
-        () => {
-            const timer = setInterval(() => {
-                setNow(Date.now());
-            }, 1000);
-
-            return () => {
-                clearInterval(timer);
-            };
-        },
-        []
-    );
-
-    const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
-
-    if (!pending) {
-        return (
-            <AuthCardLayout back={ { to: '/login', label: 'Back' } }>
-                <h1 className="font-display text-3xl font-bold tracking-tight">Your sign-in session expired</h1>
-                <p className="text-muted-foreground">Sign in again and we&apos;ll send you a new code.</p>
-                <Button
-                    asChild
-                    size="lg"
-                >
-                    <Link
-                        to="/login"
-                        state={ { from } }
-                    >
-                        Back to sign in
-                    </Link>
-                </Button>
-            </AuthCardLayout>
-        );
-    }
-
-    const verify = async (value: string) => {
-        setError(null);
-        setIsChecking(true);
-
-        try {
-            await signIn('password', { email: pending.email, code: value, flow: 'email-verification' });
-            setPending(null);
-            navigate(from, { replace: true });
-        } catch (verifyError) {
-            setError(authError(verifyError, 'email-verification'));
-            setCode('');
-        } finally {
-            setIsChecking(false);
-        }
-    };
-
-    const resend = async () => {
-        setResendAt(Date.now() + RESEND_AFTER_SECONDS * 1000);
-        setNow(Date.now());
-
-        try {
-            await signIn('password', { email: pending.email, password: pending.password, flow: 'signIn' });
-            toast.success('New code sent');
-        } catch (resendError) {
-            toast.error(authError(resendError, 'signIn'));
-        }
-    };
-
-    return (
-        <AuthCardLayout back={ { to: '/signup', label: 'Back' } }>
-            <span className="flex size-13 items-center justify-center rounded-xl bg-secondary text-circle">
-                <Mail className="size-6" />
-            </span>
-            <div className="flex flex-col gap-2.5">
-                <h1 className="font-display text-3xl font-bold tracking-tight">Check your email</h1>
-                <p className="leading-relaxed text-muted-foreground">
-                    We sent a 6-digit code to
-                    { ' ' }
-                    <span className="font-medium text-foreground">{ pending.email }</span>
-                    . Enter it to finish creating your account.
-                </p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <Label htmlFor="code">Verification code</Label>
-                <CodeInput
-                    id="code"
-                    value={ code }
-                    invalid={ error !== null }
-                    onChange={ setCode }
-                    onComplete={
-                        value => {
-                            void verify(value);
-                        }
-                    }
-                />
-                <FieldError>{ error }</FieldError>
-            </div>
-            <Button
-                size="lg"
-                disabled={ code.length < 6 || isChecking }
-                onClick={
-                    () => {
-                        void verify(code);
-                    }
-                }
-            >
-                Verify and continue
-            </Button>
-            <Button
-                variant="link"
-                disabled={ secondsLeft > 0 }
-                className="self-center"
-                onClick={
-                    () => {
-                        void resend();
-                    }
-                }
-            >
-                { secondsLeft > 0 ? `Resend in ${ clock(secondsLeft) }` : 'Resend code' }
-            </Button>
-        </AuthCardLayout>
-    );
-};
-
-export default VerifyEmailPage;
-```
-
-Хуки викликаються до раннього `return`: правило `react-hooks/rules-of-hooks` має мовчати. Якщо правило `react-hooks/purity` скаржиться на `Date.now()` в ініціалізаторах `useState`, додай поруч коментар `// eslint-disable-next-line react-hooks/purity` з поясненням: ініціалізатор виконується один раз.
-
-Run: `npx vitest run src/pages/VerifyEmailPage`
-Expected: PASS.
-
-- [ ] **Step 8: Маршрути**
-
-В `App.tsx` поруч із `/login` додай:
+В `App.tsx` поруч із `/login`:
 
 ```tsx
 <Route
     path="/signup"
     element={ <PublicRoute restricted><SignUpPage /></PublicRoute> }
 />
-<Route
-    path="/verify"
-    element={ <PublicRoute restricted><VerifyEmailPage /></PublicRoute> }
-/>
 ```
 
 Run: `npm run lint:fix && npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 9: Ручна перевірка з реальною поштою**
+- [ ] **Step 6: Ручна перевірка**
 
-Перевір повний ланцюжок на пошті власника акаунта Resend: на інші адреси тестовий відправник листів не доставляє.
-1. Вийди з акаунта й відкрий `/game/test-1?mark=circle`, тебе перекине на `/login`.
-2. «Create an account» → ім'я, пошта, пароль → екран коду.
-3. Лист приходить з кодом із 6 цифр, введи його.
-4. Ти в грі `test-1`.
+1. Вийди з акаунта й відкрий `/game/test-1?mark=circle` — тебе перекине на `/login`.
+2. «Create an account» → ім'я, пошта, пароль → ти одразу в грі `test-1`.
+3. Вийди й спробуй зареєструватися на ту саму пошту — «An account with this email already exists. Sign in instead».
+4. Спробуй зареєструватися на пошту свого Google-акаунта — «This email is linked to Google. Continue with Google instead».
+5. Увійди з паролем на `/login` — працює.
 
-Повтори з паролем, але без введення коду: вийди й увійди знову — має знову бути екран коду і новий лист.
+Тестового користувача потім видали в дашборді Convex (dev): `users` і його рядок в `authAccounts`.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add -A
-git commit -m "feat: sign-up with emailed 6-digit verification code
+git commit -m "feat: sign-up with email and password
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
 
 ---
 
-### Task 6: Скидання пароля
+### Task 6: Скидання пароля — відкладено
 
-**Files:**
-- Create: `src/pages/ResetPasswordPage/{ResetPasswordPage.tsx,index.ts,ResetPasswordPage.test.tsx}`
-- Modify: `src/App.tsx`
-
-**Interfaces:**
-- Consumes: `AuthCardLayout`, `CodeInput`, `PasswordInput`, `FieldError`, `authError`, `useFrom`, `MIN_PASSWORD_LENGTH`, `CODE_LENGTH`.
-
-- [ ] **Step 1: Тести (падають)**
-
-Обгортка — як у `VerifyEmailPage.test.tsx`, маршрут `/reset` без `state`, плюс маршрут `/` з `<p>lobby page</p>`.
-
-```tsx
-const requestCode = async (email: string) => {
-    const user = userEvent.setup();
-
-    await user.type(screen.getByLabelText('Email'), email);
-    await user.click(screen.getByRole('button', { name: 'Send reset code' }));
-
-    return user;
-};
-
-test('asks for the code after sending it to the email', async () => {
-    signIn.mockResolvedValue({ signingIn: false });
-
-    renderReset();
-    await requestCode('alice@example.com');
-
-    expect(signIn).toHaveBeenCalledWith('password', { email: 'alice@example.com', flow: 'reset' });
-    expect(await screen.findByText('Set a new password')).toBeTruthy();
-    expect(screen.getByText('alice@example.com')).toBeTruthy();
-});
-
-test('sets the new password with the code and signs in', async () => {
-    signIn.mockResolvedValue({ signingIn: true });
-
-    renderReset();
-
-    const user = await requestCode('alice@example.com');
-
-    await user.type(await screen.findByLabelText('Reset code'), '123456');
-    await user.type(screen.getByLabelText('New password'), 'newsecret1');
-    await user.click(screen.getByRole('button', { name: 'Update password' }));
-
-    expect(signIn).toHaveBeenLastCalledWith('password', {
-        email: 'alice@example.com',
-        code: '123456',
-        newPassword: 'newsecret1',
-        flow: 'reset-verification'
-    });
-    expect(await screen.findByText('lobby page')).toBeTruthy();
-});
-
-test('a short new password is rejected before calling the server', async () => {
-    signIn.mockResolvedValue({ signingIn: false });
-
-    renderReset();
-
-    const user = await requestCode('alice@example.com');
-
-    await user.type(await screen.findByLabelText('Reset code'), '123456');
-    await user.type(screen.getByLabelText('New password'), 'short');
-    await user.click(screen.getByRole('button', { name: 'Update password' }));
-
-    expect(await screen.findByText('Password must be at least 8 characters')).toBeTruthy();
-    expect(signIn).toHaveBeenCalledTimes(1);
-});
-```
-
-Run: `npx vitest run src/pages/ResetPasswordPage`
-Expected: FAIL, бо сторінки ще немає.
-
-- [ ] **Step 2: `ResetPasswordPage`** (артборди `ResetPassword`, `MobileResetPassword`)
-
-Стан: `step: 'email' | 'code'`, `email`. Зверху індикатор кроків:
-- `ol` з двома `li` («Email», «New password»), між ними лінія `h-px flex-1 bg-border`;
-- поточний крок — кружечок `bg-circle text-primary-foreground` і `aria-current="step"`;
-- пройдений — `bg-border` з іконкою `Check`.
-
-**Крок `email`:**
-- заголовок «Forgot your password?», текст «Enter the email you signed up with and we'll send you a reset code.»;
-- поле `Email`, кнопка «Send reset code»;
-- відправка — `signIn('password', { email, flow: 'reset' })`, далі `setStep('code')`; помилка — `authError(error, 'reset')`.
-
-**Крок `code`:**
-- заголовок «Set a new password»;
-- текст «Code sent to {email}.», де пошта в окремому `<span className="font-medium text-foreground">` (тест шукає її як окремий текст), і кнопка-лінк «Change» (`variant="link"`, повертає `step` на `email`);
-- поля `Reset code` (`CodeInput id="reset-code"`, без автовідправки) і `New password` (`PasswordInput`, `autoComplete="new-password"`);
-- кнопка «Update password»;
-- перевірка перед запитом:
-  - якщо `code.length < CODE_LENGTH` → «Enter the 6-digit code»;
-  - якщо пароль коротший за `MIN_PASSWORD_LENGTH` → «Password must be at least 8 characters»;
-- відправка — `signIn('password', { email, code, newPassword, flow: 'reset-verification' })`, далі `navigate(from, { replace: true })`; помилка — `authError(error, 'reset-verification')`.
-
-Лінк «назад» у `AuthCardLayout` — `{ to: '/login', label: 'Back to sign in' }` зі збереженням `from`.
-
-Run: `npx vitest run src/pages/ResetPasswordPage`
-Expected: PASS.
-
-- [ ] **Step 3: Маршрут і ручна перевірка**
-
-В `App.tsx`:
-
-```tsx
-<Route
-    path="/reset"
-    element={ <PublicRoute restricted><ResetPasswordPage /></PublicRoute> }
-/>
-```
-
-`npm run dev`:
-1. «Forgot password?» → пошта → лист з кодом.
-2. Код і новий пароль → ти в лобі.
-3. Вийди й увійди з новим паролем — працює.
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: password reset with emailed code
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
-```
+Задачу перенесено в розділ «Пізніше» разом із підтвердженням пошти. Номер лишено, щоб не зсувати посилання на задачі 7–9. Переходь до задачі 7.
 
 ---
 
@@ -3860,7 +3449,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 9: Прибирання, документація, prod
+### Task 9: Прибирання, документація, перевірка на prod
 
 **Files:**
 - Modify: `src/index.css`, `README.md`, `CLAUDE.md`, `package.json`, `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`
@@ -3887,44 +3476,28 @@ Expected: усе зелене.
 
 - [ ] **Step 3: Документація**
 
-- **`README.md`:** вхід — Google або пошта з паролем. Для локальної розробки потрібен `AUTH_RESEND_KEY` у Convex dev; без власного домену коди приходять лише на пошту власника Resend.
+- **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти).
 - **`CLAUDE.md`:**
   - **Стек:** додай shadcn/ui (`src/components/ui`, правляться як свій код і за тими самими правилами форматування), `lucide-react`, `sonner`, `react-hook-form` + `zod`.
-  - **Розділ «Деплой і секрети»:** `AUTH_RESEND_KEY` (dev і prod), необов'язковий `AUTH_EMAIL_FROM` — адреса відправника після підтвердження домену в Resend.
+  - **Бекенд:** вхід поштою — власний провайдер `convex/emailPassword.ts` (`id: 'password'`); помилки для людини лише як `ConvexError`.
   - **Конвенції:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US; кольори лише через токени в `src/index.css`.
+  - **Поточна робота:** прибери розділ або заміни на «Підтвердження пошти й скидання пароля — розділ «Пізніше» в плані 2026-10-15».
   - **Історія:** «Редизайн і вхід поштою — жовтень 2026, план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`».
 
-- [ ] **Step 4: 👤 Prod**
-
-Власник:
-
-```bash
-npx convex env set AUTH_RESEND_KEY <ключ> --prod
-```
-
-Коли в Resend підтверджено домен (DNS-записи SPF/DKIM у реєстратора), ще одна змінна:
-
-```bash
-npx convex env set AUTH_EMAIL_FROM "tic·tac·toe <noreply@твій-домен>" --prod
-```
-
-Без домену реєстрація поштою на prod працюватиме лише для пошти власника Resend. Вхід через Google — для всіх.
-
-- [ ] **Step 5: Повна ручна перевірка (QA)**
+- [ ] **Step 4: Повна ручна перевірка (QA)**
 
 На `npm run dev` і на 390px, позначай у плані:
 1. **Google-вхід з прямого посилання** `/game/:id` → назад у гру.
-2. **Реєстрація поштою з прямого посилання** → код → назад у гру (Review Focus 3).
-3. **Вхід у непідтверджений акаунт** → новий код (Review Focus 1).
-4. **Перезавантаження на `/verify`** → «Your sign-in session expired» (Review Focus 2).
-5. **Скидання пароля** → вхід з новим паролем.
-6. **Google + пошта з тією самою адресою:** спершу Google, потім реєстрація поштою на ту саму адресу з підтвердженням коду → це той самий користувач (те саме ім'я в меню, та сама гра відкривається з обох входів).
-7. **Лобі:** копіювання ID, вставка з буфера, «Enter the game ID» на порожньому полі.
-8. **Гра у двох вікнах:** хід, виграш, нічия, Clear, New session, подвійний клік по клітинці — один хід.
-9. **Меню десктоп і телефон:** копіювання ID, інвайт (копія на десктопі, меню «Поділитися» на телефоні, скасування без помилки — Review Focus 4), «Back to lobby» і «Sign out» з підтвердженням, логотип у грі з підтвердженням (Review Focus 5).
-10. **Клавіатура:** Tab проходить усі кнопки й поля, Esc закриває меню й діалог виходу, але не діалог очікування.
+2. **Реєстрація поштою з прямого посилання** → одразу назад у гру (Review Focus 3).
+3. **Повторна реєстрація на ту саму пошту** → «An account with this email already exists. Sign in instead» (Review Focus 1).
+4. **Реєстрація на пошту Google-акаунта** → «This email is linked to Google. Continue with Google instead» (Review Focus 2).
+5. **Вхід поштою:** правильний пароль працює, неправильний — «Wrong email or password».
+6. **Лобі:** копіювання ID, вставка з буфера, «Enter the game ID» на порожньому полі.
+7. **Гра у двох вікнах:** хід, виграш, нічия, Clear, New session, подвійний клік по клітинці — один хід.
+8. **Меню десктоп і телефон:** копіювання ID, інвайт (копія на десктопі, меню «Поділитися» на телефоні, скасування без помилки — Review Focus 4), «Back to lobby» і «Sign out» з підтвердженням, логотип у грі з підтвердженням (Review Focus 5).
+9. **Клавіатура:** Tab проходить усі кнопки й поля, Esc закриває меню й діалог виходу, але не діалог очікування.
 
-- [ ] **Step 6: Commit і передача власнику**
+- [ ] **Step 5: Commit і передача власнику**
 
 ```bash
 git add -A
@@ -3933,4 +3506,39 @@ git commit -m "chore: drop legacy styles, document email sign-in and the redesig
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
 
-Відміть усі кроки плану як виконані й скажи власнику, що гілку можна пушити: Netlify після мерджу в `main` сам розгорне Convex prod і фронт.
+Відміть усі кроки плану як виконані й скажи власнику, що гілку можна пушити: Netlify після мерджу в `main` сам розгорне Convex prod і фронт. Нових змінних середовища на prod не потрібно.
+
+- [ ] **Step 6: 👤 Перевірка на prod після деплою**
+
+Власник на https://bogkas-tic-tac-toe.netlify.app:
+1. Реєструється поштою, виходить.
+2. Пробує зареєструватися на ту саму пошту ще раз. Має бути «An account with this email already exists. Sign in instead», а не «Could not create the account. Try again». Друге означає, що `ConvexError` з провайдера до клієнта не дійшов, і це треба розібрати.
+3. Видаляє тестового користувача в дашборді Convex (Production): `users` і рядок в `authAccounts`.
+
+---
+
+## Пізніше: підтвердження пошти й скидання пароля
+
+Екрани вже є на канвасі: `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword`. Повні кроки з кодом і тестами — у першій версії цього плану:
+
+```bash
+git show 5a16c71:docs/superpowers/plans/2026-10-15-redesign-email-auth.md
+```
+
+Там задача 2 (Resend і `convex/otp.ts`), задача 5 (екран коду) і задача 6 (скидання пароля). Що врахувати при поверненні:
+
+1. **👤 Resend.**
+   - Акаунт і ключ `AUTH_RESEND_KEY` у Convex dev і prod.
+   - Для листів усім гравцям — підтверджений домен і `AUTH_EMAIL_FROM`.
+2. **Бекенд.**
+   - `convex/otp.ts` з першої версії: `generateCode`, `sendCodeEmail`, `ResendOTP`, `ResendOTPPasswordReset`. Код із 6 цифр, діє 15 хв.
+   - У `EmailPassword` для непідтвердженої пошти викликати `signInViaProvider(ctx, ResendOTP, { accountId, params })` — так робить штатний `Password` (`node_modules/@convex-dev/auth/dist/providers/Password.js`, гілки `email-verification`, `reset`, `reset-verification`).
+   - Перевірку зайнятої пошти зберегти. З перевіркою пошти Convex Auth з'єднує акаунти з однаковою підтвердженою адресою, тож гілку `google` у `takenEmailMessage` варто переглянути.
+   - Наявні акаунти без підтвердженої пошти при наступному вході отримають код — міграція не потрібна.
+3. **Фронт.**
+   - Екран коду (`input-otp`), пам'ять незавершеного входу для «Resend code», екран скидання пароля, лінк «Forgot password?».
+   - Гілка `signingIn: false` у `SignInPage` / `SignUpPage` → `/verify`.
+4. **Review Focus з першої версії:**
+   - вхід у непідтверджений акаунт веде на код;
+   - перезавантаження на `/verify` пояснює, що сесія минула;
+   - `from` переживає `/signup → /verify`.
