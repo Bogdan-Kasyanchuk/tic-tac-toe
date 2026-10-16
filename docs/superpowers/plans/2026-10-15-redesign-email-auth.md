@@ -1921,13 +1921,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `authError(error: unknown, flow: AuthFlow): string`;
   - `<AuthSplitLayout hero headline lead footnote>`, `<GoogleButton label />`, `<PasswordInput … />`, `<FieldError>`, `<OrDivider />`.
 
-- [ ] **Step 1: Залежності форм**
+- [x] **Step 1: Залежності форм**
 
 ```bash
 npm i react-hook-form zod @hookform/resolvers
 ```
 
-- [ ] **Step 2: Тест текстів помилок (падає)**
+- [x] **Step 2: Тест текстів помилок (падає)**
 
 `src/lib/authError.test.ts`:
 
@@ -1954,7 +1954,7 @@ test('any other error gets the fallback of its flow', () => {
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 3: Реалізуй `src/lib/authError.ts`**
+- [x] **Step 3: Реалізуй `src/lib/authError.ts`**
 
 ```ts
 import { ConvexError } from 'convex/values';
@@ -1981,7 +1981,7 @@ export default authError;
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Спільні компоненти сторінок входу**
+- [x] **Step 4: Спільні компоненти сторінок входу**
 
 - **`FieldError`:** `<p role="alert" className="flex items-center gap-1.5 text-sm text-danger"><CircleAlert className="size-3.5" />{ children }</p>`, рендерить `null` без `children`.
 - **`OrDivider`:** рядок `flex items-center gap-3 text-sm text-subtle` — лінія `h-px flex-1 bg-border`, текст «or with email», ще одна лінія.
@@ -2064,7 +2064,7 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
 );
 ```
 
-- [ ] **Step 5: Тест сторінки входу (падає)**
+- [x] **Step 5: Тест сторінки входу (падає)**
 
 `src/pages/SignInPage/SignInPage.test.tsx`:
 
@@ -2152,7 +2152,7 @@ test('Google sign-in redirects back to the original page', async () => {
 Run: `npx vitest run src/pages/SignInPage`
 Expected: FAIL, бо `./SignInPage` ще немає.
 
-- [ ] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
+- [x] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2269,7 +2269,7 @@ export default SignInPage;
 Run: `npx vitest run src/pages/SignInPage`
 Expected: PASS.
 
-- [ ] **Step 7: Маршрут і старий тест `PrivateRoute`**
+- [x] **Step 7: Маршрут і старий тест `PrivateRoute`**
 
 - В `App.tsx`: `/login` тепер рендерить `<SignInPage />`.
 - Видали `src/pages/LoginPage`.
@@ -2281,7 +2281,7 @@ Expected: PASS.
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
 
 На `npm run dev`, без входу:
 - `/login` на 1280px і 390px — знімки звір з `docs/design/Main.dc.html` і `docs/design/MobileSignIn.dc.html`. «Forgot password?» немає, це очікувано.
@@ -2289,7 +2289,7 @@ Expected: PASS.
 
 Неправильний пароль для справжнього акаунта перевіриться в задачі 5, коли з'явиться реєстрація.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add -A

@@ -112,3 +112,6 @@ dist
 
 # Superpowers plan workspace
 .superpowers
+
+# Playwright MCP
+.playwright-mcp

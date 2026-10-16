@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, expect, test, vi } from 'vitest';
 
-import LoginPage from '@/pages/LoginPage';
+import SignInPage from '@/pages/SignInPage';
 
 import PrivateRoute from './PrivateRoute';
 
@@ -34,13 +34,13 @@ test('sends the original game link, query included, as the sign-in redirect', ()
                 />
                 <Route
                     path="/login"
-                    element={ <LoginPage /> }
+                    element={ <SignInPage /> }
                 />
             </Routes>
         </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Login with google' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continue with Google' }));
 
     expect(signIn).toHaveBeenCalledWith('google', { redirectTo: '/game/g1?mark=circle' });
 });

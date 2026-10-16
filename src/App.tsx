@@ -7,7 +7,7 @@ import Spinner from '@/components/Spinner';
 import { Toaster } from '@/components/ui/sonner';
 import GamePage from '@/pages/GamePage';
 import HomePage from '@/pages/HomePage';
-import LoginPage from '@/pages/LoginPage';
+import SignInPage from '@/pages/SignInPage';
 import PrivateRoute from '@/routes/PrivateRoute';
 import PublicRoute from '@/routes/PublicRoute';
 
@@ -23,7 +23,7 @@ const App: FC = () => {
                     <Routes>
                         <Route
                             path="/login"
-                            element={ <PublicRoute restricted><LoginPage /></PublicRoute> }
+                            element={ <PublicRoute restricted><SignInPage /></PublicRoute> }
                         />
                         <Route element={ <PrivateRoute><AppLayout /></PrivateRoute> }>
                             <Route
