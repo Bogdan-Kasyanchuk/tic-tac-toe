@@ -18,12 +18,15 @@ import useFrom from '@/hooks/useFrom';
 import authError from '@/lib/authError';
 import cn from '@/lib/cn';
 import passwordStrength from '@/lib/passwordStrength';
-import { MIN_PASSWORD_LENGTH } from '@convex/authRules';
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@convex/authRules';
 
 const schema = z.object({
     name: z.string().trim().min(1, { error: 'Enter your name' }).max(40, { error: 'Keep it under 40 characters' }),
     email: z.string().trim().toLowerCase().pipe(z.email({ error: 'Enter a valid email' })),
-    password: z.string().min(MIN_PASSWORD_LENGTH, { error: `Password must be at least ${ MIN_PASSWORD_LENGTH } characters` })
+    password: z
+        .string()
+        .min(MIN_PASSWORD_LENGTH, { error: `Password must be at least ${ MIN_PASSWORD_LENGTH } characters` })
+        .max(MAX_PASSWORD_LENGTH, { error: `Password must be at most ${ MAX_PASSWORD_LENGTH } characters` })
 });
 
 type Values = z.infer<typeof schema>;

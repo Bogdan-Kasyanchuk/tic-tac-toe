@@ -1,5 +1,6 @@
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type FunctionReference, getFunctionName } from 'convex/server';
 import { ConvexError } from 'convex/values';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -11,10 +12,17 @@ import AppHeader from './AppHeader';
 
 const leave = vi.fn();
 const signOut = vi.fn();
+let myMark: 'circle' | 'cross' = 'circle';
 
 vi.mock('convex/react', () => ({
     useMutation: () => leave,
-    useQuery: () => ({ name: 'Alice Smith', email: 'alice@example.com', avatar: '' })
+    useQuery: (ref: FunctionReference<'query'>, args: unknown) => {
+        if (getFunctionName(ref) === 'games:get') {
+            return args === 'skip' ? undefined : { me: myMark };
+        }
+
+        return { name: 'Alice Smith', email: 'alice@example.com', avatar: '' };
+    }
 }));
 
 vi.mock('@convex-dev/auth/react', () => ({
@@ -39,6 +47,7 @@ const renderAt = (path: string) => render(
 
 afterEach(() => {
     cleanup();
+    myMark = 'circle';
     leave.mockReset();
     signOut.mockReset();
 });
@@ -115,4 +124,26 @@ test('the phone menu offers to share the invite link', async () => {
     expect(await screen.findByRole('button', { name: /Share invite link/ })).toBeTruthy();
     expect(screen.getByText('g1')).toBeTruthy();
     expect(screen.getByText('Alice Smith')).toBeTruthy();
+});
+
+// Канвас GameOpponent: у грі аватар у шапці має колір позначки гравця, як і його картка
+test('in a game the header avatar takes the colour of my mark', () => {
+    mockViewport(true);
+    myMark = 'cross';
+
+    renderAt('/game/g1');
+
+    const trigger = screen.getByRole('button', { name: /Alice Smith/ });
+
+    expect(within(trigger).getByText('AS').className).toContain('bg-cross-soft');
+});
+
+test('in the lobby the header avatar keeps the neutral colour', () => {
+    mockViewport(true);
+
+    renderAt('/');
+
+    const trigger = screen.getByRole('button', { name: /Alice Smith/ });
+
+    expect(within(trigger).getByText('AS').className).toContain('bg-border');
 });

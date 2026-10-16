@@ -7,10 +7,12 @@ import { copyText } from '@/lib/invite';
 type CopyButtonProps = {
     text: string,
     label: string,
-    success: string
+    success: string,
+    // Видимий підпис поруч з іконкою (діалог очікування на десктопі); без нього кнопка квадратна
+    caption?: string
 };
 
-const CopyButton: FC<CopyButtonProps> = ({ text, label, success }) => {
+const CopyButton: FC<CopyButtonProps> = ({ text, label, success, caption }) => {
     const [ copied, setCopied ] = useState(false);
 
     useEffect(
@@ -33,8 +35,9 @@ const CopyButton: FC<CopyButtonProps> = ({ text, label, success }) => {
     return (
         <Button
             variant="secondary"
-            size="icon"
+            size={ caption ? 'default' : 'icon' }
             aria-label={ label }
+            className={ caption ? 'h-12 px-4 text-sm' : undefined }
             onClick={
                 async () => {
                     await copyText(text, success);
@@ -43,6 +46,7 @@ const CopyButton: FC<CopyButtonProps> = ({ text, label, success }) => {
             }
         >
             { copied ? <Check /> : <Copy /> }
+            { caption }
         </Button>
     );
 };

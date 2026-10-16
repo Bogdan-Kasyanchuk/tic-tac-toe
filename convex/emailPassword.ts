@@ -5,7 +5,9 @@ import { Scrypt } from 'lucia';
 
 import { internal } from './_generated/api';
 import type { DataModel } from './_generated/dataModel';
-import { TOO_MANY_ATTEMPTS, WRONG_CREDENTIALS, normalizeEmail, takenEmailMessage, validatePassword } from './authRules';
+import {
+    MAX_PASSWORD_LENGTH, TOO_MANY_ATTEMPTS, WRONG_CREDENTIALS, normalizeEmail, signUpError, takenEmailMessage, validatePassword
+} from './authRules';
 
 const scrypt = new Scrypt();
 
@@ -31,12 +33,19 @@ export const EmailPassword = ConvexCredentials<DataModel>({
                 provider: 'password',
                 account: { id: email, secret: password },
                 profile: { email, ...(name ? { name } : {}) }
+            }).catch((error: unknown) => {
+                throw signUpError(error);
             });
 
             return { userId: user._id };
         }
 
         if (params.flow === 'signIn') {
+            // Задовгий пароль не міг бути зареєстрований: відповідаємо як на неправильний, не хешуючи його
+            if (password.length > MAX_PASSWORD_LENGTH) {
+                throw new ConvexError(WRONG_CREDENTIALS);
+            }
+
             // retrieveAccount кидає звичайні Error (InvalidAccountId, InvalidSecret, TooManyFailedAttempts) — на prod їх не видно
             const retrieved = await retrieveAccount(ctx, {
                 provider: 'password',

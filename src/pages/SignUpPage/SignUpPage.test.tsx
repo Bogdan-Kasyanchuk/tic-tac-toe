@@ -4,7 +4,7 @@ import { ConvexError } from 'convex/values';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, expect, test, vi } from 'vitest';
 
-import { EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN } from '@convex/authRules';
+import { EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN, MAX_PASSWORD_LENGTH } from '@convex/authRules';
 
 import SignUpPage from './SignUpPage';
 
@@ -48,6 +48,14 @@ test('a short password is rejected before calling the server', async () => {
     await fill('Alice Smith', 'alice@example.com', 'short');
 
     expect(await screen.findByText('Password must be at least 8 characters')).toBeTruthy();
+    expect(signIn).not.toHaveBeenCalled();
+});
+
+test('a too long password is rejected before calling the server', async () => {
+    renderSignUp();
+    await fill('Alice Smith', 'alice@example.com', 'a'.repeat(MAX_PASSWORD_LENGTH + 1));
+
+    expect(await screen.findByText(`Password must be at most ${ MAX_PASSWORD_LENGTH } characters`)).toBeTruthy();
     expect(signIn).not.toHaveBeenCalled();
 });
 

@@ -168,3 +168,27 @@ test('alone in the game, the desktop dialog offers the ID and the invite link', 
     expect(within(dialog).getByRole('button', { name: /Copy invite link/ })).toBeTruthy();
     expect(within(dialog).getByRole('button', { name: 'Cancel and leave' })).toBeTruthy();
 });
+
+// Артборд Waiting: на десктопі кнопка копіювання з підписом, на телефоні (MobileWaiting) — лише іконка
+test('the desktop waiting dialog labels the copy button', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(within(dialog).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('Copy');
+});
+
+test('the phone waiting sheet keeps the copy button icon-only', async () => {
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const sheet = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(within(sheet).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('');
+});

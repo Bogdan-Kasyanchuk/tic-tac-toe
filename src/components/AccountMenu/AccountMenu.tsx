@@ -10,13 +10,16 @@ import UserAvatar from '@/components/UserAvatar';
 import type { LeaveIntent } from '@/hooks/useLeaveGame';
 import { copyText, inviteLink } from '@/lib/invite';
 import { api } from '@convex/_generated/api';
+import type { Mark } from '@convex/rules';
 
 type AccountMenuProps = {
     gameCode: string | null,
+    // Колір аватара: у грі — позначка гравця, у лобі — нейтральний
+    tone: Mark,
     onRequest: (intent: LeaveIntent) => void
 };
 
-const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
+const AccountMenu: FC<AccountMenuProps> = ({ gameCode, tone, onRequest }) => {
     const me = useQuery(api.users.me);
     const name = me?.name ?? '';
 
@@ -30,6 +33,7 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
                     <UserAvatar
                         name={ name }
                         avatar={ me?.avatar ?? '' }
+                        tone={ tone }
                         size="sm"
                     />
                     { name }
@@ -44,6 +48,7 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, onRequest }) => {
                     <UserAvatar
                         name={ name }
                         avatar={ me?.avatar ?? '' }
+                        tone={ tone }
                         size="md"
                     />
                     <span className="flex min-w-0 flex-col gap-1">

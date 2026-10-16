@@ -9,15 +9,18 @@ import UserAvatar from '@/components/UserAvatar';
 import type { LeaveIntent } from '@/hooks/useLeaveGame';
 import { shareInvite } from '@/lib/invite';
 import { api } from '@convex/_generated/api';
+import type { Mark } from '@convex/rules';
 
 type MobileMenuProps = {
     gameCode: string | null,
+    // Колір аватара: у грі — позначка гравця, у лобі — нейтральний
+    tone: Mark,
     onRequest: (intent: LeaveIntent) => void
 };
 
 const ITEM = 'h-13 w-full justify-start gap-3.5 rounded-xl px-3 text-base text-foreground [&_svg:not([class*=size-])]:size-5';
 
-const MobileMenu: FC<MobileMenuProps> = ({ gameCode, onRequest }) => {
+const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
     const me = useQuery(api.users.me);
     const [ open, setOpen ] = useState(false);
     const name = me?.name ?? '';
@@ -65,6 +68,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, onRequest }) => {
                     <UserAvatar
                         name={ name }
                         avatar={ me?.avatar ?? '' }
+                        tone={ tone }
                         size="lg"
                     />
                     <span className="flex min-w-0 flex-col gap-1">

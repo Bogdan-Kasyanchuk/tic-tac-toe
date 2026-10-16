@@ -1,3 +1,4 @@
+import { useQuery } from 'convex/react';
 import { type FC, useState } from 'react';
 import { Link, useMatch } from 'react-router';
 
@@ -8,10 +9,13 @@ import MobileMenu from '@/components/MobileMenu';
 import useLeaveGame, { type LeaveIntent } from '@/hooks/useLeaveGame';
 import useMediaQuery, { DESKTOP } from '@/hooks/useMediaQuery';
 import cn from '@/lib/cn';
+import { api } from '@convex/_generated/api';
 
 const AppHeader: FC = () => {
     const gameCode = useMatch('/game/:gameId')?.params.gameId ?? null;
     const isDesktop = useMediaQuery(DESKTOP);
+    // Та сама підписка, що й на сторінці гри, тож Convex не робить другого запиту
+    const tone = useQuery(api.games.get, gameCode ? { code: gameCode } : 'skip')?.me ?? 'circle';
     const leaveGame = useLeaveGame(gameCode);
     const [ confirm, setConfirm ] = useState<LeaveIntent | null>(null);
 
@@ -54,12 +58,14 @@ const AppHeader: FC = () => {
                     ? (
                         <AccountMenu
                             gameCode={ gameCode }
+                            tone={ tone }
                             onRequest={ onRequest }
                         />
                     )
                     : (
                         <MobileMenu
                             gameCode={ gameCode }
+                            tone={ tone }
                             onRequest={ onRequest }
                         />
                     ) }

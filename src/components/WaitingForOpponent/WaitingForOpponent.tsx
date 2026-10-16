@@ -33,6 +33,7 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
                     text={ code }
                     label="Copy game ID"
                     success="Game ID copied"
+                    caption={ isDesktop ? 'Copy' : undefined }
                 />
             </div>
             <div className="flex flex-col gap-2.5">
