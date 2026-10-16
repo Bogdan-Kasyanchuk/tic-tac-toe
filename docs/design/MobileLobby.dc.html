@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lobby on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&amp;family=Geist:wght@400..600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D0F1F}
+*{box-sizing:border-box}
+a{color:#A9BCFF;text-decoration:none}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; display: flex; flex-direction: column; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 48px 20px 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700">tic·tac·toe</span>
+</div>
+<button type="button" aria-label="Open menu" aria-haspopup="menu" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 22px; border: 1px solid #2B3060; background: #151830; color: #EDEFFF">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+</button>
+</header>
+<main style="flex: 1; display: flex; flex-direction: column; gap: 22px; padding: 20px 20px 36px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em">Ready for a round, Alex?</h1>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A3A8CF">Start a new game, or join a friend with their ID.</p>
+</div>
+<div role="group" aria-label="Game type" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: #10132A; border: 1px solid #22264D">
+<button type="button" aria-pressed="true" style="height: 44px; border: 0; border-radius: 9px; background: #2B3060; color: #EDEFFF; font: 600 15px 'Geist', sans-serif">New game</button>
+<a href="MobileLobbyJoin.dc.html" style="height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 9px; color: #A3A8CF; font-size: 15px; font-weight: 600">Join a game</a>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0">
+<legend style="padding: 0; margin-bottom: 10px; font-size: 14px; font-weight: 500; color: #D6D9F5">Play as</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button type="button" aria-pressed="true" style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; border-radius: 14px; border: 2px solid #6C8CFF; background: rgba(108,140,255,0.12); color: #EDEFFF; text-align: left; font-family: 'Geist', sans-serif">
+<svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32" fill="none" stroke="#6C8CFF" stroke-width="13"></circle></svg>
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">Circle</span><span style="font-size: 13px; color: #A3A8CF">Moves first</span></span>
+</button>
+<button type="button" aria-pressed="false" style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; border-radius: 14px; border: 2px solid #2B3060; background: #10132A; color: #EDEFFF; text-align: left; font-family: 'Geist', sans-serif">
+<svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 24 76 76M76 24 24 76" stroke="#FFA24C" stroke-width="13" stroke-linecap="round"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">Cross</span><span style="font-size: 13px; color: #A3A8CF">Moves second</span></span>
+</button>
+</div>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 500; color: #D6D9F5">Game ID</span>
+<div style="display: flex; gap: 8px">
+<p style="flex: 1; min-width: 0; margin: 0; height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; border: 1px dashed #2B3060; background: #10132A; font: 500 14px 'Geist Mono', monospace; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">V1StGXR8_Z5jdHi6B-myT</p>
+<button type="button" aria-label="Generate a new game ID" style="width: 48px; height: 48px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #A3A8CF">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"></path><path d="M3 21v-5h5"></path></svg>
+</button>
+<button type="button" aria-label="Copy game ID" style="width: 48px; height: 48px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #A3A8CF">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+</button>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 1.45; color: #A3A8CF">Generated for you. Your friend joins with this ID.</p>
+</div>
+<a href="MobileWaiting.dc.html" style="margin-top: auto; height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; background: #EDEFFF; color: #0D0F1F; font-size: 16px; font-weight: 600">
+Create game
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

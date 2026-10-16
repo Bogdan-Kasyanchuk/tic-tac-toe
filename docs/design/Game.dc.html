@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&amp;family=Geist:wght@400..600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D0F1F}
+*{box-sizing:border-box}
+a{color:#A9BCFF;text-decoration:none}a:hover{color:#D3DDFF;text-decoration:underline}
+button:focus-visible,a:focus-visible{outline:2px solid #6C8CFF;outline-offset:2px}
+.btn-secondary:hover{background:#262B55 !important}
+.btn-ghost:hover{background:#1D2142 !important;color:#EDEFFF !important;text-decoration:none !important}
+.menu-item:hover{background:#262B55 !important;text-decoration:none !important}
+.icon-btn:hover{background:#262B55 !important;color:#EDEFFF !important}
+.cell{transition:background .15s ease,border-color .15s ease}
+.cell:not(:disabled):hover{background:#1D2142 !important;border-color:#2B3060 !important}
+</style>
+</helmet>
+<div style="min-height: 860px; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
+<header style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1D2142">
+<a href="Lobby.dc.html" aria-label="tic·tac·toe home" style="display: flex; align-items: center; gap: 10px; color: #EDEFFF">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em">tic·tac·toe</span>
+</a>
+<div style="position: relative">
+<button type="button" aria-haspopup="menu" aria-expanded="{{menuOpen}}" onClick="{{toggleMenu}}" class="btn-ghost" style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px 0 6px; border-radius: 22px; border: 1px solid #2B3060; background: #151830; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 12px; font-weight: 600">AK</span>
+Alex Kim
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A8CF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" aria-label="Account and game" style="position: absolute; right: 0; top: 52px; z-index: 20; width: 300px; display: flex; flex-direction: column; padding: 6px; border-radius: 14px; background: #1D2142; border: 1px solid #2B3060; box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45)">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 13px; font-weight: 600">AK</span>
+<span style="min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 600">Alex Kim</span><span style="font-size: 13px; color: #A3A8CF">alex@example.com</span></span>
+</div>
+<span style="height: 1px; margin: 4px 0; background: #2B3060"></span>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 10px 10px">
+<span style="font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A8CF">Game ID</span>
+<div style="display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 2px 0 12px; border-radius: 10px; background: #10132A; border: 1px solid #2B3060">
+<span style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 500 14px 'Geist Mono', monospace">V1StGXR8_Z5jdHi6B-myT</span>
+<button type="button" class="icon-btn" aria-label="Copy game ID" style="width: 40px; height: 40px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: #1D2142; color: #A3A8CF; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+</div>
+</div>
+<button type="button" role="menuitem" class="menu-item" style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #EDEFFF; font: 400 14px 'Geist', sans-serif; text-align: left; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"></path></svg>
+Copy invite link
+</button>
+<span style="height: 1px; margin: 4px 0; background: #2B3060"></span>
+<a href="Lobby.dc.html" role="menuitem" class="menu-item" style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border-radius: 8px; color: #EDEFFF; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+Back to lobby
+</a>
+<a href="Main.dc.html" role="menuitem" class="menu-item" style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border-radius: 8px; color: #FF9B9B; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+Sign out
+</a>
+</div>
+</sc-if>
+</div>
+</header>
+<main style="max-width: 1120px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; align-items: flex-start">
+<section aria-label="Board" style="flex: 1 1 460px; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 20px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 64px">
+<p role="status" style="margin: 0; height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-radius: 20px; background: #151830; border: 1px solid #22264D; font-size: 15px; font-weight: 500">
+<span style="width: 10px; height: 10px; border-radius: 5px; background: {{statusDot}}"></span>
+{{statusText}}
+</p>
+<sc-if value="{{hasResult}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 13px; color: #A3A8CF">Next round starts in a moment</p>
+</sc-if>
+</div>
+<div style="width: 100%; max-width: 480px; aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{cells}}" as="cell" hint-placeholder-count="9">
+<button type="button" class="cell" aria-label="{{cell.label}}" disabled="{{cell.disabled}}" onClick="{{cell.pick}}" style="display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 16px; border: 2px solid {{cell.border}}; background: {{cell.bg}}; cursor: {{cell.cursor}}">
+<sc-if value="{{cell.isO}}" hint-placeholder-val="{{ false }}">
+<svg width="58%" height="58%" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="none" stroke="#6C8CFF" stroke-width="12"></circle></svg>
+</sc-if>
+<sc-if value="{{cell.isX}}" hint-placeholder-val="{{ false }}">
+<svg width="58%" height="58%" viewBox="0 0 100 100" aria-hidden="true"><path d="M18 18 82 82M82 18 18 82" stroke="#FFA24C" stroke-width="12" stroke-linecap="round"></path></svg>
+</sc-if>
+</button>
+</sc-for>
+</div>
+</section>
+<aside aria-label="Players" style="flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0 0 4px; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A8CF">Session score</h2>
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; background: #151830; border: 2px solid {{oBorder}}">
+<span style="position: relative; width: 44px; height: 44px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 14px; font-weight: 600">AK</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600">Alex Kim <span style="padding: 2px 8px; border-radius: 6px; background: #1D2142; font-size: 11px; font-weight: 600; color: #A3A8CF">YOU</span></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #A3A8CF">
+<svg width="14" height="14" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="none" stroke="#6C8CFF" stroke-width="16"></circle></svg>
+Circle
+<sc-if value="{{oActive}}" hint-placeholder-val="{{ true }}"><span style="color: #A9BCFF">· your move</span></sc-if>
+</span>
+</span>
+<span aria-label="Score" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 700">{{oScore}}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; background: #151830; border: 2px solid {{xBorder}}">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: #3A2E2A; font-size: 14px; font-weight: 600">SM</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 16px; font-weight: 600">Sam Moreno</span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #A3A8CF">
+<svg width="14" height="14" viewBox="0 0 100 100" aria-hidden="true"><path d="M18 18 82 82M82 18 18 82" stroke="#FFA24C" stroke-width="16" stroke-linecap="round"></path></svg>
+Cross
+<sc-if value="{{xActive}}" hint-placeholder-val="{{ false }}"><span style="color: #FFC48C">· thinking…</span></sc-if>
+</span>
+</span>
+<span aria-label="Score" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; font-weight: 700">{{xScore}}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px">
+<button type="button" class="btn-secondary" onClick="{{clearBoard}}" style="height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+Clear board
+</button>
+<button type="button" class="btn-secondary" onClick="{{newSession}}" style="height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+New session
+</button>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #A3A8CF">Clear board keeps the score. New session resets it to 0 : 0.</p>
+</aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+const LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+const COLORS = { o: '#6C8CFF', x: '#FFA24C' };
+const TINTS = { o: 'rgba(108,140,255,0.16)', x: 'rgba(255,162,76,0.16)' };
+const MARK_NAMES = { o: 'circle', x: 'cross' };
+
+class Component extends DCLogic {
+state = { board: ['x', '', 'o', '', 'o', '', '', 'x', ''], turn: 'o', scores: { o: 2, x: 1 }, result: null, menuOpen: false };
+
+componentWillUnmount() {
+clearTimeout(this.timer);
+}
+
+reset(scores) {
+clearTimeout(this.timer);
+this.setState({ board: ['', '', '', '', '', '', '', '', ''], turn: 'o', result: null, scores: scores || this.state.scores });
+}
+
+play(index) {
+const { board, turn, result, scores } = this.state;
+if (result || board[index]) {
+return;
+}
+const next = board.slice();
+next[index] = turn;
+const line = LINES.find((l) => l.every((i) => next[i] === turn));
+if (line) {
+this.setState({ board: next, result: { kind: 'win', mark: turn, line }, scores: { ...scores, [turn]: scores[turn] + 1 } });
+this.timer = setTimeout(() => { this.reset(); }, 1800);
+return;
+}
+if (next.every(Boolean)) {
+this.setState({ board: next, result: { kind: 'draw' } });
+this.timer = setTimeout(() => { this.reset(); }, 1800);
+return;
+}
+this.setState({ board: next, turn: turn === 'o' ? 'x' : 'o' });
+}
+
+renderVals() {
+const { board, turn, result, scores } = this.state;
+const winMark = result && result.kind === 'win' ? result.mark : null;
+const winLine = winMark ? result.line : [];
+const cells = board.map((value, i) => {
+const inWin = winLine.indexOf(i) !== -1;
+return {
+isO: value === 'o',
+isX: value === 'x',
+label: 'Row ' + (Math.floor(i / 3) + 1) + ', column ' + ((i % 3) + 1) + ': ' + (value ? MARK_NAMES[value] : 'empty'),
+disabled: Boolean(value) || Boolean(result),
+bg: inWin ? TINTS[winMark] : '#151830',
+border: inWin ? COLORS[winMark] : '#22264D',
+cursor: value || result ? 'default' : 'pointer',
+pick: () => { this.play(i); }
+};
+});
+let statusText = turn === 'o' ? 'Your turn' : 'Sam’s turn';
+if (winMark) {
+statusText = winMark === 'o' ? 'You take the round' : 'Sam takes the round';
+} else if (result) {
+statusText = 'Draw. Nobody takes this one';
+}
+const oActive = !result && turn === 'o';
+const xActive = !result && turn === 'x';
+return {
+menuOpen: this.state.menuOpen,
+toggleMenu: () => { this.setState({ menuOpen: !this.state.menuOpen }); },
+cells,
+statusText,
+statusDot: winMark ? COLORS[winMark] : (result ? '#A3A8CF' : COLORS[turn]),
+hasResult: Boolean(result),
+oActive,
+xActive,
+oBorder: oActive || winMark === 'o' ? '#6C8CFF' : '#22264D',
+xBorder: xActive || winMark === 'x' ? '#FFA24C' : '#22264D',
+oScore: scores.o,
+xScore: scores.x,
+clearBoard: () => { this.reset(); },
+newSession: () => { this.reset({ o: 0, x: 0 }); }
+};
+}
+}
+</script>
+</body>
+</html>

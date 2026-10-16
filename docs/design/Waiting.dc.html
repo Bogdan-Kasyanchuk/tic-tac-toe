@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Waiting for opponent</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&amp;family=Geist:wght@400..600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D0F1F}
+*{box-sizing:border-box}
+a{color:#A9BCFF;text-decoration:none}a:hover{color:#D3DDFF;text-decoration:underline}
+button:focus-visible,a:focus-visible{outline:2px solid #6C8CFF;outline-offset:2px}
+.btn-secondary:hover{background:#262B55 !important;text-decoration:none !important}
+.btn-ghost:hover{background:#1D2142 !important;color:#EDEFFF !important;text-decoration:none !important}
+@keyframes wait-dot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.wait-dot{animation:wait-dot 1.4s ease-in-out infinite}
+.wait-dot:nth-child(2){animation-delay:.2s}
+.wait-dot:nth-child(3){animation-delay:.4s}
+@media (prefers-reduced-motion: reduce){.wait-dot{animation:none;opacity:.7}}
+</style>
+</helmet>
+<div style="position: relative; min-height: 860px; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
+<header style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1D2142">
+<a href="Lobby.dc.html" aria-label="tic·tac·toe home" style="display: flex; align-items: center; gap: 10px; color: #EDEFFF">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em">tic·tac·toe</span>
+</a>
+<button type="button" aria-haspopup="menu" aria-expanded="false" class="btn-ghost" style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px 0 6px; border-radius: 22px; border: 1px solid #2B3060; background: #151830; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 12px; font-weight: 600">AK</span>
+Alex Kim
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A8CF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+</header>
+<main aria-hidden="true" style="max-width: 1120px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; align-items: flex-start; opacity: 0.35">
+<section style="flex: 1 1 460px; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 20px">
+<p style="margin: 0; height: 36px; display: flex; align-items: center; padding: 0 16px; border-radius: 18px; background: #151830; font-size: 14px; color: #A3A8CF">Waiting for a second player</p>
+<div style="width: 100%; max-width: 480px; aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+<span style="border-radius: 16px; background: #151830; border: 1px solid #22264D"></span>
+</div>
+</section>
+<aside style="flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; background: #151830; border: 2px solid #6C8CFF">
+<span style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 14px; font-weight: 600">AK</span>
+<span style="flex: 1; font-size: 16px; font-weight: 600">Alex Kim</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700">0</span>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; border: 2px dashed #2B3060">
+<span style="width: 44px; height: 44px; border-radius: 22px; border: 2px dashed #2B3060"></span>
+<span style="flex: 1; font-size: 16px; color: #A3A8CF">Open seat</span>
+</div>
+</aside>
+</main>
+<div style="position: absolute; inset: 73px 0 0 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(8, 9, 22, 0.72)">
+<div role="dialog" aria-modal="true" aria-labelledby="wait-title" aria-describedby="wait-text" style="width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 24px; padding: 32px; border-radius: 22px; background: #151830; border: 1px solid #2B3060; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45)">
+<div aria-hidden="true" style="display: flex; gap: 8px">
+<span class="wait-dot" style="width: 12px; height: 12px; border-radius: 6px; background: #6C8CFF"></span>
+<span class="wait-dot" style="width: 12px; height: 12px; border-radius: 6px; background: #6C8CFF"></span>
+<span class="wait-dot" style="width: 12px; height: 12px; border-radius: 6px; background: #6C8CFF"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="wait-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Waiting for an opponent</h2>
+<p id="wait-text" style="margin: 0; font-size: 15px; line-height: 1.55; color: #A3A8CF">Send this game ID to a friend. The game starts as soon as they join.</p>
+</div>
+<div style="display: flex; gap: 8px">
+<p style="flex: 1; min-width: 0; margin: 0; height: 48px; display: flex; align-items: center; padding: 0 14px; border-radius: 12px; background: #10132A; border: 1px solid #2B3060; font: 500 15px 'Geist Mono', monospace; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">V1StGXR8_Z5jdHi6B-myT</p>
+<button type="button" class="btn-secondary" style="height: 48px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+Copy
+</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<a href="Game.dc.html" class="btn-secondary" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF; font-size: 15px; font-weight: 500">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"></path></svg>
+Copy invite link
+</a>
+<a href="Lobby.dc.html" class="btn-ghost" style="height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #A3A8CF; font-size: 14px; font-weight: 500">Cancel and leave</a>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

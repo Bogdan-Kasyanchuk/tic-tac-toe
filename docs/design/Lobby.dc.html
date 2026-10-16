@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lobby</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&amp;family=Geist:wght@400..600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D0F1F}
+*{box-sizing:border-box}
+a{color:#A9BCFF;text-decoration:none}a:hover{color:#D3DDFF;text-decoration:underline}
+input::placeholder{color:#6B7099}
+input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rgba(108,140,255,.25)}
+button:focus-visible,a:focus-visible{outline:2px solid #6C8CFF;outline-offset:2px}
+.btn-primary:hover{background:#FFFFFF !important;text-decoration:none !important}
+.btn-ghost:hover{background:#1D2142 !important}
+.menu-item:hover{background:#262B55 !important;text-decoration:none !important}
+.icon-btn:hover{background:#262B55 !important;color:#EDEFFF !important}
+</style>
+</helmet>
+<div style="min-height: 860px; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
+<header style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1D2142">
+<a href="Lobby.dc.html" aria-label="tic·tac·toe home" style="display: flex; align-items: center; gap: 10px; color: #EDEFFF">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em">tic·tac·toe</span>
+</a>
+<div style="position: relative">
+<button type="button" aria-haspopup="menu" aria-expanded="{{menuOpen}}" onClick="{{toggleMenu}}" class="btn-ghost" style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px 0 6px; border-radius: 22px; border: 1px solid #2B3060; background: #151830; color: #EDEFFF; font: 500 14px 'Geist', sans-serif; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 12px; font-weight: 600">AK</span>
+Alex Kim
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A8CF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" aria-label="Account" style="position: absolute; right: 0; top: 52px; z-index: 20; width: 280px; display: flex; flex-direction: column; padding: 6px; border-radius: 14px; background: #1D2142; border: 1px solid #2B3060; box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45)">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: #2B3060; font-size: 13px; font-weight: 600">AK</span>
+<span style="min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 600">Alex Kim</span><span style="font-size: 13px; color: #A3A8CF">alex@example.com</span></span>
+</div>
+<span style="height: 1px; margin: 4px 0; background: #2B3060"></span>
+<a href="Main.dc.html" role="menuitem" class="menu-item" style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border-radius: 8px; color: #FF9B9B; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+Sign out
+</a>
+</div>
+</sc-if>
+</div>
+</header>
+<main style="max-width: 1040px; margin: 0 auto; padding: 56px 32px 64px; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em">Ready for a round, Alex?</h1>
+<p style="margin: 0; font-size: 16px; color: #A3A8CF">Start a new game, or join a friend with the ID they sent you.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<section aria-label="Start a game" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 26px; padding: 28px; border-radius: 20px; background: #151830; border: 1px solid #22264D">
+<div role="group" aria-label="Game type" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: #10132A; border: 1px solid #22264D">
+<button type="button" aria-pressed="{{isNew}}" onClick="{{pickNew}}" style="height: 40px; border: 0; border-radius: 9px; background: {{newTabBg}}; color: {{newTabColor}}; font: 600 14px 'Geist', sans-serif; cursor: pointer">New game</button>
+<button type="button" aria-pressed="{{isJoin}}" onClick="{{pickJoin}}" style="height: 40px; border: 0; border-radius: 9px; background: {{joinTabBg}}; color: {{joinTabColor}}; font: 600 14px 'Geist', sans-serif; cursor: pointer">Join a game</button>
+</div>
+<sc-if value="{{isNew}}" hint-placeholder-val="{{ true }}">
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 12px">
+<legend style="padding: 0; margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #D6D9F5">Play as</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<button type="button" aria-pressed="{{isCircle}}" onClick="{{pickCircle}}" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 14px; border: 2px solid {{circleBorder}}; background: {{circleBg}}; color: #EDEFFF; text-align: left; font-family: 'Geist', sans-serif; cursor: pointer">
+<svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32" fill="none" stroke="#6C8CFF" stroke-width="13"></circle></svg>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">Circle</span>
+<span style="font-size: 13px; color: #A3A8CF">Moves first</span>
+</span>
+</button>
+<button type="button" aria-pressed="{{isCross}}" onClick="{{pickCross}}" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 14px; border: 2px solid {{crossBorder}}; background: {{crossBg}}; color: #EDEFFF; text-align: left; font-family: 'Geist', sans-serif; cursor: pointer">
+<svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 24 76 76M76 24 24 76" stroke="#FFA24C" stroke-width="13" stroke-linecap="round"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">Cross</span>
+<span style="font-size: 13px; color: #A3A8CF">Moves second</span>
+</span>
+</button>
+</div>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 500; color: #D6D9F5">Game ID</span>
+<div style="display: flex; gap: 8px">
+<p style="flex: 1; min-width: 0; margin: 0; height: 44px; display: flex; align-items: center; padding: 0 14px; border-radius: 10px; border: 1px dashed #2B3060; background: #10132A; font: 500 15px 'Geist Mono', monospace; color: #EDEFFF; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{code}}</p>
+<button type="button" class="icon-btn" aria-label="Generate a new game ID" onClick="{{regenerate}}" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #2B3060; background: #1D2142; color: #A3A8CF; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"></path><path d="M3 21v-5h5"></path></svg>
+</button>
+<button type="button" class="icon-btn" aria-label="Copy game ID" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #2B3060; background: #1D2142; color: #A3A8CF; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+</button>
+</div>
+<p style="margin: 0; font-size: 13px; color: #A3A8CF">Generated for you. Your friend joins with this ID.</p>
+</div>
+<a href="Waiting.dc.html" class="btn-primary" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 15px; font-weight: 600">
+Create game
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+</a>
+</sc-if>
+<sc-if value="{{isJoin}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="join-code" style="font-size: 14px; font-weight: 500; color: #D6D9F5">Game ID</label>
+<input id="join-code" type="text" autocomplete="off" spellcheck="false" placeholder="Paste the ID your friend sent" style="width: 100%; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #2B3060; background: #10132A; color: #EDEFFF; font: 500 15px 'Geist Mono', monospace">
+<p style="margin: 0; font-size: 13px; color: #A3A8CF">You get the free mark automatically.</p>
+</div>
+<a href="Game.dc.html" class="btn-primary" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 15px; font-weight: 600">
+Join game
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+</a>
+</sc-if>
+</section>
+<aside style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 20px; border: 1px solid #22264D">
+<h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700">How it works</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px">
+<li style="display: flex; gap: 14px">
+<span style="width: 28px; height: 28px; flex: none; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #1D2142; font-size: 13px; font-weight: 600; color: #A9BCFF">1</span>
+<span style="font-size: 15px; line-height: 1.5; color: #D6D9F5">Pick your mark and create a game.</span>
+</li>
+<li style="display: flex; gap: 14px">
+<span style="width: 28px; height: 28px; flex: none; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #1D2142; font-size: 13px; font-weight: 600; color: #A9BCFF">2</span>
+<span style="font-size: 15px; line-height: 1.5; color: #D6D9F5">Send the game ID or invite link to a friend.</span>
+</li>
+<li style="display: flex; gap: 14px">
+<span style="width: 28px; height: 28px; flex: none; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #1D2142; font-size: 13px; font-weight: 600; color: #A9BCFF">3</span>
+<span style="font-size: 15px; line-height: 1.5; color: #D6D9F5">Play live. The score keeps counting until you start a new session.</span>
+</li>
+</ol>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+const ALPHABET = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict';
+
+class Component extends DCLogic {
+state = { mode: 'new', mark: 'circle', code: 'V1StGXR8_Z5jdHi6B-myT', menuOpen: false };
+
+regenerateCode() {
+let code = '';
+for (let i = 0; i < 21; i += 1) {
+code += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+}
+this.setState({ code });
+}
+
+renderVals() {
+const isNew = this.state.mode === 'new';
+const isCircle = this.state.mark === 'circle';
+return {
+menuOpen: this.state.menuOpen,
+toggleMenu: () => { this.setState({ menuOpen: !this.state.menuOpen }); },
+isNew,
+isJoin: !isNew,
+isCircle,
+isCross: !isCircle,
+code: this.state.code,
+newTabBg: isNew ? '#2B3060' : 'transparent',
+newTabColor: isNew ? '#EDEFFF' : '#A3A8CF',
+joinTabBg: isNew ? 'transparent' : '#2B3060',
+joinTabColor: isNew ? '#A3A8CF' : '#EDEFFF',
+circleBorder: isCircle ? '#6C8CFF' : '#2B3060',
+circleBg: isCircle ? 'rgba(108,140,255,0.12)' : '#10132A',
+crossBorder: isCircle ? '#2B3060' : '#FFA24C',
+crossBg: isCircle ? '#10132A' : 'rgba(255,162,76,0.12)',
+pickNew: () => { this.setState({ mode: 'new' }); },
+pickJoin: () => { this.setState({ mode: 'join' }); },
+pickCircle: () => { this.setState({ mark: 'circle' }); },
+pickCross: () => { this.setState({ mark: 'cross' }); },
+regenerate: () => { this.regenerateCode(); }
+};
+}
+}
+</script>
+</body>
+</html>
