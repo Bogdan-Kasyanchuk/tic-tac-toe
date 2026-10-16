@@ -2673,7 +2673,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `<MarkIcon mark className? />` — SVG `viewBox 0 0 100 100`, нолик `stroke-circle`, хрестик `stroke-cross`, товщина 12, розмір задається класом;
   - `<MarkPicker value onChange />` на нативних радіо.
 
-- [ ] **Step 1: Тести лобі (падають)**
+- [x] **Step 1: Тести лобі (падають)**
 
 `src/pages/HomePage/HomePage.test.tsx` повністю:
 
@@ -2781,7 +2781,7 @@ test('the generated ID can be copied', async () => {
 Run: `npx vitest run src/pages/HomePage`
 Expected: FAIL (стара сторінка не має вкладок і нових підписів).
 
-- [ ] **Step 2: Компоненти**
+- [x] **Step 2: Компоненти**
 
 ```bash
 npx shadcn@latest add tabs -y
@@ -2900,7 +2900,7 @@ export default MarkPicker;
 
 Додай ці класи до `label` через об'єкт `cn` за `option.mark`.
 
-- [ ] **Step 3: `HomePage`** (артборди `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin`)
+- [x] **Step 3: `HomePage`** (артборди `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin`)
 
 Стан:
 - `type: 'new' | 'join'`;
@@ -2935,7 +2935,7 @@ export default MarkPicker;
 Run: `npx vitest run src/pages/HomePage`
 Expected: PASS.
 
-- [ ] **Step 4: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 4: Перевірка в браузері (Claude, Playwright MCP)**
 
 Під тестовим користувачем `@e2e.test` на `npm run dev`:
 - **Лобі на 1280px і 390px.** Вкладка New — звір з `docs/design/Lobby.dc.html` і `docs/design/MobileLobby.dc.html`. Вкладка Join — з `docs/design/LobbyJoin.dc.html` і `docs/design/MobileLobbyJoin.dc.html`.
@@ -2943,7 +2943,7 @@ Expected: PASS.
 
 Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
