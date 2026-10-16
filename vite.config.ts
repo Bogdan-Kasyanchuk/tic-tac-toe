@@ -5,6 +5,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [ react(), tailwindcss() ],
+    server: {
+        // Слухати й локальну мережу, щоб відкривати dev з інших пристроїв
+        host: true
+    },
     resolve: {
         alias: {
             '@': path.resolve(import.meta.dirname, 'src'),

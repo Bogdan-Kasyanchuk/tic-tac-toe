@@ -42,5 +42,5 @@ test('sends the original game link, query included, as the sign-in redirect', ()
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue with Google' }));
 
-    expect(signIn).toHaveBeenCalledWith('google', { redirectTo: '/game/g1?mark=circle' });
+    expect(signIn).toHaveBeenCalledWith('google', { redirectTo: `${ window.location.origin }/game/g1?mark=circle` });
 });

@@ -74,5 +74,5 @@ test('Google sign-in redirects back to the original page', async () => {
     renderSignIn();
     await userEvent.setup().click(screen.getByRole('button', { name: 'Continue with Google' }));
 
-    expect(signIn).toHaveBeenCalledWith('google', { redirectTo: '/game/g1' });
+    expect(signIn).toHaveBeenCalledWith('google', { redirectTo: `${ window.location.origin }/game/g1` });
 });

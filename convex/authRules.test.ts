@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
 import {
-    EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, normalizeEmail, signUpError, takenEmailMessage, validatePassword
+    EMAIL_LINKED_TO_GOOGLE, EMAIL_TAKEN, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, normalizeEmail, redirectUrl, signUpError, takenEmailMessage, validatePassword
 } from './authRules';
 
 test('passwords shorter than the minimum are rejected', () => {
@@ -36,6 +36,31 @@ test('passwords longer than the maximum are rejected', () => {
     expect(() => {
         validatePassword('a'.repeat(MAX_PASSWORD_LENGTH + 1));
     }).toThrow('Password must be at most 128 characters');
+});
+
+test('a relative redirect goes to SITE_URL', () => {
+    expect(redirectUrl('/game/g1?mark=circle', 'https://bogkas-tic-tac-toe.netlify.app/')).toBe('https://bogkas-tic-tac-toe.netlify.app/game/g1?mark=circle');
+});
+
+test('a redirect to SITE_URL itself is allowed', () => {
+    expect(redirectUrl('http://localhost:5173/game/g1', 'http://localhost:5173')).toBe('http://localhost:5173/game/g1');
+});
+
+test('in dev a redirect to the local network is allowed so other devices can sign in with Google', () => {
+    expect(redirectUrl('http://192.168.0.101:5173/game/g1', 'http://localhost:5173')).toBe('http://192.168.0.101:5173/game/g1');
+    expect(redirectUrl('http://10.0.0.7:5174/', 'http://localhost:5173')).toBe('http://10.0.0.7:5174/');
+    expect(redirectUrl('http://172.20.1.2:5173/', 'http://localhost:5173')).toBe('http://172.20.1.2:5173/');
+});
+
+test('on prod a redirect to the local network is rejected', () => {
+    expect(() => redirectUrl('http://192.168.0.101:5173/', 'https://bogkas-tic-tac-toe.netlify.app')).toThrow('Invalid redirectTo');
+});
+
+test('a redirect to a foreign site is rejected even in dev', () => {
+    expect(() => redirectUrl('https://evil.example/', 'http://localhost:5173')).toThrow('Invalid redirectTo');
+    expect(() => redirectUrl('http://192.168.0.101.evil.example/', 'http://localhost:5173')).toThrow('Invalid redirectTo');
+    expect(() => redirectUrl('http://172.32.0.1:5173/', 'http://localhost:5173')).toThrow('Invalid redirectTo');
+    expect(() => redirectUrl('http://localhost:5173.evil.example/', 'http://localhost:5173')).toThrow('Invalid redirectTo');
 });
 
 test('a password of exactly the maximum length is accepted', () => {

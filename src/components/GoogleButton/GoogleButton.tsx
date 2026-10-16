@@ -43,8 +43,9 @@ const GoogleButton: FC<{ label: string }> = ({ label }) => {
             className="w-full"
             onClick={
                 () => {
-                    // Google OAuth іде повним редиректом і повертає на `from` (той самий /game/:id, якщо прийшли з посилання)
-                    signIn('google', { redirectTo: from }).catch((error: unknown) => {
+                    // Google OAuth іде повним редиректом і повертає на `from` (той самий /game/:id, якщо прийшли з посилання).
+                    // Адреса абсолютна, щоб з іншого пристрою в мережі повернутися на його origin, а не на SITE_URL
+                    signIn('google', { redirectTo: `${ window.location.origin }${ from }` }).catch((error: unknown) => {
                         toast.error(errorMessage(error));
                     });
                 }

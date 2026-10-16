@@ -50,6 +50,39 @@ export const signUpError = (error: unknown): unknown => {
     return error;
 };
 
+// Приватні IPv4: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+const PRIVATE_IPV4 = /^(?:10\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])|192\.168)\.\d{1,3}\.\d{1,3}$/;
+
+const isLanUrl = (value: string): boolean => {
+    try {
+        const url = new URL(value);
+
+        return url.protocol === 'http:' && PRIVATE_IPV4.test(url.hostname);
+    } catch {
+        return false;
+    }
+};
+
+// Куди Convex Auth поверне після Google. Як стандартний колбек бібліотеки, але в dev (SITE_URL — localhost)
+// пускає й адреси локальної мережі: тоді з телефона на http://192.168.…:5173 вхід повертає туди ж, а не на localhost телефона
+export const redirectUrl = (redirectTo: string, siteUrl: string): string => {
+    const site = siteUrl.replace(/\/$/, '');
+
+    if (redirectTo.startsWith('/') || redirectTo.startsWith('?')) {
+        return `${ site }${ redirectTo }`;
+    }
+
+    if (redirectTo.startsWith(site) && [ undefined, '/', '?' ].includes(redirectTo[ site.length ])) {
+        return redirectTo;
+    }
+
+    if (new URL(site).hostname === 'localhost' && isLanUrl(redirectTo)) {
+        return redirectTo;
+    }
+
+    throw new Error(`Invalid redirectTo ${ redirectTo } for SITE_URL ${ site }`);
+};
+
 export const takenEmailMessage = (status: EmailStatus): string | null => {
     if (status === 'password') {
         return EMAIL_TAKEN;

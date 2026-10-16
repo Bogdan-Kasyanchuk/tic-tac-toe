@@ -11,7 +11,7 @@
 
 ## Команди
 
-- `npx convex dev` — бекенд у режимі розробки (dev-деплоймент `compassionate-cobra-24`); `npm run dev` — фронт на http://localhost:5173.
+- `npx convex dev` — бекенд у режимі розробки (dev-деплоймент `compassionate-cobra-24`); `npm run dev` — фронт на http://localhost:5173 і в локальній мережі (`server.host` у `vite.config.ts`; Network-адресу Vite друкує при старті). Google з інших пристроїв повертає на їхню адресу, бо колбек `redirect` (`redirectUrl` у `convex/authRules.ts`) у dev, де `SITE_URL` — localhost, пускає приватні IPv4; на prod — лише `SITE_URL`.
 - `npm run test:once` — Vitest: функції Convex через `convex-test` (edge-runtime) і фронт (jsdom).
 - `npm run test:e2e` — Playwright (проєкти `desktop` 1280px і `phone` 390px) проти `npm run dev` і dev-деплойменту; `npx convex dev` має бути запущений. Тестові користувачі — лише `@e2e.test`, прибирання — `npx convex run testing:deleteE2eUsers` (teardown робить це сам).
 - `npm run lint`, `npm run lint:fix`, `npm run typecheck` (три tsconfig: `src`, конфіги Vite/Vitest/Playwright з `e2e/`, `convex`), `npm run build`.
