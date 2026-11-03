@@ -1,12 +1,13 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { FunctionReference } from 'convex/server';
 import { getFunctionName } from 'convex/server';
 import { ConvexError } from 'convex/values';
 import { StrictMode } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { Toaster } from '@/components/ui/sonner';
+import { mockViewport } from '@/test/viewport';
 import type { GameView } from '@/types/game';
 
 import GamePage from './GamePage';
@@ -29,14 +30,18 @@ vi.mock('convex/react', () => ({
     }
 }));
 
+vi.mock('@convex-dev/auth/react', () => ({
+    useAuthActions: () => ({ signOut: vi.fn() })
+}));
+
 const GAME: GameView = {
     code: 'g1',
     board: [ '', '', '', '', '', '', '', '', '' ],
     turn: 'circle',
     result: null,
     me: 'circle',
-    circle: { name: 'Alice', avatar: '', score: 0 },
-    cross: { name: 'Bob', avatar: '', score: 0 }
+    circle: { name: 'Alice Smith', avatar: '', score: 0 },
+    cross: { name: 'Bob Stone', avatar: '', score: 0 }
 };
 
 const app = (path: string) => (
@@ -59,8 +64,6 @@ const app = (path: string) => (
 
 beforeEach(() => {
     queryResult = undefined;
-    // react-hot-toast читає prefers-reduced-motion, а в jsdom matchMedia немає
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
 
 afterEach(() => {
@@ -92,7 +95,7 @@ test('goes home when the player loses the seat while the page is open', async ()
 
     const view = render(app('/game/g1'));
 
-    expect(await screen.findByText('Alice')).toBeTruthy();
+    expect(await screen.findByText('Alice Smith')).toBeTruthy();
 
     queryResult = null;
     view.rerender(app('/game/g1'));
@@ -107,15 +110,126 @@ test('sends a single move on a double click while the first move is in flight', 
     makeMove.mockReturnValue(new Promise(() => {}));
     queryResult = GAME;
 
-    const { container } = render(app('/game/g1'));
+    render(app('/game/g1'));
 
-    expect(await screen.findByText('Alice')).toBeTruthy();
+    expect(await screen.findByText('Alice Smith')).toBeTruthy();
 
-    const cell = container.querySelector('.grid-cols-3')!.children[ 4 ];
+    const cell = screen.getByRole('button', { name: 'Row 2, column 2: empty' });
 
     fireEvent.click(cell);
     fireEvent.click(cell);
 
     expect(makeMove).toHaveBeenCalledTimes(1);
     expect(makeMove).toHaveBeenCalledWith({ code: 'g1', cell: 4 });
+});
+
+test('locks the board while it is the opponent turn', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = { ...GAME, turn: 'cross' };
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('Bob\'s turn')).toBeTruthy();
+
+    const cells = screen.getAllByRole('button', { name: /^Row \d, column \d/ });
+
+    expect(cells).toHaveLength(9);
+    expect(cells.every(cell => (cell as HTMLButtonElement).disabled)).toBe(true);
+});
+
+test('highlights the winning cells in the winner colour', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = {
+        ...GAME,
+        board: [ 'circle', 'cross', '', 'cross', 'circle', '', '', '', 'circle' ],
+        result: { kind: 'win', mark: 'circle', line: 'rotate_45', cells: [ 0, 4, 8 ] }
+    };
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('You take the round')).toBeTruthy();
+
+    const winning = screen.getAllByRole('button', { name: /circle$/ });
+
+    expect(winning.map(cell => cell.getAttribute('data-win'))).toEqual([ 'circle', 'circle', 'circle' ]);
+    expect(screen.getByRole('button', { name: 'Row 1, column 2: cross' }).getAttribute('data-win')).toBeNull();
+});
+
+test('alone in the game, the desktop dialog offers the ID and the invite link', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(within(dialog).getByText('g1')).toBeTruthy();
+    expect(within(dialog).getByRole('button', { name: /Copy invite link/ })).toBeTruthy();
+    expect(within(dialog).getByRole('button', { name: 'Cancel and leave' })).toBeTruthy();
+});
+
+// Оновлений артборд Waiting: і на десктопі копіювання ID — квадратна кнопка-іконка 50×50, без підпису
+test('the desktop waiting dialog keeps the copy button icon-only', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(within(dialog).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('');
+});
+
+// Аркуш Components → Badge: чий хід, показує лише статус над полем, не картки гравців
+test('the score cards do not repeat whose turn it is', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('Your turn')).toBeTruthy();
+    expect(screen.queryByText(/your move/)).toBeNull();
+    expect(screen.queryByText(/thinking/)).toBeNull();
+});
+
+// Артборд LongNames: на телефоні картка суперника показує ім'я з прізвищем і обрізає його, як на десктопі
+test('the phone score card shows the opponent full name', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('You')).toBeTruthy();
+    expect(screen.queryByText('Bob')).toBeNull();
+    expect(screen.getAllByText('Bob Stone')[ 0 ].className).toContain('truncate');
+});
+
+// Обрізане ім'я видно повністю в підказці при наведенні
+test('a truncated player name shows the full name on hover', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('You')).toBeTruthy();
+
+    for (const name of [ 'Alice Smith', 'Bob Stone' ]) {
+        for (const element of screen.getAllByText(name)) {
+            expect(element.getAttribute('title')).toBe(name);
+        }
+    }
+});
+
+test('the phone waiting sheet keeps the copy button icon-only', async () => {
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const sheet = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(within(sheet).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('');
 });

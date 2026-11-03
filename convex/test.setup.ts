@@ -12,6 +12,7 @@ export const setup = () => convexTest(schema, modules);
 export const asUser = async (t: ReturnType<typeof setup>, name: string) => {
     const userId = await t.run(async ctx => ctx.db.insert('users', {
         name,
+        email: `${ name.toLowerCase() }@example.com`,
         image: `https://example.com/${ name }.png`
     }));
 

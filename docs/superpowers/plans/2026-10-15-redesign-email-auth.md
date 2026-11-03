@@ -11,7 +11,7 @@
 
 **Tech Stack:** Vite 8, React 19, TypeScript 6, Tailwind CSS 4.3, React Router 8, Convex 1.46 + `@convex-dev/auth` 0.0.96 (`ConvexCredentials`, `createAccount`, `retrieveAccount`), `lucia` 3 (Scrypt), shadcn/ui (Radix), `lucide-react`, `sonner`, `vaul` (Drawer), `react-hook-form` + `zod` 4 + `@hookform/resolvers`, `@fontsource-variable/{geist,geist-mono,bricolage-grotesque}`, `motion`, Vitest 5 + Testing Library + `@testing-library/user-event`, `convex-test`, `@playwright/test` (e2e), Playwright MCP (перевірки в браузері під час роботи).
 
-**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — ще не розпочато, починати із задачі 1. Галочки `- [x]` у кроках показують, що вже зроблено.
+**Виконання:** Native (обрано власником 2026-10-15): усі задачі по черзі в одній сесії, наприкінці одна рецензія всієї гілки. Стан на 2026-10-16 — задачі 1–10 виконані на гілці `redesign`; лишились кроки власника в задачі 10 (крок 4, пункт 3 — Google і Web Share; крок 6 — prod після деплою). Галочки `- [x]` у кроках показують, що вже зроблено.
 
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, його копія лежить у репозиторії в `docs/design/` (екрани `*.dc.html`; точні кольори, відступи й тексти беруться звідти). Рішення з розмови зведені в розділ «Рішення».
 
@@ -21,7 +21,7 @@
 
 ## Рішення
 
-- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone» і аркуш «Components (shadcn/ui)». Екрани «Verify email» і «Reset password» поки не реалізуються.
+- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone», аркуш «Components (shadcn/ui)» і «Long names: truncation». Екрани «Verify email» і «Reset password» поки не реалізуються (з канвасу прибрані 2026-11-03). Як дизайн-система лягає на токени коду — `docs/design/README.md`.
 - Бібліотека компонентів — shadcn/ui на Radix. Файли компонентів генеруються в `src/components/ui/` і далі вважаються кодом проєкту, а не залежністю.
 - Тема тільки темна, світлої немає.
 - Вхід:
@@ -37,7 +37,7 @@
 - Посилання «Forgot password?» на сторінці входу поки немає.
 - Лобі (`/`) тепер тільки для тих, хто увійшов: привітання звертається на ім'я. Анонім потрапляє на `/login`, а після входу повертається туди, звідки прийшов.
 - Меню:
-  - **Десктоп:** дропдаун з аватаром та ім'ям. У грі в ньому є ID гри (клік копіює), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
+  - **Десктоп:** кнопка з аватаром та ім'ям відкриває дропдаун; угорі в ньому лише пошта. У грі є ID гри (копіює кнопка поруч, меню лишається відкритим), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
   - **Телефон:** бургер-меню з тим самим вмістом, лінк поширюється через «Share invite link». Якщо браузер не вміє Web Share, лінк копіюється.
 - «Back to lobby», «Sign out» і клік по логотипу в грі просять підтвердження в діалозі «Leave the game?» / «Sign out?». У лобі «Sign out» виходить одразу.
 - Очікування суперника: на десктопі модальний діалог, на телефоні нижня панель. Закрити їх можна лише через «Cancel and leave», без підтвердження, бо гравець у грі сам.
@@ -58,9 +58,9 @@
   - стрілка, яка нічого не повертає, має блокове тіло.
 - **Те саме стосується файлів shadcn/ui** після генерації (у глобальних правилах сказано «і при переносі чужого»): після кожного `npx shadcn add` запусти `npm run lint:fix` і сканери скіла.
 - **Токени замість hex у класах.** Кольори з канвасу в JSX не пишуться, лише через токени `@theme` (таблиця в задачі 1).
-- **Числа з канвасу округлюються до шкали Tailwind** (крок 4px, `text-*`). Розбіжність до 4px — норма. Довільні значення в дужках допустимі тільки там, де шкали немає (шаблони grid).
-- **Поля вводу** мають шрифт 16px (`text-base`), щоб iOS не збільшував сторінку при фокусі. На канвасі там 15px.
-- **Розміри для дотику:** інтерактивні елементи щонайменше 44×44px (`size-11` / `h-11`).
+- **Числа з канвасу переносяться точно** (з 2026-11-03; раніше округлювались до шкали Tailwind). Що є в шкалі Tailwind, береться з неї; кеглі, інтервали й радіуси, яких там немає, — токенами `@theme`, перелік у `docs/design/README.md`. Новий `--text-*` чи `--leading-*` треба дописати і в `extendTailwindMerge` у `src/lib/cn.ts`. Довільні значення в дужках — лише там, де шкали немає (шаблони grid).
+- **Поля вводу** мають шрифт 18px (`text-lg`), як на канвасі; від 16px iOS не збільшує сторінку при фокусі.
+- **Розміри для дотику:** кнопки й поля — 50px (`h-12.5` / `size-12.5`), кнопка акаунта й бургер — 44px (`h-11` / `size-11`).
 - Перемикання десктоп/телефон — `md` (48rem): у класах і в хуку `useMediaQuery(DESKTOP)`.
 - Правила пароля й пошти живуть у `convex/authRules.ts` (`MIN_PASSWORD_LENGTH = 8`, `normalizeEmail`, `validatePassword`, тексти помилок). Фронт імпортує їх через `@convex/authRules`.
 - **Convex приховує на prod повідомлення звичайних `Error`.** Усе, що має побачити людина, сервер кидає як `ConvexError('текст')`. Клієнт показує `error.data`, а для будь-якої іншої помилки — запасний текст сценарію.
@@ -88,7 +88,8 @@
 |---|---|
 | `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`), без лінка «Forgot password?» |
 | `SignUp`, `MobileSignUp` | `src/pages/SignUpPage` (`/signup`) |
-| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше» |
+| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше»; з канвасу прибрані 2026-11-03, копія в git (`ce9e237`) |
+| `LongNames` | `PlayerCard`, `AccountMenu`, `MobileMenu` (обрізання й перенос довгих імен) |
 | `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin` | `src/pages/HomePage` (`/`, вкладки New / Join) |
 | `Waiting`, `MobileWaiting` | `src/components/WaitingForOpponent` |
 | `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame` | `src/pages/GamePage` + `Board`, `PlayerCard`, `TurnStatus` |
@@ -151,14 +152,14 @@ playwright.config.ts          проєкти desktop (1280px) і phone (390px)
   - токени кольорів: `background foreground card popover primary secondary muted accent border input ring destructive danger danger-bg danger-border field line label subtle placeholder link link-hover circle cross cross-soft`;
   - шрифти `font-sans`, `font-mono`, `font-display`.
 
-- [ ] **Step 1: Встанови залежності**
+- [x] **Step 1: Встанови залежності**
 
 ```bash
 npm i lucide-react sonner @fontsource-variable/geist @fontsource-variable/geist-mono @fontsource-variable/bricolage-grotesque
 npm i -D @testing-library/user-event
 ```
 
-- [ ] **Step 2: Додай іменований `cn`**
+- [x] **Step 2: Додай іменований `cn`**
 
 `src/lib/cn.ts`:
 
@@ -172,7 +173,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 export default cn;
 ```
 
-- [ ] **Step 3: Створи `components.json`**
+- [x] **Step 3: Створи `components.json`**
 
 ```json
 {
@@ -198,7 +199,7 @@ export default cn;
 }
 ```
 
-- [ ] **Step 4: Перепиши токени в `src/index.css`**
+- [x] **Step 4: Перепиши токени в `src/index.css`**
 
 Старі кольори (`blue-50`, `blue-200`, `blue-700`, `blue-dark`, `stone-300`, `red`, `green`) поки лишаються в блоці legacy: на них ще тримаються старі `HomePage` і `GamePage` до задач 7–8. Скид `--color-*: initial` і власні брейкпоінти прибираються: shadcn використовує `sm:`, `black`, `white` зі стандартної палітри.
 
@@ -323,7 +324,7 @@ export default cn;
 
 `tw-animate-css` встановить `shadcn add` на кроці 5; якщо ні, встанови його окремо: `npm i tw-animate-css`.
 
-- [ ] **Step 5: Згенеруй базові компоненти shadcn**
+- [x] **Step 5: Згенеруй базові компоненти shadcn**
 
 ```bash
 npx shadcn@latest add button input label sonner -y
@@ -332,7 +333,7 @@ npx shadcn@latest add button input label sonner -y
 Якщо CLI пропонує переписати `src/index.css` або `cn.ts`, відмовся: токени вже стоять. Потім:
 - `npm uninstall next-themes`: sonner від shadcn тягне його, нам теми не потрібні.
 
-- [ ] **Step 6: Підлаштуй `button.tsx` під канвас**
+- [x] **Step 6: Підлаштуй `button.tsx` під канвас**
 
 У згенерованому `src/components/ui/button.tsx` лиши тіло компонента (`Slot` / `asChild`) і заміни конфіг `cva`:
 
@@ -367,7 +368,7 @@ const buttonVariants = cva(
 );
 ```
 
-- [ ] **Step 7: Підлаштуй `input.tsx`, `label.tsx`, `sonner.tsx`**
+- [x] **Step 7: Підлаштуй `input.tsx`, `label.tsx`, `sonner.tsx`**
 
 `input.tsx`: клас інпута замінити на
 
@@ -402,7 +403,7 @@ const Toaster = (props: ToasterProps) => (
 export { Toaster };
 ```
 
-- [ ] **Step 8: Переведи toast-и на sonner**
+- [x] **Step 8: Переведи toast-и на sonner**
 
 Скрізь у `src`:
 - `import toast from 'react-hot-toast'` → `import { toast } from 'sonner'`;
@@ -414,7 +415,7 @@ export { Toaster };
 npm uninstall react-hot-toast
 ```
 
-- [ ] **Step 9: Тестове середовище jsdom**
+- [x] **Step 9: Тестове середовище jsdom**
 
 `src/test/viewport.ts`:
 
@@ -462,7 +463,7 @@ beforeEach(() => {
 
 У `vitest.config.ts`, проєкт `frontend`, додай `setupFiles: [ './src/test/setup.ts' ]`. З тестів прибери ручні `window.matchMedia = …` у `beforeEach`: їх тепер ставить setup.
 
-- [ ] **Step 10: ESLint для `src/components/ui`**
+- [x] **Step 10: ESLint для `src/components/ui`**
 
 `button.tsx` експортує `buttonVariants` поруч із компонентом, через що спрацьовує правило `react-refresh/only-export-components`. Додай в `eslint.config.mjs` окремий блок:
 
@@ -475,18 +476,18 @@ beforeEach(() => {
 },
 ```
 
-- [ ] **Step 11: `index.html`**
+- [x] **Step 11: `index.html`**
 
 Прибери три рядки Google Fonts (`preconnect` ×2 і `css2?family=Open+Sans`) і зміни `theme-color` на `#0d0f1f`. `<div id="root-modal">` поки лишається: на нього спирається старий `Modal`, обидва видаляються в задачі 3.
 
-- [ ] **Step 12: Перевір**
+- [x] **Step 12: Перевір**
 
 Run: `npm run lint:fix && npm run typecheck && npm run test:once && npm run build`
 Expected: усе зелене. Старі сторінки тимчасово темні з чорним текстом. Це нормально, їх замінять задачі 3–8.
 
 Прожени сканери скіла `tailwind-format` по `src/components/ui/*.tsx` і виправ групування класів, якщо вони щось знайдуть.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 git add -A
@@ -519,7 +520,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів (розділ «Пізніше»).
 
-- [ ] **Step 1: Залежність**
+- [x] **Step 1: Залежність**
 
 `lucia` вже стоїть транзитивно (його використовує `@convex-dev/auth`). Закріпи його прямою залежністю, щоб імпорт не залежав від того, як npm розкладе пакети:
 
@@ -529,7 +530,7 @@ npm i lucia@^3.2.0
 
 npm попередить, що `lucia` 3 deprecated. Це очікувано: Convex Auth 0.0.96 сам на ньому працює.
 
-- [ ] **Step 2: Тест правил (падає)**
+- [x] **Step 2: Тест правил (падає)**
 
 `convex/authRules.test.ts`:
 
@@ -570,7 +571,7 @@ test('a taken email gets a message that says how to get in', () => {
 Run: `npx vitest run convex/authRules.test.ts`
 Expected: FAIL, бо модуля `./authRules` ще немає.
 
-- [ ] **Step 3: Реалізуй `convex/authRules.ts`**
+- [x] **Step 3: Реалізуй `convex/authRules.ts`**
 
 ```ts
 import { ConvexError } from 'convex/values';
@@ -612,7 +613,7 @@ export const takenEmailMessage = (status: EmailStatus): string | null => {
 Run: `npx vitest run convex/authRules.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Тест `emailStatus` і пошти в `me` (падає)**
+- [x] **Step 4: Тест `emailStatus` і пошти в `me` (падає)**
 
 У `convex/test.setup.ts` функція `asUser` вставляє ще `email: \`${ name.toLowerCase() }@example.com\``.
 
@@ -659,7 +660,7 @@ test('an email known only from Google sign-in points to Google', async () => {
 Run: `npx vitest run convex/users.test.ts`
 Expected: FAIL: немає `internal.users.emailStatus` і поля `email` у `me`.
 
-- [ ] **Step 5: `convex/users.ts`**
+- [x] **Step 5: `convex/users.ts`**
 
 У `me` додай `email: user.email ?? ''` між `name` і `avatar`. Нижче — внутрішній запит:
 
@@ -695,7 +696,7 @@ export const emailStatus = internalQuery({
 Run: `npm run test:once`
 Expected: PASS (включно з `games.test.ts`).
 
-- [ ] **Step 6: Провайдер `convex/emailPassword.ts`**
+- [x] **Step 6: Провайдер `convex/emailPassword.ts`**
 
 ```ts
 import { ConvexCredentials } from '@convex-dev/auth/providers/ConvexCredentials';
@@ -772,7 +773,7 @@ grep -n "crypto\|authorize" node_modules/@convex-dev/auth/dist/providers/ConvexC
 
 Якщо типи відрізняються (наприклад, `retrieveAccount` повертає не `null`, а кидає помилку), підлаштуй код, але не змінюй поведінку: усі помилки для людини — `ConvexError` з текстами з `authRules.ts`.
 
-- [ ] **Step 7: Підключи провайдер у `convex/auth.ts`**
+- [x] **Step 7: Підключи провайдер у `convex/auth.ts`**
 
 ```ts
 import Google from '@auth/core/providers/google';
@@ -788,7 +789,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 Run: `npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Тест прибирання e2e-користувачів (падає)**
+- [x] **Step 8: Тест прибирання e2e-користувачів (падає)**
 
 `convex/testing.test.ts`:
 
@@ -833,7 +834,7 @@ test('removes only e2e users, with their accounts, sessions and games', async ()
 Run: `npx vitest run convex/testing.test.ts`
 Expected: FAIL, бо `internal.testing` ще немає.
 
-- [ ] **Step 9: `convex/testing.ts`**
+- [x] **Step 9: `convex/testing.ts`**
 
 ```ts
 import { internalMutation } from './_generated/server';
@@ -884,7 +885,7 @@ export const deleteE2eUsers = internalMutation({
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 10: Перевірка в dev**
+- [x] **Step 10: Перевірка в dev**
 
 `npx convex dev` має бути запущений і без помилок завантажити функції. Перевір провайдер прямо через CLI:
 
@@ -905,7 +906,7 @@ npx convex run testing:deleteE2eUsers
 
 Очікувано: `1`.
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 git add convex package.json package-lock.json
@@ -940,7 +941,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `<Logo />`;
   - `<AppLayout />` (рендерить `<Outlet />`).
 
-- [ ] **Step 1: Згенеруй компоненти**
+- [x] **Step 1: Згенеруй компоненти**
 
 ```bash
 npx shadcn@latest add dropdown-menu sheet alert-dialog avatar -y
@@ -952,7 +953,7 @@ npm run lint:fix
 - **alert-dialog:** контент — `rounded-2xl border-border bg-card`, оверлей — `bg-[#080916]/70`. Це єдиний hex у класах: прозорість саме цього відтінку токеном не задати. Або заведи `--overlay: rgb(8 9 22 / 0.72)` і клас `bg-(--overlay)`.
 - **sheet:** контент справа — `w-82 border-l-border bg-card`.
 
-- [ ] **Step 2: Хуки**
+- [x] **Step 2: Хуки**
 
 `src/hooks/useMediaQuery.ts`:
 
@@ -1032,7 +1033,7 @@ const useLeaveGame = (gameCode: string | null) => {
 export default useLeaveGame;
 ```
 
-- [ ] **Step 3: Тест інвайта (падає)**
+- [x] **Step 3: Тест інвайта (падає)**
 
 `src/lib/invite.test.ts`:
 
@@ -1097,7 +1098,7 @@ test('stays quiet when the person closes the share sheet', async () => {
 Run: `npx vitest run src/lib/invite.test.ts`
 Expected: FAIL, бо модуля `./invite` ще немає.
 
-- [ ] **Step 4: Реалізуй `src/lib/invite.ts` і `src/lib/initials.ts`**
+- [x] **Step 4: Реалізуй `src/lib/invite.ts` і `src/lib/initials.ts`**
 
 ```ts
 import { toast } from 'sonner';
@@ -1151,7 +1152,7 @@ export default (name: string) => name
 Run: `npx vitest run src/lib/invite.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Дрібні компоненти**
+- [x] **Step 5: Дрібні компоненти**
 
 `Logo/Logo.tsx`: знак 32×32 (квадрат `rounded-[9px]` з фоном `fill-secondary`, нолик `stroke-circle`, хрестик `stroke-cross`) і напис.
 
@@ -1317,7 +1318,7 @@ export default Spinner;
 - `npm uninstall react-loader-spinner`;
 - з `vitest.config.ts` прибери `server: { deps: { inline: [ 'react-loader-spinner' ] } }` разом із коментарем.
 
-- [ ] **Step 6: `LeaveGameDialog`**
+- [x] **Step 6: `LeaveGameDialog`**
 
 ```tsx
 import type { FC } from 'react';
@@ -1376,7 +1377,7 @@ const LeaveGameDialog: FC<LeaveGameDialogProps> = ({ intent, onCancel, onConfirm
 export default LeaveGameDialog;
 ```
 
-- [ ] **Step 7: `AccountMenu` (десктоп) і `MobileMenu` (телефон)**
+- [x] **Step 7: `AccountMenu` (десктоп) і `MobileMenu` (телефон)**
 
 Спільні пропси: `{ gameCode: string | null, onRequest: (intent: LeaveIntent) => void }`. Обидва беруть `me` з `useQuery(api.users.me)`.
 
@@ -1523,7 +1524,7 @@ export default AccountMenu;
 
 Стан `open` керований: кожна дія спершу `setOpen(false)`, потім `onRequest(…)`. Додай `SheetDescription className="sr-only"` «Account and game», бо Radix попереджає без опису.
 
-- [ ] **Step 8: Тест шапки (падає)**
+- [x] **Step 8: Тест шапки (падає)**
 
 `src/components/AppHeader/AppHeader.test.tsx` — перенесений тест зі старого `NavBar.test.tsx` плюс нові сценарії:
 
@@ -1651,7 +1652,7 @@ test('the phone menu offers to share the invite link', async () => {
 Run: `npx vitest run src/components/AppHeader`
 Expected: FAIL, бо `./AppHeader` ще не існує.
 
-- [ ] **Step 9: `AppHeader` і `AppLayout`**
+- [x] **Step 9: `AppHeader` і `AppLayout`**
 
 `AppHeader/AppHeader.tsx`:
 
@@ -1776,7 +1777,7 @@ const AppLayout: FC = () => (
 export default AppLayout;
 ```
 
-- [ ] **Step 10: Маршрути й `PublicRoute`**
+- [x] **Step 10: Маршрути й `PublicRoute`**
 
 `PublicRoute` повертає людину туди, звідки вона прийшла. Інакше після входу поштою він кидав би на `/` раніше, ніж сторінка встигне перейти на `from`:
 
@@ -1846,7 +1847,7 @@ const App: FC = () => {
 - прибери `<div id="root-modal">` з `index.html`;
 - перевір, що старі `HomePage` і `GamePage` не імпортують видалене: `GamePage` імпортує лише `Button`, `Cell`, `Player`, `Spinner`, `Statistics`, `Waiting`. Якщо `Waiting` тягне `Overlay`, тимчасово заміни `Overlay` в ньому на звичайний `div` з тими самими класами — `Waiting` все одно видаляється в задачі 8.
 
-- [ ] **Step 11: Тест `PublicRoute` (падає, потім проходить)**
+- [x] **Step 11: Тест `PublicRoute` (падає, потім проходить)**
 
 `src/routes/PublicRoute/PublicRoute.test.tsx`:
 
@@ -1889,11 +1890,11 @@ test('a signed-in visitor on an auth page goes back to where they came from', ()
 Run: `npm run test:once`
 Expected: PASS. Тест `NavBar.test.tsx` видалено разом із `NavBar`, його сценарій тепер у `AppHeader.test.tsx`.
 
-- [ ] **Step 12: Перевірка в браузері — у задачі 5**
+- [x] **Step 12: Перевірка в браузері — у задачі 5**
 
 Поки немає реєстрації поштою, увійти можна лише через Google, а це вручну. Шапку й меню Claude перевірить у задачі 5 під тестовим користувачем. Якщо хочеш побачити шапку раніше, увійди сам через Google на `npm run dev`.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 git add -A
@@ -1921,13 +1922,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `authError(error: unknown, flow: AuthFlow): string`;
   - `<AuthSplitLayout hero headline lead footnote>`, `<GoogleButton label />`, `<PasswordInput … />`, `<FieldError>`, `<OrDivider />`.
 
-- [ ] **Step 1: Залежності форм**
+- [x] **Step 1: Залежності форм**
 
 ```bash
 npm i react-hook-form zod @hookform/resolvers
 ```
 
-- [ ] **Step 2: Тест текстів помилок (падає)**
+- [x] **Step 2: Тест текстів помилок (падає)**
 
 `src/lib/authError.test.ts`:
 
@@ -1954,7 +1955,7 @@ test('any other error gets the fallback of its flow', () => {
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 3: Реалізуй `src/lib/authError.ts`**
+- [x] **Step 3: Реалізуй `src/lib/authError.ts`**
 
 ```ts
 import { ConvexError } from 'convex/values';
@@ -1981,7 +1982,7 @@ export default authError;
 Run: `npx vitest run src/lib/authError.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Спільні компоненти сторінок входу**
+- [x] **Step 4: Спільні компоненти сторінок входу**
 
 - **`FieldError`:** `<p role="alert" className="flex items-center gap-1.5 text-sm text-danger"><CircleAlert className="size-3.5" />{ children }</p>`, рендерить `null` без `children`.
 - **`OrDivider`:** рядок `flex items-center gap-3 text-sm text-subtle` — лінія `h-px flex-1 bg-border`, текст «or with email», ще одна лінія.
@@ -2064,7 +2065,7 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
 );
 ```
 
-- [ ] **Step 5: Тест сторінки входу (падає)**
+- [x] **Step 5: Тест сторінки входу (падає)**
 
 `src/pages/SignInPage/SignInPage.test.tsx`:
 
@@ -2152,7 +2153,7 @@ test('Google sign-in redirects back to the original page', async () => {
 Run: `npx vitest run src/pages/SignInPage`
 Expected: FAIL, бо `./SignInPage` ще немає.
 
-- [ ] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
+- [x] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2269,7 +2270,7 @@ export default SignInPage;
 Run: `npx vitest run src/pages/SignInPage`
 Expected: PASS.
 
-- [ ] **Step 7: Маршрут і старий тест `PrivateRoute`**
+- [x] **Step 7: Маршрут і старий тест `PrivateRoute`**
 
 - В `App.tsx`: `/login` тепер рендерить `<SignInPage />`.
 - Видали `src/pages/LoginPage`.
@@ -2281,7 +2282,7 @@ Expected: PASS.
 Run: `npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
 
 На `npm run dev`, без входу:
 - `/login` на 1280px і 390px — знімки звір з `docs/design/Main.dc.html` і `docs/design/MobileSignIn.dc.html`. «Forgot password?» немає, це очікувано.
@@ -2289,7 +2290,7 @@ Expected: PASS.
 
 Неправильний пароль для справжнього акаунта перевіриться в задачі 5, коли з'явиться реєстрація.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add -A
@@ -2312,7 +2313,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `useFrom`, `authError`, `MIN_PASSWORD_LENGTH` і тексти з `@convex/authRules`, `AuthSplitLayout`, `GoogleButton`, `PasswordInput`, `FieldError`, `OrDivider`.
 - Produces: `passwordStrength(password: string): 0 | 1 | 2 | 3`.
 
-- [ ] **Step 1: Тест сили пароля (падає)**
+- [x] **Step 1: Тест сили пароля (падає)**
 
 `src/lib/passwordStrength.test.ts`:
 
@@ -2334,7 +2335,7 @@ test.each([
 Run: `npx vitest run src/lib/passwordStrength.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 2: `src/lib/passwordStrength.ts`**
+- [x] **Step 2: `src/lib/passwordStrength.ts`**
 
 ```ts
 import { MIN_PASSWORD_LENGTH } from '@convex/authRules';
@@ -2360,7 +2361,7 @@ export default passwordStrength;
 Run: `npx vitest run src/lib/passwordStrength.test.ts`
 Expected: PASS.
 
-- [ ] **Step 3: Тести реєстрації (падають)**
+- [x] **Step 3: Тести реєстрації (падають)**
 
 `src/pages/SignUpPage/SignUpPage.test.tsx`:
 
@@ -2459,7 +2460,7 @@ test('an email used with Google says to continue with Google', async () => {
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: FAIL, бо `./SignUpPage` ще немає.
 
-- [ ] **Step 4: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
+- [x] **Step 4: `SignUpPage`** (артборди `SignUp`, `MobileSignUp`)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2609,12 +2610,12 @@ const SignUpPage: FC = () => {
 export default SignUpPage;
 ```
 
-`footnote` відходить від канвасу: там написано про коди на пошту, яких поки немає.
+`footnote` спершу відходив від канвасу: там було написано про коди на пошту, яких поки немає. З 2026-11-03 і на канвасі, і в коді — «We only use your email to sign you in.»
 
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: PASS.
 
-- [ ] **Step 5: Маршрут**
+- [x] **Step 5: Маршрут**
 
 В `App.tsx` поруч із `/login`:
 
@@ -2628,7 +2629,7 @@ Expected: PASS.
 Run: `npm run lint:fix && npm run typecheck && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 6: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 6: Перевірка в браузері (Claude, Playwright MCP)**
 
 На `npm run dev`, адреса `e2e-check-<час>@e2e.test`:
 1. `/game/e2e-check-1?mark=circle` без входу → перекидає на `/login` → «Create an account» → ім'я, пошта, пароль → одразу в грі `e2e-check-1` з «Waiting for an opponent».
@@ -2643,7 +2644,7 @@ Expected: PASS.
 npx convex run testing:deleteE2eUsers
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -2673,7 +2674,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `<MarkIcon mark className? />` — SVG `viewBox 0 0 100 100`, нолик `stroke-circle`, хрестик `stroke-cross`, товщина 12, розмір задається класом;
   - `<MarkPicker value onChange />` на нативних радіо.
 
-- [ ] **Step 1: Тести лобі (падають)**
+- [x] **Step 1: Тести лобі (падають)**
 
 `src/pages/HomePage/HomePage.test.tsx` повністю:
 
@@ -2781,7 +2782,7 @@ test('the generated ID can be copied', async () => {
 Run: `npx vitest run src/pages/HomePage`
 Expected: FAIL (стара сторінка не має вкладок і нових підписів).
 
-- [ ] **Step 2: Компоненти**
+- [x] **Step 2: Компоненти**
 
 ```bash
 npx shadcn@latest add tabs -y
@@ -2900,7 +2901,7 @@ export default MarkPicker;
 
 Додай ці класи до `label` через об'єкт `cn` за `option.mark`.
 
-- [ ] **Step 3: `HomePage`** (артборди `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin`)
+- [x] **Step 3: `HomePage`** (артборди `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin`)
 
 Стан:
 - `type: 'new' | 'join'`;
@@ -2935,7 +2936,7 @@ export default MarkPicker;
 Run: `npx vitest run src/pages/HomePage`
 Expected: PASS.
 
-- [ ] **Step 4: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 4: Перевірка в браузері (Claude, Playwright MCP)**
 
 Під тестовим користувачем `@e2e.test` на `npm run dev`:
 - **Лобі на 1280px і 390px.** Вкладка New — звір з `docs/design/Lobby.dc.html` і `docs/design/MobileLobby.dc.html`. Вкладка Join — з `docs/design/LobbyJoin.dc.html` і `docs/design/MobileLobbyJoin.dc.html`.
@@ -2943,7 +2944,7 @@ Expected: PASS.
 
 Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A
@@ -2974,7 +2975,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `gameStatus(game: GameView): { text: string, hint: string | null, tone: 'circle' | 'cross' | 'muted', waiting: boolean }`;
   - `canMove(game: GameView): boolean`.
 
-- [ ] **Step 1: Тест статусу (падає)**
+- [x] **Step 1: Тест статусу (падає)**
 
 `src/lib/gameStatus.test.ts`:
 
@@ -3038,7 +3039,7 @@ test('no moves while waiting for the second player', () => {
 Run: `npx vitest run src/lib/gameStatus.test.ts`
 Expected: FAIL, бо модуля ще немає.
 
-- [ ] **Step 2: `src/lib/gameStatus.ts`**
+- [x] **Step 2: `src/lib/gameStatus.ts`**
 
 ```ts
 import { firstName } from '@/lib/initials';
@@ -3088,7 +3089,7 @@ export const gameStatus = (game: GameView): GameStatus => {
 Run: `npx vitest run src/lib/gameStatus.test.ts`
 Expected: PASS.
 
-- [ ] **Step 3: Тести сторінки гри (падають)**
+- [x] **Step 3: Тести сторінки гри (падають)**
 
 `src/pages/GamePage/GamePage.test.tsx`. Перенеси три наявні тести з такими змінами:
 - `Toaster` береться з `@/components/ui/sonner`, ручний `matchMedia` прибрано;
@@ -3149,7 +3150,7 @@ test('alone in the game, the desktop dialog offers the ID and the invite link', 
 Run: `npx vitest run src/pages/GamePage`
 Expected: FAIL.
 
-- [ ] **Step 4: Згенеруй `dialog` і `drawer`**
+- [x] **Step 4: Згенеруй `dialog` і `drawer`**
 
 ```bash
 npx shadcn@latest add dialog drawer -y
@@ -3161,7 +3162,7 @@ npm run lint:fix
 - Оверлей обох компонентів — той самий, що в alert-dialog (задача 3).
 - `DrawerContent` — `rounded-t-3xl border-t border-border bg-card`; ручка зверху `h-1 w-10 bg-border`.
 
-- [ ] **Step 5: `BoardCell` і `Board`**
+- [x] **Step 5: `BoardCell` і `Board`**
 
 `BoardCell/BoardCell.tsx`:
 
@@ -3271,7 +3272,7 @@ const Board: FC<BoardProps> = ({ game, onSelect }) => {
 export default Board;
 ```
 
-- [ ] **Step 6: `TurnStatus` і `PlayerCard`**
+- [x] **Step 6: `TurnStatus` і `PlayerCard`**
 
 **`TurnStatus`** (`status: GameStatus`): `role="status"` у `FadeSwitch switchKey={ status.text }`. Плашка — `flex h-10 items-center gap-2.5 rounded-full border border-line bg-card px-4.5 font-medium`.
 - Ліворуч: крапка `size-2.5 rounded-full` з кольором за `tone` (`bg-circle` / `bg-cross` / `bg-muted-foreground`), або при `waiting` — три крапки `size-1.5` з анімацією.
@@ -3304,7 +3305,7 @@ export default Board;
 
 Вільне місце (`player === null`): пунктирна картка `border-dashed border-border` з порожнім пунктирним кружечком і «Open seat».
 
-- [ ] **Step 7: `WaitingForOpponent`** (артборди `Waiting`, `MobileWaiting`)
+- [x] **Step 7: `WaitingForOpponent`** (артборди `Waiting`, `MobileWaiting`)
 
 ```tsx
 import { Link2, Share2 } from 'lucide-react';
@@ -3435,7 +3436,7 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
 export default WaitingForOpponent;
 ```
 
-- [ ] **Step 8: `GamePage`** (артборди `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame`)
+- [x] **Step 8: `GamePage`** (артборди `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame`)
 
 Логіка лишається: ефекти `enter` і `wasInGame` з `ENTER_TOAST`, `onSelect` з `isMoving`. Змінюються лише імпорти toast (вже sonner) і рендер:
 
@@ -3545,7 +3546,7 @@ return (
 Run: `npx vitest run src/pages/GamePage && npm run test:once`
 Expected: PASS.
 
-- [ ] **Step 9: Перевірка в браузері (Claude, Playwright MCP)**
+- [x] **Step 9: Перевірка в браузері (Claude, Playwright MCP)**
 
 Повний сценарій двох гравців автоматизує задача 9. Тут Claude звіряє вигляд.
 
@@ -3557,7 +3558,7 @@ Expected: PASS.
 
 Наприкінці — `npx convex run testing:deleteE2eUsers`.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add -A
@@ -3586,7 +3587,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Тести йдуть проти `npm run dev` і dev-деплойменту Convex, тож `npx convex dev` має бути запущений. Сценаріїв, яких тут немає: входу через Google (справжній вхід Google не автоматизується) і системного меню «Поділитися».
 
-- [ ] **Step 1: Встанови Playwright**
+- [x] **Step 1: Встанови Playwright**
 
 ```bash
 npm i -D @playwright/test
@@ -3595,7 +3596,7 @@ npx playwright install chromium
 
 У `package.json` додай скрипт `"test:e2e": "playwright test"`. У `.gitignore` додай `playwright-report/` і `test-results/`.
 
-- [ ] **Step 2: `playwright.config.ts`**
+- [x] **Step 2: `playwright.config.ts`**
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -3627,7 +3628,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 3: TypeScript і ESLint для `e2e/`**
+- [x] **Step 3: TypeScript і ESLint для `e2e/`**
 
 - У `tsconfig.node.json` у `include` додай `"playwright.config.ts"` і `"e2e"`.
 - В `eslint.config.mjs` у `projectService.allowDefaultProject` додай `'playwright.config.ts'` і `'e2e/*.ts'`. Файлів разом із конфігами Vite/Vitest буде 7, а ліміт typescript-eslint за замовчуванням — 8.
@@ -3635,7 +3636,7 @@ export default defineConfig({
 Run: `npm run typecheck && npm run lint`
 Expected: PASS.
 
-- [ ] **Step 4: Прибирання й хелпери**
+- [x] **Step 4: Прибирання й хелпери**
 
 `e2e/teardown.ts`:
 
@@ -3706,7 +3707,7 @@ export const chooseMenuItem = async (page: Page, name: string, item: string) => 
 
 Пароль шукається з `{ exact: true }`, бо в поля є ще кнопка «Show password».
 
-- [ ] **Step 5: `e2e/auth.spec.ts`**
+- [x] **Step 5: `e2e/auth.spec.ts`**
 
 ```ts
 import { expect, type Page, test } from '@playwright/test';
@@ -3767,7 +3768,7 @@ test('a game link survives sign-up', async ({ page }) => {
 ```
 
 
-- [ ] **Step 6: `e2e/game.spec.ts`**
+- [x] **Step 6: `e2e/game.spec.ts`**
 
 ```ts
 import { expect, test } from '@playwright/test';
@@ -3833,7 +3834,7 @@ test('two players join through the lobby, win a round, draw one and leave', asyn
 
 Клітинка суперника стає активною лише після того, як дійде його черга. `click()` у Playwright сам чекає, поки кнопка стане enabled, тож затримки між ходами не потрібні.
 
-- [ ] **Step 7: Прожени**
+- [x] **Step 7: Прожени**
 
 `npx convex dev` запущений у фоні. Далі:
 
@@ -3842,7 +3843,7 @@ Expected: усі тести зелені в обох проєктах; у кін
 
 Якщо тест падає, відкрий трейс (`npx playwright show-trace test-results/…/trace.zip`). Виправ причину в коді застосунку, а не підганяй тест під помилку.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A
@@ -3859,7 +3860,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `src/index.css`, `README.md`, `CLAUDE.md`, `package.json`, `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`
 - Delete: `src/assets/not-avatar.jpg` і все, що лишилось невикористаним
 
-- [ ] **Step 1: Прибери legacy**
+- [x] **Step 1: Прибери legacy**
 
 - З `src/index.css` видали блок `/* Legacy … */`.
 - Перевір, що нічого не посилається на старі класи, файли й пакети:
@@ -3871,14 +3872,14 @@ grep -rnE "blue-dark|bg-red|border-green|text-green|bg-blue-50|stone-300|not-ava
   Expected: порожньо.
 - Видали `src/assets/not-avatar.jpg` і теку `src/assets`, якщо вона спорожніла.
 
-- [ ] **Step 2: Ревізія формату**
+- [x] **Step 2: Ревізія формату**
 
 Прожени сканери зі скіла `.claude/skills/tailwind-format/` по всьому `src` і виправ знахідки.
 
 Run: `npm run lint:fix && npm run typecheck && npm run test:once && npm run build`
 Expected: усе зелене.
 
-- [ ] **Step 3: Документація**
+- [x] **Step 3: Документація**
 
 - **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти). Команда `npm run test:e2e` (потрібен запущений `npx convex dev`).
 - **`CLAUDE.md`:**
@@ -3899,7 +3900,7 @@ Expected: усе зелене.
    - вхід через Google з прямого посилання `/game/:id` → назад у гру;
    - на телефоні (або в емуляції з Web Share) «Share invite link» відкриває системне меню, а скасування не показує помилки (Review Focus 4).
 
-- [ ] **Step 5: Commit і передача власнику**
+- [x] **Step 5: Commit і передача власнику**
 
 ```bash
 git add -A
@@ -3926,7 +3927,7 @@ E2E_BASE_URL=https://bogkas-tic-tac-toe.netlify.app E2E_PROD=1 npx playwright te
 
 ## Пізніше: підтвердження пошти й скидання пароля
 
-Екрани вже є на канвасі: `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword`. Повні кроки з кодом і тестами — у першій версії цього плану:
+Екрани `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword` 2026-11-03 з канвасу прибрали; їхня остання копія — `git show ce9e237 -- docs/design/`, і перед реалізацією їх треба оновити під нову дизайн-систему (`docs/design/README.md`). Повні кроки з кодом і тестами — у першій версії цього плану:
 
 ```bash
 git show 5a16c71:docs/superpowers/plans/2026-10-15-redesign-email-auth.md

@@ -1,181 +1,155 @@
 {
   "v": 3,
+  "attachments": {},
   "boards": {
-    "Main.dc.html": {
+    "Components.dc.html": {
+      "h": 4800,
+      "title": "Components (shadcn/ui)",
+      "w": 1280,
       "x": 0,
-      "y": 0,
-      "w": 1280,
-      "h": 800,
-      "title": "Sign in",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "SignUp.dc.html": {
-      "x": 1360,
-      "y": 0,
-      "w": 1280,
-      "h": 800,
-      "title": "Create account",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "VerifyEmail.dc.html": {
-      "x": 2720,
-      "y": 0,
-      "w": 1280,
-      "h": 800,
-      "title": "Verify email",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "ResetPassword.dc.html": {
-      "x": 4080,
-      "y": 0,
-      "w": 1280,
-      "h": 800,
-      "title": "Reset password",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "MobileSignIn.dc.html": {
-      "x": 0,
-      "y": 1200,
-      "w": 390,
-      "h": 844,
-      "title": "Sign in",
-      "is_interactive": true
-    },
-    "MobileSignUp.dc.html": {
-      "x": 470,
-      "y": 1200,
-      "w": 390,
-      "h": 844,
-      "title": "Create account",
-      "is_interactive": true
-    },
-    "MobileVerifyEmail.dc.html": {
-      "x": 940,
-      "y": 1200,
-      "w": 390,
-      "h": 844,
-      "title": "Verify email",
-      "is_interactive": true
-    },
-    "MobileResetPassword.dc.html": {
-      "x": 1410,
-      "y": 1200,
-      "w": 390,
-      "h": 844,
-      "title": "Reset password",
-      "is_interactive": true
-    },
-    "Lobby.dc.html": {
-      "x": 0,
-      "y": 2444,
-      "w": 1280,
-      "h": 860,
-      "title": "Lobby: new game",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "LobbyJoin.dc.html": {
-      "x": 1360,
-      "y": 2444,
-      "w": 1280,
-      "h": 860,
-      "title": "Lobby: join (second player)",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "Waiting.dc.html": {
-      "x": 2720,
-      "y": 2444,
-      "w": 1280,
-      "h": 860,
-      "title": "Waiting for opponent",
-      "expand": "fill",
-      "is_interactive": true
+      "y": 4948
     },
     "Game.dc.html": {
-      "x": 4080,
-      "y": 2444,
-      "w": 1280,
-      "h": 860,
-      "title": "Game: your move",
       "expand": "fill",
-      "is_interactive": true
+      "h": 860,
+      "is_interactive": true,
+      "title": "Game: your move",
+      "w": 1280,
+      "x": 4080,
+      "y": 2444
     },
     "GameOpponent.dc.html": {
-      "x": 5440,
-      "y": 2444,
-      "w": 1280,
-      "h": 860,
-      "title": "Game: opponent's move, menu open",
       "expand": "fill",
-      "is_interactive": true
+      "h": 860,
+      "is_interactive": true,
+      "title": "Game: opponent's move, menu open",
+      "w": 1280,
+      "x": 5440,
+      "y": 2444
     },
-    "MobileLobby.dc.html": {
-      "x": 0,
-      "y": 3704,
-      "w": 390,
-      "h": 844,
+    "Lobby.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "is_interactive": true,
       "title": "Lobby: new game",
-      "is_interactive": true
+      "w": 1280,
+      "x": 0,
+      "y": 2444
     },
-    "MobileWaiting.dc.html": {
-      "x": 940,
-      "y": 3704,
-      "w": 390,
-      "h": 844,
-      "title": "Waiting for opponent",
-      "is_interactive": true
+    "LobbyJoin.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "is_interactive": true,
+      "title": "Lobby: join (second player)",
+      "w": 1280,
+      "x": 1360,
+      "y": 2444
     },
-    "MobilePlay.dc.html": {
-      "x": 1410,
-      "y": 3704,
-      "w": 390,
-      "h": 844,
-      "title": "Your move",
-      "is_interactive": true
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "is_interactive": true,
+      "title": "Sign in",
+      "w": 1280,
+      "x": 0,
+      "y": 0
     },
     "MobileGame.dc.html": {
-      "x": 2350,
-      "y": 3704,
-      "w": 390,
       "h": 844,
+      "is_interactive": true,
       "title": "Round won",
-      "is_interactive": true
-    },
-    "MobileMenu.dc.html": {
-      "x": 2820,
-      "y": 3704,
       "w": 390,
-      "h": 844,
-      "title": "Burger menu",
-      "is_interactive": true
+      "x": 2350,
+      "y": 3704
     },
-    "Components.dc.html": {
+    "MobileLobby.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Lobby: new game",
+      "w": 390,
       "x": 0,
-      "y": 4948,
-      "w": 1280,
-      "h": 2400,
-      "title": "Components (shadcn/ui)"
+      "y": 3704
     },
     "MobileLobbyJoin.dc.html": {
-      "x": 470,
-      "y": 3704,
-      "w": 390,
       "h": 844,
+      "is_interactive": true,
       "title": "Lobby: join (second player)",
-      "is_interactive": true
+      "w": 390,
+      "x": 470,
+      "y": 3704
+    },
+    "MobileMenu.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Burger menu",
+      "w": 390,
+      "x": 2820,
+      "y": 3704
     },
     "MobileOpponent.dc.html": {
-      "x": 1880,
-      "y": 3704,
-      "w": 390,
       "h": 844,
+      "is_interactive": true,
       "title": "Opponent's move (second player)",
-      "is_interactive": true
+      "w": 390,
+      "x": 1880,
+      "y": 3704
+    },
+    "MobilePlay.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Your move",
+      "w": 390,
+      "x": 1410,
+      "y": 3704
+    },
+    "MobileSignIn.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Sign in",
+      "w": 390,
+      "x": 0,
+      "y": 1200
+    },
+    "MobileSignUp.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Create account",
+      "w": 390,
+      "x": 470,
+      "y": 1200
+    },
+    "MobileWaiting.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Waiting for opponent",
+      "w": 390,
+      "x": 940,
+      "y": 3704
+    },
+    "SignUp.dc.html": {
+      "expand": "fill",
+      "h": 800,
+      "is_interactive": true,
+      "title": "Create account",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "Waiting.dc.html": {
+      "expand": "fill",
+      "h": 860,
+      "is_interactive": true,
+      "title": "Waiting for opponent",
+      "w": 1280,
+      "x": 2720,
+      "y": 2444
+    },
+    "LongNames.dc.html": {
+      "h": 844,
+      "title": "Long names: truncation",
+      "w": 920,
+      "x": 3290,
+      "y": 3704
     }
   },
   "createdOnFiles": {
@@ -187,44 +161,44 @@
     "view": "canvas"
   },
   "notes": {
-    "authTitle": {
-      "x": 0,
-      "y": -300,
-      "text": "Auth · desktop",
-      "kind": "title1",
-      "maxW": 5360
-    },
     "authPhoneTitle": {
-      "x": 0,
-      "y": 900,
+      "kind": "title1",
+      "maxW": 860,
       "text": "Auth · phone",
-      "kind": "title1",
-      "maxW": 1800
-    },
-    "playTitle": {
+      "w": 240,
       "x": 0,
-      "y": 2144,
-      "text": "Play · desktop",
+      "y": 900
+    },
+    "authTitle": {
       "kind": "title1",
-      "maxW": 6720
+      "maxW": 2640,
+      "text": "Auth · desktop",
+      "w": 240,
+      "x": 0,
+      "y": -300
     },
     "playPhoneTitle": {
-      "x": 0,
-      "y": 3404,
-      "text": "Play · phone",
       "kind": "title1",
-      "maxW": 3210
+      "maxW": 4210,
+      "text": "Play · phone",
+      "w": 240,
+      "x": 0,
+      "y": 3404
+    },
+    "playTitle": {
+      "kind": "title1",
+      "maxW": 6720,
+      "text": "Play · desktop",
+      "w": 240,
+      "x": 0,
+      "y": 2144
     }
   },
   "order": [
     "Main.dc.html",
     "SignUp.dc.html",
-    "VerifyEmail.dc.html",
-    "ResetPassword.dc.html",
     "MobileSignIn.dc.html",
     "MobileSignUp.dc.html",
-    "MobileVerifyEmail.dc.html",
-    "MobileResetPassword.dc.html",
     "Lobby.dc.html",
     "LobbyJoin.dc.html",
     "Waiting.dc.html",
@@ -237,6 +211,7 @@
     "MobileOpponent.dc.html",
     "MobileGame.dc.html",
     "MobileMenu.dc.html",
+    "LongNames.dc.html",
     "Components.dc.html"
   ],
   "pages": [],

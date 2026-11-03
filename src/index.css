@@ -1,42 +1,173 @@
 /* Класи шукаємо лише в src: інакше Tailwind підхоплює приклади з docs/ і .claude/ */
 @import 'tailwindcss' source('.');
+@import 'tw-animate-css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import '@fontsource-variable/bricolage-grotesque';
 
 /* Tailwind 4 за замовчуванням вмикає hover лише на пристроях із курсором; у старій версії hover був скрізь */
 @custom-variant hover (&:hover);
 
+:root {
+    --radius: 0.625rem;
+
+    /* Палітра канвасу «Tic-Tac-Toe redesign», аркуш Components */
+    --background: #0d0f1f;
+    --foreground: #edefff;
+    --card: #151830;
+    --card-foreground: #edefff;
+    --popover: #1d2142;
+    --popover-foreground: #edefff;
+    --primary: #edefff;
+    --primary-foreground: #0d0f1f;
+    --secondary: #1d2142;
+    --secondary-foreground: #edefff;
+    --muted: #121530;
+    --muted-foreground: #a3a8cf;
+    --accent: #262b55;
+    --accent-foreground: #edefff;
+    --destructive: #ff7a7a;
+    --border: #2b3060;
+    --input: #2b3060;
+    --ring: #6c8cff;
+
+    --danger: #ff9b9b;
+    --danger-bg: #2a1520;
+    --danger-border: #5a2a36;
+    --danger-hover: #3a1a28;
+    --danger-pressed: #4a1f30;
+    --field: #10132a;
+    --line: #22264d;
+    /* Стани з таблиці States: hover — accent, натиснуто — border, рамка під курсором — border-hover */
+    --border-hover: #3a4080;
+    --option-hover: #4a5199;
+    --label: #d6d9f5;
+    --subtle: #8086b3;
+    --placeholder: #6b7099;
+    --link: #a9bcff;
+    --link-hover: #d3ddff;
+    --circle: #6c8cff;
+    --cross: #ffa24c;
+    --cross-soft: #3a2e2a;
+    --cross-light: #ffc48c;
+    --overlay: rgb(8 9 22 / 0.72);
+}
+
+@theme inline {
+    --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+    --font-display: 'Bricolage Grotesque Variable', 'Geist Variable', sans-serif;
+
+    /* Кегли канвасу, яких немає в Tailwind: заголовок сторінки 44, рахунок 34 (на телефоні 28), заголовок діалогу й шторки 28, логотип 26 */
+    --text-page-title: 2.75rem;
+    --text-score: 2.125rem;
+    --text-score-sm: 1.75rem;
+    --text-dialog-title: 1.75rem;
+    --text-logo: 1.625rem;
+    /* Заголовки входу: панель-герой 52 (на телефоні 34), заголовок форми 32 */
+    --text-hero: 3.25rem;
+    --text-hero-sm: 2.125rem;
+    --text-form-title: 2rem;
+
+    /* Міжрядковий інтервал канвасу: текст 1.35, заголовки h1–h4 — 1.2. Кеглі Tailwind свого line-height не задають,
+       тож інтервал успадковується від body чи заголовка, а не прив'язаний до розміру */
+    --leading-body: 1.35;
+    --leading-heading: 1.2;
+    --text-xs--line-height: initial;
+    --text-sm--line-height: initial;
+    --text-base--line-height: initial;
+    --text-lg--line-height: initial;
+    --text-xl--line-height: initial;
+    --text-2xl--line-height: initial;
+    --text-3xl--line-height: initial;
+    --text-4xl--line-height: initial;
+    --text-5xl--line-height: initial;
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    /* Шкала радіусів канвасу: 6 бейдж, 8 вкладка й пункт меню, 12 контрол 50px, 14 меню й toast, 16 картка й клітинка */
+    --radius-lg: calc(var(--radius) + 2px);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-danger: var(--danger);
+    --color-danger-bg: var(--danger-bg);
+    --color-danger-border: var(--danger-border);
+    --color-danger-hover: var(--danger-hover);
+    --color-danger-pressed: var(--danger-pressed);
+    --color-field: var(--field);
+    --color-line: var(--line);
+    --color-border-hover: var(--border-hover);
+    --color-option-hover: var(--option-hover);
+    --color-label: var(--label);
+    --color-subtle: var(--subtle);
+    --color-placeholder: var(--placeholder);
+    --color-link: var(--link);
+    --color-link-hover: var(--link-hover);
+    --color-circle: var(--circle);
+    --color-cross: var(--cross);
+    --color-cross-soft: var(--cross-soft);
+    --color-cross-light: var(--cross-light);
+    --color-overlay: var(--overlay);
+}
+
+@keyframes wait-dot {
+    0%, 80%, 100% {
+        opacity: 0.25;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
+
 @theme {
-    --breakpoint-*: initial;
-    --breakpoint-xs: 22.5rem;
-    --breakpoint-md: 48rem;
-    --breakpoint-lg: 64rem;
-    --breakpoint-xl: 90rem;
-
-    --color-*: initial;
-    --color-white: #fff;
-    --color-black: #000;
-    --color-red: #ff0000;
-    --color-green: #008000;
-    --color-blue-50: #eff6ff;
-    --color-blue-200: #bfdbfe;
-    --color-blue-700: #1d4ed8;
-    --color-blue-dark: #1b1c3a;
-    --color-stone-300: #d6d3d1;
-
-    --font-sans: 'Open Sans', sans-serif;
+    --animate-wait-dot: wait-dot 1.4s ease-in-out infinite;
 }
 
 @layer base {
-    /* Tailwind 4 прибрав cursor: pointer у кнопок, у Tailwind 3 він був */
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    /* Tailwind 4 прибрав cursor: pointer у кнопок, у Tailwind 3 він був; вимкнена кнопка — not-allowed, як на канвасі */
     button:not(:disabled),
     [role='button']:not(:disabled) {
         cursor: pointer;
     }
 
+    button:disabled {
+        cursor: not-allowed;
+    }
+
     body {
-        @apply text-base leading-none font-normal text-black;
+        @apply min-h-dvh bg-background font-sans leading-body text-foreground antialiased;
         -webkit-text-size-adjust: 100%;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply leading-heading;
     }
 }
