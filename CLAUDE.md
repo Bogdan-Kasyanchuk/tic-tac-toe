@@ -20,7 +20,7 @@
 
 - Стиль коду — ESLint + `@stylistic` (як у `jackpot-sounds`): 4 пробіли, `[ a ]`, `${ a }`, атрибути JSX у подвійних лапках. Prettier не використовується, бо схлопує `cn([…])`. Після правок — `npm run lint:fix`.
 - Класи Tailwind і стрілки — за скілом `tailwind-format` (`.claude/skills/tailwind-format/`, там і сканери для ревізії).
-- Дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, копія в `docs/design/` (відкривається на `npm run dev` за адресою `/docs/design/<Ім'я>.dc.html`). Кольори лише через токени в `src/index.css`, не hex у класах.
+- Дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, копія в `docs/design/` (відкривається на `npm run dev` за адресою `/docs/design/<Ім'я>.dc.html`). Числа з канвасу переносяться точно: кольори, кеглі, інтервали й радіуси — лише через токени в `src/index.css`, не hex і не `[…px]` у класах; перелік токенів — `docs/design/README.md`. Новий `--text-*` чи `--leading-*` допиши й у `extendTailwindMerge` у `src/lib/cn.ts`, інакше `cn` прийме його за колір.
 - Нова поведінка — з тестом, що спершу падає.
 
 ## Деплой і секрети

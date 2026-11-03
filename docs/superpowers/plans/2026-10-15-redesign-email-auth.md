@@ -21,7 +21,7 @@
 
 ## Рішення
 
-- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone» і аркуш «Components (shadcn/ui)». Екрани «Verify email» і «Reset password» поки не реалізуються.
+- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone», аркуш «Components (shadcn/ui)» і «Long names: truncation». Екрани «Verify email» і «Reset password» поки не реалізуються (з канвасу прибрані 2026-11-03). Як дизайн-система лягає на токени коду — `docs/design/README.md`.
 - Бібліотека компонентів — shadcn/ui на Radix. Файли компонентів генеруються в `src/components/ui/` і далі вважаються кодом проєкту, а не залежністю.
 - Тема тільки темна, світлої немає.
 - Вхід:
@@ -37,7 +37,7 @@
 - Посилання «Forgot password?» на сторінці входу поки немає.
 - Лобі (`/`) тепер тільки для тих, хто увійшов: привітання звертається на ім'я. Анонім потрапляє на `/login`, а після входу повертається туди, звідки прийшов.
 - Меню:
-  - **Десктоп:** дропдаун з аватаром та ім'ям. У грі в ньому є ID гри (клік копіює), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
+  - **Десктоп:** кнопка з аватаром та ім'ям відкриває дропдаун; угорі в ньому лише пошта. У грі є ID гри (копіює кнопка поруч, меню лишається відкритим), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
   - **Телефон:** бургер-меню з тим самим вмістом, лінк поширюється через «Share invite link». Якщо браузер не вміє Web Share, лінк копіюється.
 - «Back to lobby», «Sign out» і клік по логотипу в грі просять підтвердження в діалозі «Leave the game?» / «Sign out?». У лобі «Sign out» виходить одразу.
 - Очікування суперника: на десктопі модальний діалог, на телефоні нижня панель. Закрити їх можна лише через «Cancel and leave», без підтвердження, бо гравець у грі сам.
@@ -58,9 +58,9 @@
   - стрілка, яка нічого не повертає, має блокове тіло.
 - **Те саме стосується файлів shadcn/ui** після генерації (у глобальних правилах сказано «і при переносі чужого»): після кожного `npx shadcn add` запусти `npm run lint:fix` і сканери скіла.
 - **Токени замість hex у класах.** Кольори з канвасу в JSX не пишуться, лише через токени `@theme` (таблиця в задачі 1).
-- **Числа з канвасу округлюються до шкали Tailwind** (крок 4px, `text-*`). Розбіжність до 4px — норма. Довільні значення в дужках допустимі тільки там, де шкали немає (шаблони grid).
-- **Поля вводу** мають шрифт 16px (`text-base`), щоб iOS не збільшував сторінку при фокусі. На канвасі там 15px.
-- **Розміри для дотику:** інтерактивні елементи щонайменше 44×44px (`size-11` / `h-11`).
+- **Числа з канвасу переносяться точно** (з 2026-11-03; раніше округлювались до шкали Tailwind). Що є в шкалі Tailwind, береться з неї; кеглі, інтервали й радіуси, яких там немає, — токенами `@theme`, перелік у `docs/design/README.md`. Новий `--text-*` чи `--leading-*` треба дописати і в `extendTailwindMerge` у `src/lib/cn.ts`. Довільні значення в дужках — лише там, де шкали немає (шаблони grid).
+- **Поля вводу** мають шрифт 18px (`text-lg`), як на канвасі; від 16px iOS не збільшує сторінку при фокусі.
+- **Розміри для дотику:** кнопки й поля — 50px (`h-12.5` / `size-12.5`), кнопка акаунта й бургер — 44px (`h-11` / `size-11`).
 - Перемикання десктоп/телефон — `md` (48rem): у класах і в хуку `useMediaQuery(DESKTOP)`.
 - Правила пароля й пошти живуть у `convex/authRules.ts` (`MIN_PASSWORD_LENGTH = 8`, `normalizeEmail`, `validatePassword`, тексти помилок). Фронт імпортує їх через `@convex/authRules`.
 - **Convex приховує на prod повідомлення звичайних `Error`.** Усе, що має побачити людина, сервер кидає як `ConvexError('текст')`. Клієнт показує `error.data`, а для будь-якої іншої помилки — запасний текст сценарію.
@@ -88,7 +88,8 @@
 |---|---|
 | `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`), без лінка «Forgot password?» |
 | `SignUp`, `MobileSignUp` | `src/pages/SignUpPage` (`/signup`) |
-| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше» |
+| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше»; з канвасу прибрані 2026-11-03, копія в git (`ce9e237`) |
+| `LongNames` | `PlayerCard`, `AccountMenu`, `MobileMenu` (обрізання й перенос довгих імен) |
 | `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin` | `src/pages/HomePage` (`/`, вкладки New / Join) |
 | `Waiting`, `MobileWaiting` | `src/components/WaitingForOpponent` |
 | `Game`, `GameOpponent`, `MobilePlay`, `MobileOpponent`, `MobileGame` | `src/pages/GamePage` + `Board`, `PlayerCard`, `TurnStatus` |
@@ -2609,7 +2610,7 @@ const SignUpPage: FC = () => {
 export default SignUpPage;
 ```
 
-`footnote` відходить від канвасу: там написано про коди на пошту, яких поки немає.
+`footnote` спершу відходив від канвасу: там було написано про коди на пошту, яких поки немає. З 2026-11-03 і на канвасі, і в коді — «We only use your email to sign you in.»
 
 Run: `npx vitest run src/pages/SignUpPage`
 Expected: PASS.
@@ -3926,7 +3927,7 @@ E2E_BASE_URL=https://bogkas-tic-tac-toe.netlify.app E2E_PROD=1 npx playwright te
 
 ## Пізніше: підтвердження пошти й скидання пароля
 
-Екрани вже є на канвасі: `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword`. Повні кроки з кодом і тестами — у першій версії цього плану:
+Екрани `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword` 2026-11-03 з канвасу прибрали; їхня остання копія — `git show ce9e237 -- docs/design/`, і перед реалізацією їх треба оновити під нову дизайн-систему (`docs/design/README.md`). Повні кроки з кодом і тестами — у першій версії цього плану:
 
 ```bash
 git show 5a16c71:docs/superpowers/plans/2026-10-15-redesign-email-auth.md
