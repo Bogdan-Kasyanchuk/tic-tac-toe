@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import cn from '@/lib/cn';
 
 const Logo: FC<{ className?: string }> = ({ className }) => (
-    <span className={ cn('flex items-center gap-2.5', className) }>
+    <span className={ cn('flex items-center gap-3', className) }>
         <svg
             width="32"
             height="32"
@@ -31,7 +31,7 @@ const Logo: FC<{ className?: string }> = ({ className }) => (
                 className="stroke-cross"
             />
         </svg>
-        <span className="font-display text-xl font-bold tracking-tight text-foreground">tic·tac·toe</span>
+        <span className="font-display text-logo font-bold tracking-tight text-foreground">tic·tac·toe</span>
     </span>
 );
 

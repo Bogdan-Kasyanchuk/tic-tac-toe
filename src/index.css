@@ -34,8 +34,13 @@
     --danger: #ff9b9b;
     --danger-bg: #2a1520;
     --danger-border: #5a2a36;
+    --danger-hover: #3a1a28;
+    --danger-pressed: #4a1f30;
     --field: #10132a;
     --line: #22264d;
+    /* Стани з таблиці States: hover — accent, натиснуто — border, рамка під курсором — border-hover */
+    --border-hover: #3a4080;
+    --option-hover: #4a5199;
     --label: #d6d9f5;
     --subtle: #8086b3;
     --placeholder: #6b7099;
@@ -53,9 +58,35 @@
     --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
     --font-display: 'Bricolage Grotesque Variable', 'Geist Variable', sans-serif;
 
+    /* Кегли канвасу, яких немає в Tailwind: заголовок сторінки 44, рахунок 34 (на телефоні 28), заголовок діалогу й шторки 28, логотип 26 */
+    --text-page-title: 2.75rem;
+    --text-score: 2.125rem;
+    --text-score-sm: 1.75rem;
+    --text-dialog-title: 1.75rem;
+    --text-logo: 1.625rem;
+    /* Заголовки входу: панель-герой 52 (на телефоні 34), заголовок форми 32 */
+    --text-hero: 3.25rem;
+    --text-hero-sm: 2.125rem;
+    --text-form-title: 2rem;
+
+    /* Міжрядковий інтервал канвасу: текст 1.35, заголовки h1–h4 — 1.2. Кеглі Tailwind свого line-height не задають,
+       тож інтервал успадковується від body чи заголовка, а не прив'язаний до розміру */
+    --leading-body: 1.35;
+    --leading-heading: 1.2;
+    --text-xs--line-height: initial;
+    --text-sm--line-height: initial;
+    --text-base--line-height: initial;
+    --text-lg--line-height: initial;
+    --text-xl--line-height: initial;
+    --text-2xl--line-height: initial;
+    --text-3xl--line-height: initial;
+    --text-4xl--line-height: initial;
+    --text-5xl--line-height: initial;
+
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
-    --radius-lg: var(--radius);
+    /* Шкала радіусів канвасу: 6 бейдж, 8 вкладка й пункт меню, 12 контрол 50px, 14 меню й toast, 16 картка й клітинка */
+    --radius-lg: calc(var(--radius) + 2px);
     --radius-xl: calc(var(--radius) + 4px);
 
     --color-background: var(--background);
@@ -79,8 +110,12 @@
     --color-danger: var(--danger);
     --color-danger-bg: var(--danger-bg);
     --color-danger-border: var(--danger-border);
+    --color-danger-hover: var(--danger-hover);
+    --color-danger-pressed: var(--danger-pressed);
     --color-field: var(--field);
     --color-line: var(--line);
+    --color-border-hover: var(--border-hover);
+    --color-option-hover: var(--option-hover);
     --color-label: var(--label);
     --color-subtle: var(--subtle);
     --color-placeholder: var(--placeholder);
@@ -112,16 +147,27 @@
         @apply border-border outline-ring/50;
     }
 
-    /* Tailwind 4 прибрав cursor: pointer у кнопок, у Tailwind 3 він був */
+    /* Tailwind 4 прибрав cursor: pointer у кнопок, у Tailwind 3 він був; вимкнена кнопка — not-allowed, як на канвасі */
     button:not(:disabled),
     [role='button']:not(:disabled) {
         cursor: pointer;
     }
 
+    button:disabled {
+        cursor: not-allowed;
+    }
+
     body {
-        @apply min-h-dvh bg-background font-sans text-foreground antialiased;
+        @apply min-h-dvh bg-background font-sans leading-body text-foreground antialiased;
         -webkit-text-size-adjust: 100%;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         text-rendering: optimizeLegibility;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply leading-heading;
     }
 }

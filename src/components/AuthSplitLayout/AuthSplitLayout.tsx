@@ -12,7 +12,7 @@ type AuthSplitLayoutProps = {
     children: ReactNode
 };
 
-// Десктоп: ліва панель з полем і заголовком, форма праворуч. Телефон: лише логотип і форма
+// Десктоп: ліва панель з полем і заголовком, форма праворуч. Телефон і планшет до 768: лише логотип і форма, колонка 380 по центру
 const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footnote, children }) => (
     <div className="flex min-h-dvh">
         <section
@@ -27,8 +27,8 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
             <div className="flex flex-col gap-8">
                 <HeroBoard variant={ hero } />
                 <div className="flex max-w-115 flex-col gap-4">
-                    <h1 className="font-display text-5xl leading-none font-extrabold tracking-tight">{ headline }</h1>
-                    <p className="text-lg leading-relaxed text-muted-foreground">{ lead }</p>
+                    <h1 className="font-display text-hero font-extrabold tracking-tight">{ headline }</h1>
+                    <p className="text-lg text-muted-foreground">{ lead }</p>
                 </div>
             </div>
             <p className="text-sm text-subtle">{ footnote }</p>
@@ -36,15 +36,15 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
         <section
             className={
                 cn([
-                    'flex flex-1 flex-col px-6 pt-14 pb-8',
-                    'md:items-center md:justify-center md:py-12'
+                    'flex flex-1 flex-col items-center px-6 pt-14 pb-8',
+                    'md:justify-center md:py-12'
                 ])
             }
         >
             <div
                 className={
                     cn([
-                        'flex w-full max-w-95 grow flex-col gap-6',
+                        'flex w-full max-w-95 grow flex-col gap-7',
                         'md:grow-0'
                     ])
                 }

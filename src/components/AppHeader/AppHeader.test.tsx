@@ -147,3 +147,39 @@ test('in the lobby the header avatar keeps the neutral colour', () => {
 
     expect(within(trigger).getByText('AS').className).toContain('bg-border');
 });
+
+// Аркуш Components → DropdownMenu: на десктопі вгорі меню лише пошта, без аватара й імені
+test('the desktop menu shows only the email on top', async () => {
+    mockViewport(true);
+
+    const user = userEvent.setup();
+
+    renderAt('/game/g1');
+
+    await user.click(screen.getByRole('button', { name: /Alice Smith/ }));
+
+    const menu = await screen.findByRole('menu');
+
+    expect(within(menu).getByText('alice@example.com')).toBeTruthy();
+    expect(within(menu).queryByText('Alice Smith')).toBeNull();
+    expect(within(menu).queryByText('AS')).toBeNull();
+});
+
+// Як на мобільному: поле з ID — просто текст, копіює лише кнопка поруч, і меню після копіювання не закривається
+test('in the desktop menu only the copy button copies the game ID', async () => {
+    mockViewport(true);
+
+    const user = userEvent.setup();
+
+    renderAt('/game/g1');
+
+    await user.click(screen.getByRole('button', { name: /Alice Smith/ }));
+
+    const menu = await screen.findByRole('menu');
+
+    expect(within(menu).getByText('g1').closest('[role="menuitem"]')).toBeNull();
+
+    await user.click(within(menu).getByRole('menuitem', { name: 'Copy game ID' }));
+
+    expect(screen.getByRole('menu')).toBeTruthy();
+});

@@ -53,7 +53,7 @@ test('no moves while waiting for the second player', () => {
     expect(canMove({ ...GAME, cross: null })).toBe(false);
 });
 
-// Артборд Waiting: поки суперника немає, це не «Your turn»
+// Артборд Waiting: поки суперника немає, це не «Your turn», а тихий статус без крапки (тон idle)
 test('alone in the game, the status says it waits for a second player', () => {
-    expect(gameStatus({ ...GAME, cross: null })).toEqual({ text: 'Waiting for a second player', hint: null, tone: 'muted', waiting: false });
+    expect(gameStatus({ ...GAME, cross: null })).toEqual({ text: 'Waiting for a second player', hint: null, tone: 'idle', waiting: false });
 });

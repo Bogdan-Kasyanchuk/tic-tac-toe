@@ -33,7 +33,7 @@ const LeaveGameDialog: FC<LeaveGameDialogProps> = ({ intent, onCancel, onConfirm
         >
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="font-display text-2xl font-bold">{ copy.title }</AlertDialogTitle>
+                    <AlertDialogTitle className="font-display text-dialog-title font-bold">{ copy.title }</AlertDialogTitle>
                     <AlertDialogDescription>The current game ends for both players, and the score is lost.</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

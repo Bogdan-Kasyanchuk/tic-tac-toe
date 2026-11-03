@@ -1,52 +1,30 @@
 import { Check, Copy } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { copyText } from '@/lib/invite';
+import useCopy from '@/hooks/useCopy';
 
 type CopyButtonProps = {
     text: string,
     label: string,
-    success: string,
-    // Видимий підпис поруч з іконкою (діалог очікування на десктопі); без нього кнопка квадратна
-    caption?: string
+    success: string
 };
 
-const CopyButton: FC<CopyButtonProps> = ({ text, label, success, caption }) => {
-    const [ copied, setCopied ] = useState(false);
-
-    useEffect(
-        () => {
-            if (!copied) {
-                return;
-            }
-
-            const timer = setTimeout(() => {
-                setCopied(false);
-            }, 1500);
-
-            return () => {
-                clearTimeout(timer);
-            };
-        },
-        [ copied ]
-    );
+const CopyButton: FC<CopyButtonProps> = ({ text, label, success }) => {
+    const { copied, copy } = useCopy(text, success);
 
     return (
         <Button
             variant="secondary"
-            size={ caption ? 'default' : 'icon' }
+            size="icon"
             aria-label={ label }
-            className={ caption ? 'h-12 px-4 text-sm' : undefined }
             onClick={
-                async () => {
-                    await copyText(text, success);
-                    setCopied(true);
+                () => {
+                    void copy();
                 }
             }
         >
             { copied ? <Check /> : <Copy /> }
-            { caption }
         </Button>
     );
 };

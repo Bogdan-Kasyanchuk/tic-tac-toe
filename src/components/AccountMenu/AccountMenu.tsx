@@ -1,5 +1,5 @@
 import { useQuery } from 'convex/react';
-import { ArrowLeft, ChevronDown, Copy, Link2, LogOut } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, Copy, Link2, LogOut } from 'lucide-react';
 import type { FC } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -7,8 +7,9 @@ import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import UserAvatar from '@/components/UserAvatar';
+import useCopy from '@/hooks/useCopy';
 import type { LeaveIntent } from '@/hooks/useLeaveGame';
-import { copyText, inviteLink } from '@/lib/invite';
+import { copyInvite } from '@/lib/invite';
 import { api } from '@convex/_generated/api';
 import type { Mark } from '@convex/rules';
 
@@ -22,13 +23,15 @@ type AccountMenuProps = {
 const AccountMenu: FC<AccountMenuProps> = ({ gameCode, tone, onRequest }) => {
     const me = useQuery(api.users.me);
     const name = me?.name ?? '';
+    const { copied, copy: copyGameId } = useCopy(gameCode ?? '', 'Game ID copied');
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
+                { /* Кнопка росте разом з іменем і не обрізає його: так на аркуші Long names */ }
                 <Button
                     variant="secondary"
-                    className="group rounded-full bg-card pr-3 pl-1.5 text-sm"
+                    className="group h-11 gap-3 rounded-full bg-card pr-3 pl-2 text-sm hover:border-border hover:bg-secondary active:border-border active:bg-accent active:scale-100"
                 >
                     <UserAvatar
                         name={ name }
@@ -44,42 +47,46 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, tone, onRequest }) => {
                 align="end"
                 className="w-75"
             >
-                <DropdownMenuLabel className="flex items-center gap-3 p-2.5 font-normal">
-                    <UserAvatar
-                        name={ name }
-                        avatar={ me?.avatar ?? '' }
-                        tone={ tone }
-                        size="md"
-                    />
-                    <span className="flex min-w-0 flex-col gap-1">
-                        <span className="truncate text-sm font-semibold">{ name }</span>
-                        <span className="truncate text-sm text-muted-foreground">{ me?.email }</span>
-                    </span>
+                { /* Ім'я й аватар уже на кнопці, тож угорі меню лише пошта */ }
+                <DropdownMenuLabel
+                    title={ me?.email }
+                    className="truncate p-3 text-sm font-normal text-muted-foreground"
+                >
+                    { me?.email }
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 { gameCode && (
                     <>
-                        <DropdownMenuLabel className="px-2.5 pt-2 pb-0 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-                            Game ID
-                        </DropdownMenuLabel>
+                        <div className="flex flex-col gap-2 px-3 pt-2 pb-3">
+                            <DropdownMenuLabel className="p-0 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+                                Game ID
+                            </DropdownMenuLabel>
+                            { /* Як на мобільному: поле — лише текст, копіює кнопка; меню після копіювання лишається відкритим */ }
+                            <div className="flex gap-2">
+                                <span
+                                    title={ gameCode }
+                                    className="h-12.5 min-w-0 flex-1 truncate rounded-lg border border-border bg-field px-4 font-mono text-lg leading-12 font-medium"
+                                >
+                                    { gameCode }
+                                </span>
+                                <DropdownMenuItem
+                                    aria-label="Copy game ID"
+                                    className="size-12.5 min-h-0 shrink-0 justify-center rounded-lg border border-border bg-card p-0 text-muted-foreground transition focus:bg-accent focus:text-foreground active:scale-96 active:bg-border"
+                                    onSelect={
+                                        event => {
+                                            event.preventDefault();
+                                            void copyGameId();
+                                        }
+                                    }
+                                >
+                                    { copied ? <Check className="text-current" /> : <Copy className="text-current" /> }
+                                </DropdownMenuItem>
+                            </div>
+                        </div>
                         <DropdownMenuItem
-                            className="mx-1 mt-2 mb-1 h-11 min-h-0 rounded-lg border border-border bg-field pr-0.5 pl-3 focus:border-ring focus:bg-field"
                             onSelect={
                                 () => {
-                                    void copyText(gameCode, 'Game ID copied');
-                                }
-                            }
-                        >
-                            <span className="min-w-0 flex-1 truncate font-mono text-sm font-medium">{ gameCode }</span>
-                            <span className="sr-only">Copy game ID</span>
-                            <span className="flex size-10 items-center justify-center rounded-md bg-secondary">
-                                <Copy />
-                            </span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onSelect={
-                                () => {
-                                    void copyText(inviteLink(gameCode), 'Invite link copied');
+                                    void copyInvite(gameCode);
                                 }
                             }
                         >

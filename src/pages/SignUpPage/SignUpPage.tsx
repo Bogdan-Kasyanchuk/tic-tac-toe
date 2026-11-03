@@ -59,12 +59,12 @@ const SignUpPage: FC = () => {
             hero="column"
             headline={ <>Your name on<br />every scoreboard.</> }
             lead="One account for every device. Sign in with Google or with your email."
-            footnote="Your email is only used to sign in."
+            footnote="We only use your email to sign you in."
         >
             <div
                 className={
                     cn([
-                        'mt-3 flex flex-col gap-2',
+                        'mt-auto flex flex-col gap-2',
                         'md:mt-0'
                     ])
                 }
@@ -72,8 +72,8 @@ const SignUpPage: FC = () => {
                 <h2
                     className={
                         cn([
-                            'font-display text-3xl leading-tight font-extrabold tracking-tight',
-                            'md:font-bold'
+                            'font-display text-3xl font-extrabold tracking-tight',
+                            'md:text-form-title md:font-bold'
                         ])
                     }
                 >
@@ -124,7 +124,7 @@ const SignUpPage: FC = () => {
                     />
                     <div
                         aria-hidden="true"
-                        className="grid grid-cols-3 gap-1.5"
+                        className="mt-1 grid grid-cols-3 gap-2"
                     >
                         { [ 0, 1, 2 ].map(level => (
                             <span
@@ -145,26 +145,15 @@ const SignUpPage: FC = () => {
                                 { ' ' }
                                 { MIN_PASSWORD_LENGTH }
                                 { ' ' }
-                                characters
-                                <span
-                                    className={
-                                        cn([
-                                            'hidden',
-                                            'md:inline'
-                                        ])
-                                    }
-                                >
-                                    ; a mix of letters and digits is stronger
-                                </span>
-                                .
+                                characters; a mix of letters and digits is stronger.
                             </p>
                         ) }
                 </div>
                 <FieldError>{ formError }</FieldError>
                 <Button
                     type="submit"
-                    size="lg"
                     disabled={ isSubmitting }
+                    className="mt-1"
                 >
                     Create account
                 </Button>
@@ -172,8 +161,8 @@ const SignUpPage: FC = () => {
             <p
                 className={
                     cn([
-                        'mt-auto text-center text-sm text-muted-foreground',
-                        'md:mt-0'
+                        'mb-auto text-center text-sm text-muted-foreground',
+                        'md:mb-0'
                     ])
                 }
             >
@@ -182,7 +171,7 @@ const SignUpPage: FC = () => {
                 <Link
                     to="/login"
                     state={ { from } }
-                    className="font-medium text-link hover:text-link-hover"
+                    className="font-medium text-link hover:text-link-hover hover:underline active:text-foreground"
                 >
                     Sign in
                 </Link>

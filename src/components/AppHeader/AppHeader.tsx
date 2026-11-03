@@ -36,7 +36,7 @@ const AppHeader: FC = () => {
                 className={
                     cn([
                         'flex h-18 items-center justify-between gap-4 px-5',
-                        'md:px-8'
+                        'md:h-19 md:px-8'
                     ])
                 }
             >

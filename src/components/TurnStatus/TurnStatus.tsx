@@ -18,9 +18,16 @@ const TurnStatus: FC<{ status: GameStatus }> = ({ status }) => {
             <div className="flex min-h-16 flex-col items-center gap-2">
                 <p
                     role="status"
-                    className="flex h-10 items-center gap-2.5 rounded-full border border-line bg-card px-4.5 font-medium"
+                    className={
+                        status.tone === 'idle'
+                            ? 'flex h-9 items-center rounded-full bg-card px-4 text-sm text-muted-foreground'
+                            : cn([
+                                'flex h-10 items-center gap-3 rounded-full border border-line bg-card px-5 font-semibold',
+                                'md:font-medium'
+                            ])
+                    }
                 >
-                    { status.waiting
+                    { status.tone !== 'idle' && (status.waiting
                         ? (
                             <span
                                 aria-hidden="true"
@@ -36,7 +43,7 @@ const TurnStatus: FC<{ status: GameStatus }> = ({ status }) => {
                                 aria-hidden="true"
                                 className={ cn('size-2.5 rounded-full', color) }
                             />
-                        ) }
+                        )) }
                     { status.text }
                 </p>
                 { status.hint && <p className="text-center text-sm text-muted-foreground">{ status.hint }</p> }

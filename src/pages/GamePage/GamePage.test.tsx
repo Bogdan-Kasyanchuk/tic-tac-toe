@@ -169,8 +169,8 @@ test('alone in the game, the desktop dialog offers the ID and the invite link', 
     expect(within(dialog).getByRole('button', { name: 'Cancel and leave' })).toBeTruthy();
 });
 
-// Артборд Waiting: на десктопі кнопка копіювання з підписом, на телефоні (MobileWaiting) — лише іконка
-test('the desktop waiting dialog labels the copy button', async () => {
+// Оновлений артборд Waiting: і на десктопі копіювання ID — квадратна кнопка-іконка 50×50, без підпису
+test('the desktop waiting dialog keeps the copy button icon-only', async () => {
     mockViewport(true);
     enter.mockResolvedValue('created');
     queryResult = { ...GAME, cross: null };
@@ -179,7 +179,48 @@ test('the desktop waiting dialog labels the copy button', async () => {
 
     const dialog = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
 
-    expect(within(dialog).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('Copy');
+    expect(within(dialog).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('');
+});
+
+// Аркуш Components → Badge: чий хід, показує лише статус над полем, не картки гравців
+test('the score cards do not repeat whose turn it is', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('Your turn')).toBeTruthy();
+    expect(screen.queryByText(/your move/)).toBeNull();
+    expect(screen.queryByText(/thinking/)).toBeNull();
+});
+
+// Артборд LongNames: на телефоні картка суперника показує ім'я з прізвищем і обрізає його, як на десктопі
+test('the phone score card shows the opponent full name', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('You')).toBeTruthy();
+    expect(screen.queryByText('Bob')).toBeNull();
+    expect(screen.getAllByText('Bob Stone')[ 0 ].className).toContain('truncate');
+});
+
+// Обрізане ім'я видно повністю в підказці при наведенні
+test('a truncated player name shows the full name on hover', async () => {
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect(await screen.findByText('You')).toBeTruthy();
+
+    for (const name of [ 'Alice Smith', 'Bob Stone' ]) {
+        for (const element of screen.getAllByText(name)) {
+            expect(element.getAttribute('title')).toBe(name);
+        }
+    }
 });
 
 test('the phone waiting sheet keeps the copy button icon-only', async () => {

@@ -30,7 +30,7 @@ const STEPS: Record<GameType, string[]> = {
     join: [
         'Paste the game ID, or open the invite link.',
         'You take the mark your friend left free.',
-        'Play live. The score keeps counting until a new session.'
+        'Play live. The score keeps counting until you start a new session.'
     ]
 };
 
@@ -77,32 +77,18 @@ const HomePage: FC = () => {
                 ])
             }
         >
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
                 <h1
                     className={
                         cn([
-                            'font-display text-3xl leading-tight font-extrabold tracking-tight',
-                            'md:text-5xl'
+                            'font-display text-3xl font-extrabold tracking-tight',
+                            'md:text-page-title'
                         ])
                     }
                 >
                     { `Ready for a round, ${ firstName(me?.name ?? '') }?` }
                 </h1>
-                <p className="text-muted-foreground">
-                    Start a new game, or join a friend with
-                    <span
-                        className={
-                            cn([
-                                'hidden',
-                                'md:inline'
-                            ])
-                        }
-                    >
-                        { ' the ID they sent you' }
-                    </span>
-                    <span className="md:hidden">{ ' their ID' }</span>
-                    .
-                </p>
+                <p className="text-muted-foreground">Start a new game, or join a friend with the ID they sent you.</p>
             </div>
             <div className="flex flex-wrap items-start gap-6">
                 <section
@@ -110,7 +96,7 @@ const HomePage: FC = () => {
                     className={
                         cn([
                             'flex min-w-0 flex-[999_1_32rem] flex-col gap-6',
-                            'md:rounded-2xl md:border md:border-line md:bg-card md:p-7'
+                            'md:gap-7 md:rounded-2xl md:border md:border-line md:bg-card md:p-7'
                         ])
                     }
                 >
@@ -134,7 +120,10 @@ const HomePage: FC = () => {
                             <div className="flex flex-col gap-2">
                                 <span className="text-sm font-medium text-label">Game ID</span>
                                 <div className="flex gap-2">
-                                    <p className="h-11 min-w-0 flex-1 truncate rounded-lg border border-dashed border-border bg-field px-3.5 font-mono leading-11 font-medium">
+                                    <p
+                                        title={ newCode }
+                                        className="h-12.5 min-w-0 flex-1 truncate rounded-lg border border-border bg-field px-4 font-mono text-lg leading-12 font-medium"
+                                    >
                                         { newCode }
                                     </p>
                                     <Button
@@ -158,7 +147,6 @@ const HomePage: FC = () => {
                                 <p className="text-sm text-muted-foreground">Generated for you. Your friend joins with this ID.</p>
                             </div>
                             <Button
-                                size="lg"
                                 onClick={
                                     () => {
                                         navigate(`/game/${ encodeURIComponent(newCode) }?mark=${ mark }`);
@@ -214,7 +202,7 @@ const HomePage: FC = () => {
                                 { /* Сервер сам віддає вільну позначку, тож «Cross» з канвасу тут не обіцяємо */ }
                                 <div
                                     role="note"
-                                    className="flex items-center gap-3.5 rounded-xl border border-line bg-field px-4 py-3.5"
+                                    className="flex h-20 shrink-0 items-center gap-4 rounded-2xl border border-line bg-field px-4"
                                 >
                                     <MarkIcon
                                         mark="cross"
@@ -225,10 +213,7 @@ const HomePage: FC = () => {
                                         <span className="text-sm text-muted-foreground">Circle moves first.</span>
                                     </span>
                                 </div>
-                                <Button
-                                    type="submit"
-                                    size="lg"
-                                >
+                                <Button type="submit">
                                     Join game
                                     <ArrowRight />
                                 </Button>
@@ -245,16 +230,16 @@ const HomePage: FC = () => {
                     }
                 >
                     <h2 className="font-display text-xl font-bold">How it works</h2>
-                    <ol className="flex flex-col gap-4.5">
+                    <ol className="flex flex-col gap-5">
                         { STEPS[ type ].map((step, index) => (
                             <li
                                 key={ step }
-                                className="flex gap-3.5"
+                                className="flex gap-4"
                             >
                                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-link">
                                     { index + 1 }
                                 </span>
-                                <span className="leading-normal text-label">{ step }</span>
+                                <span className="text-label">{ step }</span>
                             </li>
                         )) }
                     </ol>

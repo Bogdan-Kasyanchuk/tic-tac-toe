@@ -3,7 +3,6 @@ import type { FC } from 'react';
 import MarkIcon from '@/components/MarkIcon';
 import UserAvatar from '@/components/UserAvatar';
 import cn from '@/lib/cn';
-import { firstName } from '@/lib/initials';
 import type { PlayerView } from '@/types/game';
 import type { Mark } from '@convex/rules';
 
@@ -11,30 +10,33 @@ type PlayerCardProps = {
     mark: Mark,
     player: PlayerView | null,
     isMe: boolean,
-    active: boolean,
-    activity: string | null
+    active: boolean
 };
 
-const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity }) => {
+// Висота картки фіксована (60 на телефоні, 80 на десктопі): довге ім'я обрізається трьома крапками, YOU і рахунок не стискаються
+const CARD = 'flex h-15 min-w-0 items-center gap-3 rounded-2xl border-2 px-3';
+const CARD_MD = 'md:h-20 md:gap-4 md:px-4';
+
+const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active }) => {
     if (!player) {
         return (
             <div
                 className={
                     cn([
-                        'flex min-w-0 items-center gap-2.5 rounded-2xl border-2 border-dashed border-border p-3 text-muted-foreground',
-                        'md:gap-3.5 md:p-4'
+                        `${ CARD } border-dashed border-border text-muted-foreground`,
+                        CARD_MD
                     ])
                 }
             >
                 <span
                     className={
                         cn([
-                            'size-8 shrink-0 rounded-full border-2 border-dashed border-border',
+                            'size-9 shrink-0 rounded-full border-2 border-dashed border-border',
                             'md:size-11'
                         ])
                     }
                 />
-                <span className="font-medium">Open seat</span>
+                <span className="truncate">Open seat</span>
             </div>
         );
     }
@@ -43,8 +45,8 @@ const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity 
         <div
             className={
                 cn([
-                    'flex min-w-0 items-center gap-2.5 rounded-2xl border-2 bg-card p-3',
-                    'md:gap-3.5 md:p-4'
+                    `${ CARD } bg-card`,
+                    CARD_MD
                 ], {
                     'border-circle': active && mark === 'circle',
                     'border-cross': active && mark === 'cross',
@@ -57,7 +59,7 @@ const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity 
                     name={ player.name }
                     avatar={ player.avatar }
                     tone={ mark }
-                    size="sm"
+                    size="card"
                 />
             </span>
             <span className="max-md:hidden">
@@ -68,8 +70,17 @@ const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity 
                     size="md"
                 />
             </span>
-            <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <span
+                className={
+                    cn([
+                        'flex min-w-0 flex-1 flex-col gap-1',
+                        'md:gap-2'
+                    ])
+                }
+            >
+                { /* title — повне ім'я в підказці при наведенні, коли воно обрізане трьома крапками */ }
                 <span
+                    title={ isMe ? undefined : player.name }
                     className={
                         cn([
                             'truncate text-sm font-semibold',
@@ -77,7 +88,7 @@ const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity 
                         ])
                     }
                 >
-                    { isMe ? 'You' : firstName(player.name) }
+                    { isMe ? 'You' : player.name }
                 </span>
                 <span
                     className={
@@ -87,35 +98,29 @@ const PlayerCard: FC<PlayerCardProps> = ({ mark, player, isMe, active, activity 
                         ])
                     }
                 >
-                    <span className="truncate">{ player.name }</span>
-                    { isMe && <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">YOU</span> }
+                    <span
+                        title={ player.name }
+                        className="truncate"
+                    >
+                        { player.name }
+                    </span>
+                    { isMe && <span className="shrink-0 rounded-sm bg-secondary px-2 py-1 text-xs font-semibold text-muted-foreground">YOU</span> }
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MarkIcon
                         mark={ mark }
                         className="size-3.5"
                     />
-                    <span className="max-md:hidden">{ mark === 'circle' ? 'Circle' : 'Cross' }</span>
-                    { activity && (
-                        <span
-                            className={
-                                cn('max-md:hidden', {
-                                    'text-link': mark === 'circle',
-                                    'text-cross-light': mark === 'cross'
-                                })
-                            }
-                        >
-                            { activity }
-                        </span>
-                    ) }
+                    { /* На телефоні лишається лише значок, назву позначки читає скрінрідер */ }
+                    <span className="max-md:sr-only">{ mark === 'circle' ? 'Circle' : 'Cross' }</span>
                 </span>
             </span>
             <span
                 aria-label="Score"
                 className={
                     cn([
-                        'font-display text-3xl font-bold',
-                        'md:text-4xl'
+                        'shrink-0 font-display text-score-sm font-bold',
+                        'md:text-score'
                     ])
                 }
             >

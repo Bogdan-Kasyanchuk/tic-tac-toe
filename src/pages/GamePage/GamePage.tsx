@@ -14,7 +14,6 @@ import cn from '@/lib/cn';
 import errorMessage from '@/lib/errorMessage';
 import { gameStatus } from '@/lib/gameStatus';
 import { api } from '@convex/_generated/api';
-import type { Mark } from '@convex/rules';
 
 // Один id на всі toast-и входу: у dev StrictMode викликає enter двічі, і toast оновлюється, а не дублюється
 const ENTER_TOAST = 'game-enter';
@@ -99,13 +98,6 @@ const GamePage: FC = () => {
 
     const status = gameStatus(game);
     const ready = Boolean(game.circle && game.cross);
-    const activityOf = (mark: Mark) => {
-        if (!ready || game.result || game.turn !== mark) {
-            return null;
-        }
-
-        return mark === game.me ? '· your move' : '· thinking…';
-    };
 
     return (
         <>
@@ -122,15 +114,15 @@ const GamePage: FC = () => {
                     aria-label="Players"
                     className={
                         cn([
-                            'grid grid-cols-2 gap-2.5',
-                            'md:col-start-2 md:row-start-1 md:grid-cols-1 md:content-start md:gap-3'
+                            'grid grid-cols-2 gap-3',
+                            'md:col-start-2 md:row-start-1 md:grid-cols-1 md:content-start'
                         ])
                     }
                 >
                     <h2
                         className={
                             cn([
-                                'text-xs font-medium tracking-widest text-muted-foreground uppercase',
+                                'mb-1 text-sm font-medium tracking-widest text-muted-foreground uppercase',
                                 'max-md:hidden'
                             ])
                         }
@@ -144,7 +136,6 @@ const GamePage: FC = () => {
                             player={ game[ mark ] }
                             isMe={ mark === game.me }
                             active={ game.result?.kind === 'win' ? game.result.mark === mark : ready && !game.result && game.turn === mark }
-                            activity={ activityOf(mark) }
                         />
                     )) }
                 </section>
@@ -166,14 +157,13 @@ const GamePage: FC = () => {
                 <section
                     className={
                         cn([
-                            'grid grid-cols-2 gap-2.5 self-end',
-                            'md:col-start-2 md:row-start-2 md:self-start'
+                            'grid grid-cols-2 gap-3 self-end',
+                            'md:col-start-2 md:row-start-2 md:mt-2 md:self-start'
                         ])
                     }
                 >
                     <Button
                         variant="secondary"
-                        size="lg"
                         onClick={
                             () => {
                                 clearBoard({ code: gameId }).catch(onError);
@@ -181,14 +171,10 @@ const GamePage: FC = () => {
                         }
                     >
                         <RotateCcw />
-                        <span>
-                            Clear
-                            <span className="max-md:hidden"> board</span>
-                        </span>
+                        Clear board
                     </Button>
                     <Button
                         variant="secondary"
-                        size="lg"
                         onClick={
                             () => {
                                 newSession({ code: gameId }).catch(onError);

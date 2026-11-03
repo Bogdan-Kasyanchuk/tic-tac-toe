@@ -31,7 +31,7 @@ function TabsList({
             data-slot="tabs-list"
             className={
                 cn(
-                    'grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-line bg-field p-1',
+                    'grid h-auto w-full grid-cols-2 gap-1 rounded-lg border border-line bg-field p-1',
                     className
                 )
             }
@@ -49,7 +49,7 @@ function TabsTrigger({
             data-slot="tabs-trigger"
             className={
                 cn(
-                    'inline-flex h-10 items-center justify-center gap-2 rounded-md text-sm font-semibold whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-border data-[state=active]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+                    'inline-flex h-10 items-center justify-center gap-2 rounded-md text-base font-semibold whitespace-nowrap text-muted-foreground transition outline-none hover:not-data-[state=active]:bg-secondary hover:text-foreground active:not-data-[state=active]:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-border data-[state=active]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
                     className
                 )
             }

@@ -21,7 +21,7 @@ const Board: FC<BoardProps> = ({ game, onSelect }) => {
             className={
                 cn([
                     'mx-auto grid aspect-square w-full max-w-120 grid-cols-3 grid-rows-3 gap-2',
-                    'md:gap-2.5'
+                    'md:gap-3'
                 ])
             }
         >

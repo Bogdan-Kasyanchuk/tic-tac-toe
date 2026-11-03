@@ -40,7 +40,7 @@ const GoogleButton: FC<{ label: string }> = ({ label }) => {
     return (
         <Button
             variant="secondary"
-            className="w-full"
+            className="w-full gap-3"
             onClick={
                 () => {
                     // Google OAuth іде повним редиректом і повертає на `from` (той самий /game/:id, якщо прийшли з посилання).

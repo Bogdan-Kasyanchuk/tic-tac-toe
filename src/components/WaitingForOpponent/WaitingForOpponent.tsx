@@ -7,12 +7,13 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import useLeaveGame from '@/hooks/useLeaveGame';
 import useMediaQuery, { DESKTOP } from '@/hooks/useMediaQuery';
-import { copyText, inviteLink, shareInvite } from '@/lib/invite';
+import cn from '@/lib/cn';
+import { copyInvite, shareInvite } from '@/lib/invite';
 
 const WaitDots: FC = () => (
     <span
         aria-hidden="true"
-        className="flex gap-2"
+        className="flex justify-center gap-2"
     >
         <span className="size-3 animate-wait-dot rounded-full bg-circle motion-reduce:animate-none" />
         <span className="size-3 animate-wait-dot rounded-full bg-circle [animation-delay:200ms] motion-reduce:animate-none" />
@@ -28,23 +29,33 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
     const body: ReactNode = (
         <>
             <div className="flex gap-2">
-                <p className="h-12 min-w-0 flex-1 truncate rounded-xl border border-border bg-field px-3.5 font-mono leading-12">{ code }</p>
+                <p
+                    title={ code }
+                    className="h-12.5 min-w-0 flex-1 truncate rounded-lg border border-border bg-field px-4 font-mono text-lg leading-12 font-medium"
+                >
+                    { code }
+                </p>
                 <CopyButton
                     text={ code }
                     label="Copy game ID"
                     success="Game ID copied"
-                    caption={ isDesktop ? 'Copy' : undefined }
                 />
             </div>
-            <div className="flex flex-col gap-2.5">
+            <div
+                className={
+                    cn([
+                        'flex flex-col gap-2',
+                        'md:gap-3'
+                    ])
+                }
+            >
                 { isDesktop
                     ? (
                         <Button
                             variant="secondary"
-                            size="lg"
                             onClick={
                                 () => {
-                                    void copyText(inviteLink(code), 'Invite link copied');
+                                    void copyInvite(code);
                                 }
                             }
                         >
@@ -54,7 +65,6 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
                     )
                     : (
                         <Button
-                            size="lg"
                             onClick={
                                 () => {
                                     void shareInvite(code);
@@ -97,8 +107,8 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
                     }
                 >
                     <WaitDots />
-                    <div className="flex flex-col gap-2.5">
-                        <DialogTitle className="font-display text-3xl font-bold tracking-tight">Waiting for an opponent</DialogTitle>
+                    <div className="flex flex-col gap-3">
+                        <DialogTitle className="font-display text-dialog-title font-bold tracking-tight">Waiting for an opponent</DialogTitle>
                         <DialogDescription>Send this game ID to a friend. The game starts as soon as they join.</DialogDescription>
                     </div>
                     { body }
@@ -115,7 +125,7 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
             <DrawerContent className="flex flex-col gap-5 px-5 pb-9">
                 <WaitDots />
                 <div className="flex flex-col gap-2">
-                    <DrawerTitle className="font-display text-2xl font-extrabold tracking-tight">Waiting for an opponent</DrawerTitle>
+                    <DrawerTitle className="font-display text-dialog-title font-extrabold tracking-tight">Waiting for an opponent</DrawerTitle>
                     <DrawerDescription>Share the invite link. The game starts as soon as your friend joins.</DrawerDescription>
                 </div>
                 { body }

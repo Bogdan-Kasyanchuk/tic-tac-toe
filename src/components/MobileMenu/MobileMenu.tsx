@@ -18,7 +18,7 @@ type MobileMenuProps = {
     onRequest: (intent: LeaveIntent) => void
 };
 
-const ITEM = 'h-13 w-full justify-start gap-3.5 rounded-xl px-3 text-base text-foreground [&_svg:not([class*=size-])]:size-5';
+const ITEM = 'h-12.5 w-full justify-start gap-3 rounded-md px-3 font-normal text-foreground hover:bg-accent active:bg-border active:scale-100';
 
 const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
     const me = useQuery(api.users.me);
@@ -39,9 +39,9 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
             <SheetTrigger asChild>
                 <Button
                     variant="secondary"
-                    size="icon"
+                    size="icon-round"
                     aria-label="Open menu"
-                    className="rounded-full bg-card"
+                    className="bg-card text-foreground"
                 >
                     <Menu />
                 </Button>
@@ -51,20 +51,20 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                 className="gap-5 px-4 pt-12 pb-8 shadow-[-16px_0_48px_rgba(0,0,0,0.45)]"
             >
                 <div className="flex items-center justify-between pl-2">
-                    <SheetTitle className="font-display text-xl font-bold">Menu</SheetTitle>
+                    <SheetTitle className="font-display text-xl leading-body font-bold">Menu</SheetTitle>
                     <SheetClose asChild>
                         <Button
                             variant="secondary"
-                            size="icon"
+                            size="icon-round"
                             aria-label="Close menu"
-                            className="rounded-full"
+                            className="text-foreground"
                         >
                             <X />
                         </Button>
                     </SheetClose>
                 </div>
                 <SheetDescription className="sr-only">Account and game</SheetDescription>
-                <div className="flex items-center gap-3.5 px-2 py-1">
+                <div className="flex items-center gap-4 px-2 py-1">
                     <UserAvatar
                         name={ name }
                         avatar={ me?.avatar ?? '' }
@@ -72,16 +72,20 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                         size="lg"
                     />
                     <span className="flex min-w-0 flex-col gap-1">
-                        <span className="text-lg font-semibold">{ name }</span>
-                        <span className="truncate text-sm text-muted-foreground">{ me?.email }</span>
+                        { /* Довге ім'я й пошта переносяться, а не обрізаються; аватар лишається по центру */ }
+                        <span className="text-lg font-semibold wrap-anywhere">{ name }</span>
+                        <span className="text-sm wrap-anywhere text-muted-foreground">{ me?.email }</span>
                     </span>
                 </div>
                 <hr className="mx-3 border-border" />
                 { gameCode && (
                     <div className="flex flex-col gap-2 px-2">
                         <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">Game ID</span>
-                        <div className="flex h-12 items-center gap-1.5 rounded-xl border border-border bg-field pr-0.5 pl-3">
-                            <span className="min-w-0 flex-1 truncate font-mono text-sm font-medium">{ gameCode }</span>
+                        <div className="flex gap-2">
+                            <span
+                                title={ gameCode }
+                                className="h-12.5 min-w-0 flex-1 truncate rounded-lg border border-border bg-field px-4 font-mono text-lg leading-12 font-medium"
+                            >{ gameCode }</span>
                             <CopyButton
                                 text={ gameCode }
                                 label="Copy game ID"
@@ -105,7 +109,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                                 <Share2 />
                                 Share invite link
                             </Button>
-                            <hr className="mx-3 my-1.5 border-border" />
+                            <hr className="mx-3 my-2 border-border" />
                             <Button
                                 variant="ghost"
                                 className={ ITEM }
@@ -134,7 +138,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                     </Button>
                 </nav>
                 { gameCode && (
-                    <p className="mx-2 mt-auto text-sm/normal text-muted-foreground">
+                    <p className="mx-2 mt-auto text-sm text-muted-foreground">
                         Back to lobby and Sign out end the current game for both players. You confirm first.
                     </p>
                 ) }

@@ -14,13 +14,13 @@ const IconInput: FC<IconInputProps> = ({ icon: Icon, className, ...props }) => (
             strokeWidth={ 1.75 }
             className={
                 cn([
-                    'pointer-events-none absolute top-3.25 left-3.5 hidden size-4.5 text-subtle',
+                    'pointer-events-none absolute top-4 left-4 hidden size-4.5 text-subtle',
                     'md:block'
                 ])
             }
         />
         <Input
-            className={ cn('md:pl-10.5', className) }
+            className={ cn('md:pl-11', className) }
             { ...props }
         />
     </div>

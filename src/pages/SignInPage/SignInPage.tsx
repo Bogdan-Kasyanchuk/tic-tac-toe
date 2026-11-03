@@ -53,7 +53,7 @@ const SignInPage: FC = () => {
             <div
                 className={
                     cn([
-                        'mt-3 flex flex-col gap-2',
+                        'mt-auto flex flex-col gap-2',
                         'md:mt-0'
                     ])
                 }
@@ -61,8 +61,8 @@ const SignInPage: FC = () => {
                 <h2
                     className={
                         cn([
-                            'font-display text-4xl leading-none font-extrabold tracking-tight',
-                            'md:text-3xl md:leading-tight md:font-bold'
+                            'font-display text-hero-sm font-extrabold tracking-tight',
+                            'md:text-form-title md:font-bold'
                         ])
                     }
                 >
@@ -83,7 +83,12 @@ const SignInPage: FC = () => {
             <GoogleButton label="Continue with Google" />
             <OrDivider />
             <form
-                className="flex flex-col gap-4"
+                className={
+                    cn([
+                        'flex flex-col gap-4',
+                        'md:gap-5'
+                    ])
+                }
                 noValidate
                 onSubmit={ onSubmit }
             >
@@ -113,9 +118,13 @@ const SignInPage: FC = () => {
                 </div>
                 <Button
                     type="submit"
-                    size="lg"
                     disabled={ isSubmitting }
-                    className="mt-1"
+                    className={
+                        cn([
+                            'mt-1',
+                            'md:mt-2'
+                        ])
+                    }
                 >
                     Sign in
                 </Button>
@@ -123,8 +132,8 @@ const SignInPage: FC = () => {
             <p
                 className={
                     cn([
-                        'mt-auto text-center text-sm text-muted-foreground',
-                        'md:mt-0'
+                        'mb-auto text-center text-sm text-muted-foreground',
+                        'md:mb-0'
                     ])
                 }
             >
@@ -133,7 +142,7 @@ const SignInPage: FC = () => {
                 <Link
                     to="/signup"
                     state={ { from } }
-                    className="font-medium text-link hover:text-link-hover"
+                    className="font-medium text-link hover:text-link-hover hover:underline active:text-foreground"
                 >
                     Create an account
                 </Link>

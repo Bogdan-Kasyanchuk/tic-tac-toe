@@ -2,21 +2,29 @@ import { toast } from 'sonner';
 
 export const inviteLink = (code: string) => `${ window.location.origin }/game/${ encodeURIComponent(code) }`;
 
-export const copyText = async (text: string, success: string) => {
+export const copyText = async (text: string, success: string, description?: string) => {
     try {
         await navigator.clipboard.writeText(text);
-        toast.success(success);
+
+        if (description) {
+            toast.success(success, { description });
+        } else {
+            toast.success(success);
+        }
     } catch {
         toast.error('Could not copy. Select the text and copy it manually');
     }
 };
+
+// Тексти toast-а — аркуш Components канвасу, секція Sonner
+export const copyInvite = (code: string) => copyText(inviteLink(code), 'Link copied', 'Send it to a friend to start');
 
 // Телефон: системне меню «Поділитися»; браузер без Web Share отримує копію лінка
 export const shareInvite = async (code: string) => {
     const url = inviteLink(code);
 
     if (typeof navigator.share !== 'function') {
-        await copyText(url, 'Invite link copied');
+        await copyInvite(code);
 
         return;
     }
@@ -28,6 +36,6 @@ export const shareInvite = async (code: string) => {
             return;
         }
 
-        await copyText(url, 'Invite link copied');
+        await copyInvite(code);
     }
 };

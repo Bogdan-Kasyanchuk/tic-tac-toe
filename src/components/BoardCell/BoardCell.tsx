@@ -23,11 +23,10 @@ const BoardCell: FC<BoardCellProps> = ({ index, value, win, locked, dim, onSelec
         data-win={ win ?? undefined }
         disabled={ locked || value !== '' }
         className={
-            cn([
-                'relative flex items-center justify-center rounded-2xl border-2 border-line bg-card transition-colors enabled:hover:border-border enabled:hover:bg-secondary disabled:cursor-default',
-                'max-md:rounded-xl'
-            ], {
+            cn('relative flex items-center justify-center rounded-2xl border-2 border-line bg-card transition enabled:hover:border-border-hover enabled:hover:bg-secondary enabled:active:bg-accent disabled:cursor-default', {
+                // Хід суперника: порожні клітинки темніші, курсор каже, що поле замкнене
                 'bg-muted': dim && value === '',
+                'disabled:cursor-not-allowed': dim,
                 'border-circle bg-circle/16': win === 'circle',
                 'border-cross bg-cross/16': win === 'cross'
             })

@@ -13,7 +13,7 @@ const PasswordInput: FC<ComponentProps<typeof Input>> = props => {
             <IconInput
                 icon={ Lock }
                 type={ visible ? 'text' : 'password' }
-                className="pr-11.5"
+                className="pr-12"
                 { ...props }
             />
             <Button
@@ -21,7 +21,7 @@ const PasswordInput: FC<ComponentProps<typeof Input>> = props => {
                 variant="ghost"
                 size="icon"
                 aria-label={ visible ? 'Hide password' : 'Show password' }
-                className="absolute top-0 right-0.5 text-subtle hover:bg-transparent"
+                className="absolute top-0 right-0.5 w-11 text-subtle hover:bg-transparent active:bg-transparent"
                 onClick={
                     () => {
                         setVisible(value => !value);

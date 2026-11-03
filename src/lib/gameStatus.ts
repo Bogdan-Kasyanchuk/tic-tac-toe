@@ -7,7 +7,8 @@ const NEXT_ROUND = 'Next round starts in a moment';
 export type GameStatus = {
     text: string,
     hint: string | null,
-    tone: 'circle' | 'cross' | 'muted',
+    // idle — суперника ще немає: тихий статус без крапки, як на артборді Waiting
+    tone: 'circle' | 'cross' | 'muted' | 'idle',
     waiting: boolean
 };
 
@@ -17,7 +18,7 @@ export const gameStatus = (game: GameView): GameStatus => {
     const opponent = firstName(game[ otherMark(game.me) ]?.name ?? '');
 
     if (!game.circle || !game.cross) {
-        return { text: 'Waiting for a second player', hint: null, tone: 'muted', waiting: false };
+        return { text: 'Waiting for a second player', hint: null, tone: 'idle', waiting: false };
     }
 
     if (game.result?.kind === 'win') {

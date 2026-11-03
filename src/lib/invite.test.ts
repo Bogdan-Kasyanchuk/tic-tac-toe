@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest';
 
-import { shareInvite } from './invite';
+import { copyInvite, shareInvite } from './invite';
 
 const { success, error } = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn() }));
 
@@ -26,7 +26,18 @@ test('copies the invite link when the browser cannot share', async () => {
     await shareInvite('g 1');
 
     expect(writeText).toHaveBeenCalledWith(`${ window.location.origin }/game/g%201`);
-    expect(success).toHaveBeenCalledWith('Invite link copied');
+    expect(success).toHaveBeenCalledWith('Link copied', { description: 'Send it to a friend to start' });
+});
+
+// Канвас, аркуш Components → Sonner: «Link copied» з підказкою, що робити далі
+test('copying the invite link tells what to do next', async () => {
+    writeText.mockResolvedValue(undefined);
+    setNavigator(undefined);
+
+    await copyInvite('g1');
+
+    expect(writeText).toHaveBeenCalledWith(`${ window.location.origin }/game/g1`);
+    expect(success).toHaveBeenCalledWith('Link copied', { description: 'Send it to a friend to start' });
 });
 
 test('opens the share sheet when the browser can share', async () => {
