@@ -31,7 +31,7 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, tone, onRequest }) => {
                 { /* Кнопка росте разом з іменем і не обрізає його: так на аркуші Long names */ }
                 <Button
                     variant="secondary"
-                    className="group h-11 gap-3 rounded-full bg-card pr-3 pl-2 text-sm hover:border-border hover:bg-secondary active:border-border active:bg-accent active:scale-100"
+                    className="group h-11 gap-3 rounded-full bg-card pr-3 pl-2 text-base hover:border-border hover:bg-secondary active:border-border active:bg-accent active:scale-100"
                 >
                     <UserAvatar
                         name={ name }
@@ -40,25 +40,26 @@ const AccountMenu: FC<AccountMenuProps> = ({ gameCode, tone, onRequest }) => {
                         size="sm"
                     />
                     { name }
-                    <ChevronDown className="text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                    <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align="end"
+                sideOffset={ 8 }
                 className="w-75"
             >
                 { /* Ім'я й аватар уже на кнопці, тож угорі меню лише пошта */ }
                 <DropdownMenuLabel
                     title={ me?.email }
-                    className="truncate p-3 text-sm font-normal text-muted-foreground"
+                    className="h-10 truncate px-3 py-2.5 text-sm font-normal text-muted-foreground"
                 >
                     { me?.email }
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="mt-0" />
                 { gameCode && (
                     <>
                         <div className="flex flex-col gap-2 px-3 pt-2 pb-3">
-                            <DropdownMenuLabel className="p-0 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+                            <DropdownMenuLabel className="p-0 text-sm leading-none font-medium tracking-label text-muted-foreground uppercase">
                                 Game ID
                             </DropdownMenuLabel>
                             { /* Як на мобільному: поле — лише текст, копіює кнопка; меню після копіювання лишається відкритим */ }

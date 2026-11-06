@@ -17,7 +17,8 @@ const Toaster = (props: ToasterProps) => (
         toastOptions={
             {
                 classNames: {
-                    toast: 'gap-3! font-sans! text-sm! shadow-[0_12px_32px_rgba(0,0,0,0.35)]!',
+                    toast: 'gap-3! p-3! font-sans! text-sm! shadow-[0_12px_32px_rgba(0,0,0,0.35)]!',
+                    content: 'gap-1!',
                     title: 'leading-body! font-semibold!',
                     description: 'leading-body! text-muted-foreground!',
                     icon: 'm-0! size-7! justify-center! rounded-full [&_svg]:size-4',

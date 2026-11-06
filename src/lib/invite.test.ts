@@ -48,8 +48,8 @@ test('opens the share sheet when the browser can share', async () => {
     await shareInvite('g1');
 
     expect(share).toHaveBeenCalledWith({
-        title: 'tic·tac·toe',
-        text: 'Join my game of tic·tac·toe',
+        title: 'Tic·Tac·Toe',
+        text: 'Join my game of Tic·Tac·Toe',
         url: `${ window.location.origin }/game/g1`
     });
     expect(writeText).not.toHaveBeenCalled();

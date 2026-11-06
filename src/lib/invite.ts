@@ -30,7 +30,7 @@ export const shareInvite = async (code: string) => {
     }
 
     try {
-        await navigator.share({ title: 'tic·tac·toe', text: 'Join my game of tic·tac·toe', url });
+        await navigator.share({ title: 'Tic·Tac·Toe', text: 'Join my game of Tic·Tac·Toe', url });
     } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
             return;

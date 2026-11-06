@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { cell, chooseMenuItem, newPlayerPage, signUp } from './helpers';
+import { cell, chooseMenuItem, isPhone, newPlayerPage, signUp } from './helpers';
 
 test('two players join through the lobby, win a round, draw one and leave', async ({ page, browser }) => {
     const bob = await newPlayerPage(browser);
@@ -56,4 +56,35 @@ test('two players join through the lobby, win a round, draw one and leave', asyn
     await expect(page.getByText('Waiting for an opponent')).toBeVisible();
 
     await bob.context().close();
+});
+
+test('the header works while waiting for an opponent', async ({ page }) => {
+    await signUp(page, 'Wendy');
+    await page.getByRole('button', { name: /Create game/ }).click();
+    await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+
+    // Меню відкривається і закривається, а діалог очікування лишається
+    if (isPhone()) {
+        await page.getByRole('button', { name: 'Open menu' }).click();
+        await expect(page.getByRole('button', { name: 'Back to lobby' })).toBeVisible();
+        await page.getByRole('button', { name: 'Close menu' }).click();
+    } else {
+        await page.getByRole('button', { name: /Wendy/ }).click();
+        await expect(page.getByRole('menuitem', { name: 'Back to lobby' })).toBeVisible();
+        await page.keyboard.press('Escape');
+    }
+
+    await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+
+    // Toast «New game» на телефоні лежить поверх логотипа, а під курсором його таймер стоїть
+    await page.mouse.move(0, 400);
+    await expect(page.getByText('New game', { exact: true })).toBeHidden();
+
+    // Логотип питає підтвердження; після «Stay» діалог очікування знову клікається
+    await page.getByRole('link', { name: 'Tic·Tac·Toe home' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Stay' }).click();
+    await expect(page.getByRole('alertdialog')).toBeHidden();
+
+    await page.getByRole('button', { name: 'Cancel and leave' }).click();
+    await expect(page.getByRole('heading', { name: 'Ready for a round, Wendy?' })).toBeVisible();
 });

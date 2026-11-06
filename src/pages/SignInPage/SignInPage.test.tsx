@@ -76,3 +76,11 @@ test('Google sign-in redirects back to the original page', async () => {
 
     expect(signIn).toHaveBeenCalledWith('google', { redirectTo: `${ window.location.origin }/game/g1` });
 });
+
+// На телефоні заголовок той самий, що й на десктопі: слогана «Sign in to play» на канвасі більше немає
+test('the form heading is just "Sign in"', () => {
+    renderSignIn();
+
+    expect(screen.getByRole('heading', { name: 'Sign in' })).toBeTruthy();
+    expect(screen.queryByText(/Sign in to play/)).toBeNull();
+});

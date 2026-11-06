@@ -64,7 +64,7 @@ const SignUpPage: FC = () => {
             <div
                 className={
                     cn([
-                        'mt-auto flex flex-col gap-2',
+                        'mt-3 flex flex-col gap-3',
                         'md:mt-0'
                     ])
                 }
@@ -72,8 +72,8 @@ const SignUpPage: FC = () => {
                 <h2
                     className={
                         cn([
-                            'font-display text-3xl font-extrabold tracking-tight',
-                            'md:text-form-title md:font-bold'
+                            'font-display text-4xl font-bold tracking-heading',
+                            'md:text-page-title'
                         ])
                     }
                 >
@@ -84,7 +84,7 @@ const SignUpPage: FC = () => {
             <GoogleButton label="Sign up with Google" />
             <OrDivider />
             <form
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-5"
                 noValidate
                 onSubmit={ onSubmit }
             >
@@ -94,7 +94,7 @@ const SignUpPage: FC = () => {
                         id="name"
                         icon={ UserRound }
                         autoComplete="nickname"
-                        placeholder="Shown to your opponent"
+                        placeholder="Jon Doe"
                         aria-invalid={ errors.name ? true : undefined }
                         { ...register('name') }
                     />
@@ -124,7 +124,7 @@ const SignUpPage: FC = () => {
                     />
                     <div
                         aria-hidden="true"
-                        className="mt-1 grid grid-cols-3 gap-2"
+                        className="grid grid-cols-3 gap-2"
                     >
                         { [ 0, 1, 2 ].map(level => (
                             <span
@@ -138,7 +138,7 @@ const SignUpPage: FC = () => {
                         : (
                             <p
                                 id="password-hint"
-                                className="text-sm text-muted-foreground"
+                                className="text-xs text-muted-foreground"
                             >
                                 { STRENGTH_LABEL[ strength ] }
                                 At least
@@ -153,7 +153,6 @@ const SignUpPage: FC = () => {
                 <Button
                     type="submit"
                     disabled={ isSubmitting }
-                    className="mt-1"
                 >
                     Create account
                 </Button>
@@ -161,7 +160,7 @@ const SignUpPage: FC = () => {
             <p
                 className={
                     cn([
-                        'mb-auto text-center text-sm text-muted-foreground',
+                        'mb-auto text-center text-muted-foreground',
                         'md:mb-0'
                     ])
                 }

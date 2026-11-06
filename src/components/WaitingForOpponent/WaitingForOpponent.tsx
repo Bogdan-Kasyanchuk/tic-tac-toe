@@ -4,24 +4,43 @@ import type { FC, ReactNode } from 'react';
 import CopyButton from '@/components/CopyButton';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import useLeaveGame from '@/hooks/useLeaveGame';
 import useMediaQuery, { DESKTOP } from '@/hooks/useMediaQuery';
 import cn from '@/lib/cn';
 import { copyInvite, shareInvite } from '@/lib/invite';
+
+const DOT = cn([
+    'size-2.5 animate-wait-pulse rounded-full bg-circle motion-reduce:animate-none motion-reduce:opacity-70',
+    'md:size-3'
+]);
 
 const WaitDots: FC = () => (
     <span
         aria-hidden="true"
         className="flex justify-center gap-2"
     >
-        <span className="size-3 animate-wait-dot rounded-full bg-circle motion-reduce:animate-none" />
-        <span className="size-3 animate-wait-dot rounded-full bg-circle [animation-delay:200ms] motion-reduce:animate-none" />
-        <span className="size-3 animate-wait-dot rounded-full bg-circle [animation-delay:400ms] motion-reduce:animate-none" />
+        <span className={ DOT } />
+        <span className={ cn(DOT, '[animation-delay:200ms]') } />
+        <span className={ cn(DOT, '[animation-delay:400ms]') } />
     </span>
 );
 
-// Закрити можна лише через «Cancel and leave»: без суперника гра не почнеться
+// Шапка лишається незатемненою й робочою, як на артбордах Waiting: затемнення починається під нею, діалог стоїть по центру решти екрана.
+// Немодальні діалог і шторка свого затемнення не малюють, тому воно тут. Шторка — Sheet, а не vaul: vaul не передає modal у Radix
+const Backdrop: FC = () => (
+    <div
+        aria-hidden="true"
+        className={
+            cn([
+                'fixed inset-x-0 top-18 bottom-0 z-50 bg-overlay-drawer animate-in fade-in-0',
+                'md:bg-overlay'
+            ])
+        }
+    />
+);
+
+// Самі діалог і шторка не закриваються: без суперника гра не почнеться, вийти можна кнопкою «Cancel and leave» або через шапку
 const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
     const isDesktop = useMediaQuery(DESKTOP);
     const leaveGame = useLeaveGame(code);
@@ -91,10 +110,13 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
 
     if (isDesktop) {
         return (
-            <Dialog open>
+            <Dialog
+                modal={ false }
+                open
+            >
                 <DialogContent
                     showCloseButton={ false }
-                    className="flex flex-col gap-6"
+                    className="top-[calc(50%+2.25rem)] flex flex-col gap-6"
                     onEscapeKeyDown={
                         event => {
                             event.preventDefault();
@@ -108,29 +130,54 @@ const WaitingForOpponent: FC<{ code: string }> = ({ code }) => {
                 >
                     <WaitDots />
                     <div className="flex flex-col gap-3">
-                        <DialogTitle className="font-display text-dialog-title font-bold tracking-tight">Waiting for an opponent</DialogTitle>
+                        <DialogTitle className="font-display text-dialog-title font-bold tracking-heading">Waiting for an opponent</DialogTitle>
                         <DialogDescription>Send this game ID to a friend. The game starts as soon as they join.</DialogDescription>
                     </div>
                     { body }
                 </DialogContent>
+                <Backdrop />
             </Dialog>
         );
     }
 
     return (
-        <Drawer
-            dismissible={ false }
+        <Sheet
+            modal={ false }
             open
         >
-            <DrawerContent className="flex flex-col gap-5 px-5 pb-9">
+            <SheetContent
+                side="bottom"
+                showCloseButton={ false }
+                className="max-h-[80vh] gap-5 rounded-t-3xl px-5 pb-5 shadow-drawer"
+                onOpenAutoFocus={
+                    event => {
+                        event.preventDefault();
+                    }
+                }
+                onEscapeKeyDown={
+                    event => {
+                        event.preventDefault();
+                    }
+                }
+                onInteractOutside={
+                    event => {
+                        event.preventDefault();
+                    }
+                }
+            >
+                <span
+                    aria-hidden="true"
+                    className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-border"
+                />
                 <WaitDots />
                 <div className="flex flex-col gap-2">
-                    <DrawerTitle className="font-display text-dialog-title font-extrabold tracking-tight">Waiting for an opponent</DrawerTitle>
-                    <DrawerDescription>Share the invite link. The game starts as soon as your friend joins.</DrawerDescription>
+                    <SheetTitle className="font-display text-logo font-extrabold tracking-heading">Waiting for an opponent</SheetTitle>
+                    <SheetDescription className="text-base">Share the invite link. The game starts as soon as your friend joins.</SheetDescription>
                 </div>
                 { body }
-            </DrawerContent>
-        </Drawer>
+            </SheetContent>
+            <Backdrop />
+        </Sheet>
     );
 };
 

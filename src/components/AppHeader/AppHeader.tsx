@@ -31,18 +31,18 @@ const AppHeader: FC = () => {
     };
 
     return (
-        <header className="border-b border-secondary">
-            <div
-                className={
-                    cn([
-                        'flex h-18 items-center justify-between gap-4 px-5',
-                        'md:h-19 md:px-8'
-                    ])
-                }
-            >
+        <header
+            className={
+                cn([
+                    'h-18',
+                    'md:border-b md:border-secondary'
+                ])
+            }
+        >
+            <div className="flex h-full items-center justify-between gap-4 px-5">
                 <Link
                     to="/"
-                    aria-label="tic·tac·toe home"
+                    aria-label="Tic·Tac·Toe home"
                     onClick={
                         event => {
                             if (gameCode) {

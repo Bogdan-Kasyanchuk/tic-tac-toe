@@ -101,7 +101,7 @@ test('asks before leaving the game through the logo', async () => {
 
     renderAt('/game/g1');
 
-    await user.click(screen.getByRole('link', { name: 'tic·tac·toe home' }));
+    await user.click(screen.getByRole('link', { name: 'Tic·Tac·Toe home' }));
 
     const dialog = await screen.findByRole('alertdialog');
 

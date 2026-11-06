@@ -2,7 +2,7 @@ import { type Page, expect, test } from '@playwright/test';
 
 import { EMAIL_TAKEN, WRONG_CREDENTIALS } from '../convex/authRules';
 
-import { PASSWORD, chooseMenuItem, fillSignUp, signUp, testEmail } from './helpers';
+import { PASSWORD, chooseMenuItem, fillSignUp, isPhone, signUp, testEmail } from './helpers';
 
 const signIn = async (page: Page, email: string, password: string) => {
     await page.getByLabel('Email').fill(email);
@@ -54,4 +54,24 @@ test('a game link survives sign-up', async ({ page }) => {
 
     await expect(page).toHaveURL(new RegExp(`/game/${ code }$`));
     await expect(page.getByText('Waiting for an opponent')).toBeVisible();
+});
+
+// Від 768 до 1024 панель вузька: відступи 40, а заголовок плавно росте від 42 до 52, щоб не рвати рядки
+test('the sign-in panel scales between tablet and desktop', async ({ page }) => {
+    test.skip(isPhone(), 'панелі на телефоні немає');
+
+    const heading = page.getByRole('heading', { level: 1 });
+    const panel = page.locator('section').filter({ has: heading });
+    const check = async (width: number, size: string, padding: string) => {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(heading).toHaveCSS('font-size', size);
+        await expect(panel).toHaveCSS('padding-left', padding);
+    };
+
+    await page.goto('/login');
+
+    await check(768, '42px', '40px');
+    await check(896, '47px', '40px');
+    await check(1024, '52px', '60px');
+    await check(1280, '52px', '60px');
 });

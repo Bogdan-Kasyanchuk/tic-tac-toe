@@ -233,3 +233,39 @@ test('the phone waiting sheet keeps the copy button icon-only', async () => {
 
     expect(within(sheet).getByRole('button', { name: 'Copy game ID' }).textContent).toBe('');
 });
+
+// Діалог очікування немодальний, щоб шапка працювала, тож сторінку під затемненням вимикає сам `inert`
+test('the page under the waiting dialog is inert until the opponent joins', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(screen.getByText('Clear board').closest('[inert]')).toBeTruthy();
+});
+
+test('the page is not inert once both players are in', async () => {
+    mockViewport(true);
+    enter.mockResolvedValue('already');
+    queryResult = GAME;
+
+    render(app('/game/g1'));
+
+    expect((await screen.findByText('Clear board')).closest('[inert]')).toBeNull();
+});
+
+// На артбордах Waiting крапки діалогу й шторки пульсують, а в бейджі ходу лише блимають
+test.each([ [ 'desktop dialog', true ], [ 'phone sheet', false ] ])('the dots in the waiting %s pulse', async (_, desktop) => {
+    mockViewport(desktop);
+    enter.mockResolvedValue('created');
+    queryResult = { ...GAME, cross: null };
+
+    render(app('/game/g1'));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Waiting for an opponent' });
+
+    expect(dialog.querySelectorAll('.animate-wait-pulse')).toHaveLength(3);
+});

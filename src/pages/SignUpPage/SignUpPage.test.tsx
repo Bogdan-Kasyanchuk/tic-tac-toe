@@ -95,3 +95,9 @@ test('an email used with Google says to continue with Google', async () => {
 
     expect(await screen.findByText(EMAIL_LINKED_TO_GOOGLE)).toBeTruthy();
 });
+
+test('the name field shows an example name as a placeholder', () => {
+    renderSignUp();
+
+    expect(screen.getByPlaceholderText('Jon Doe')).toBeTruthy();
+});

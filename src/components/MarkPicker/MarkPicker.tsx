@@ -16,7 +16,16 @@ type MarkPickerProps = {
 
 const MarkPicker: FC<MarkPickerProps> = ({ value, onChange }) => (
     <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 text-sm font-medium text-label">Play as</legend>
+        <legend
+            className={
+                cn([
+                    'mb-2 text-sm leading-none font-medium text-label',
+                    'md:mb-3'
+                ])
+            }
+        >
+            Play as
+        </legend>
         <div className="grid grid-cols-2 gap-3">
             { OPTIONS.map(option => (
                 <label

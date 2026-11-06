@@ -4,7 +4,7 @@ import FadeSwitch from '@/components/FadeSwitch';
 import cn from '@/lib/cn';
 import type { GameStatus } from '@/lib/gameStatus';
 
-const DOT = 'size-1.5 animate-wait-dot rounded-full motion-reduce:animate-none';
+const DOT = 'size-1.5 animate-wait-dot rounded-full motion-reduce:animate-none motion-reduce:opacity-70';
 
 const TurnStatus: FC<{ status: GameStatus }> = ({ status }) => {
     const color = {
@@ -15,16 +15,13 @@ const TurnStatus: FC<{ status: GameStatus }> = ({ status }) => {
 
     return (
         <FadeSwitch switchKey={ status.text }>
-            <div className="flex min-h-16 flex-col items-center gap-2">
+            <div className="flex min-h-16.75 flex-col items-center gap-2">
                 <p
                     role="status"
                     className={
                         status.tone === 'idle'
                             ? 'flex h-9 items-center rounded-full bg-card px-4 text-sm text-muted-foreground'
-                            : cn([
-                                'flex h-10 items-center gap-3 rounded-full border border-line bg-card px-5 font-semibold',
-                                'md:font-medium'
-                            ])
+                            : 'flex h-10 items-center gap-2 rounded-full border border-line bg-card px-4 font-semibold'
                     }
                 >
                     { status.tone !== 'idle' && (status.waiting
