@@ -10,8 +10,8 @@ const AppLayout: FC = () => (
         <main
             className={
                 cn([
-                    'mx-auto flex w-full max-w-280 grow flex-col px-5 py-6',
-                    'md:px-8 md:py-10'
+                    'mx-auto flex w-full max-w-280 grow flex-col p-5',
+                    'md:py-10'
                 ])
             }
         >

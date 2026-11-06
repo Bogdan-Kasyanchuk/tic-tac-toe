@@ -53,7 +53,7 @@ const SignInPage: FC = () => {
             <div
                 className={
                     cn([
-                        'mt-auto flex flex-col gap-2',
+                        'mt-3 flex flex-col gap-3',
                         'md:mt-0'
                     ])
                 }
@@ -61,34 +61,19 @@ const SignInPage: FC = () => {
                 <h2
                     className={
                         cn([
-                            'font-display text-hero-sm font-extrabold tracking-tight',
-                            'md:text-form-title md:font-bold'
+                            'font-display text-4xl font-bold tracking-heading',
+                            'md:text-page-title'
                         ])
                     }
                 >
-                    <span className="md:hidden">Three in a row.<br />Sign in to play.</span>
-                    <span
-                        className={
-                            cn([
-                                'hidden',
-                                'md:inline'
-                            ])
-                        }
-                    >
-                        Sign in
-                    </span>
+                    Sign in
                 </h2>
                 <p className="text-muted-foreground">Welcome back. Your games are waiting.</p>
             </div>
             <GoogleButton label="Continue with Google" />
             <OrDivider />
             <form
-                className={
-                    cn([
-                        'flex flex-col gap-4',
-                        'md:gap-5'
-                    ])
-                }
+                className="flex flex-col gap-5"
                 noValidate
                 onSubmit={ onSubmit }
             >
@@ -119,12 +104,6 @@ const SignInPage: FC = () => {
                 <Button
                     type="submit"
                     disabled={ isSubmitting }
-                    className={
-                        cn([
-                            'mt-1',
-                            'md:mt-2'
-                        ])
-                    }
                 >
                     Sign in
                 </Button>
@@ -132,7 +111,7 @@ const SignInPage: FC = () => {
             <p
                 className={
                     cn([
-                        'mb-auto text-center text-sm text-muted-foreground',
+                        'mb-auto text-center text-muted-foreground',
                         'md:mb-0'
                     ])
                 }

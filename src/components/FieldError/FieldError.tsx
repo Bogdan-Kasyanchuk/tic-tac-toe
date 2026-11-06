@@ -9,9 +9,9 @@ const FieldError: FC<{ children?: ReactNode }> = ({ children }) => {
     return (
         <p
             role="alert"
-            className="flex items-center gap-2 text-sm text-danger"
+            className="-mt-1 flex items-center gap-1 text-xs text-danger"
         >
-            <CircleAlert className="size-3.5 shrink-0" />
+            <CircleAlert className="size-3 shrink-0" />
             { children }
         </p>
     );

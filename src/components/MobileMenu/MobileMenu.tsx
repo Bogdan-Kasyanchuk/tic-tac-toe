@@ -48,10 +48,10 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
             </SheetTrigger>
             <SheetContent
                 showCloseButton={ false }
-                className="gap-5 px-4 pt-12 pb-8 shadow-[-16px_0_48px_rgba(0,0,0,0.45)]"
+                className="gap-5 px-5 pt-3.5 pb-5 shadow-[-16px_0_48px_rgba(0,0,0,0.45)]"
             >
                 <div className="flex items-center justify-between pl-2">
-                    <SheetTitle className="font-display text-xl leading-body font-bold">Menu</SheetTitle>
+                    <SheetTitle className="font-display text-xl leading-none font-bold">Menu</SheetTitle>
                     <SheetClose asChild>
                         <Button
                             variant="secondary"
@@ -64,23 +64,23 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                     </SheetClose>
                 </div>
                 <SheetDescription className="sr-only">Account and game</SheetDescription>
-                <div className="flex items-center gap-4 px-2 py-1">
+                <div className="flex items-center gap-3">
                     <UserAvatar
                         name={ name }
                         avatar={ me?.avatar ?? '' }
                         tone={ tone }
                         size="lg"
                     />
-                    <span className="flex min-w-0 flex-col gap-1">
+                    <span className="flex min-w-0 flex-col">
                         { /* Довге ім'я й пошта переносяться, а не обрізаються; аватар лишається по центру */ }
                         <span className="text-lg font-semibold wrap-anywhere">{ name }</span>
                         <span className="text-sm wrap-anywhere text-muted-foreground">{ me?.email }</span>
                     </span>
                 </div>
-                <hr className="mx-3 border-border" />
+                <hr className="border-border" />
                 { gameCode && (
                     <div className="flex flex-col gap-2 px-2">
-                        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">Game ID</span>
+                        <span className="text-sm leading-none font-medium tracking-label text-muted-foreground uppercase">Game ID</span>
                         <div className="flex gap-2">
                             <span
                                 title={ gameCode }
@@ -94,7 +94,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                         </div>
                     </div>
                 ) }
-                <nav className="flex flex-col gap-1">
+                <nav className="flex flex-col">
                     { gameCode && (
                         <>
                             <Button
@@ -109,7 +109,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                                 <Share2 />
                                 Share invite link
                             </Button>
-                            <hr className="mx-3 my-2 border-border" />
+                            <hr className="my-1 border-border" />
                             <Button
                                 variant="ghost"
                                 className={ ITEM }
@@ -138,7 +138,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ gameCode, tone, onRequest }) => {
                     </Button>
                 </nav>
                 { gameCode && (
-                    <p className="mx-2 mt-auto text-sm text-muted-foreground">
+                    <p className="mt-auto text-sm text-muted-foreground">
                         Back to lobby and Sign out end the current game for both players. You confirm first.
                     </p>
                 ) }

@@ -102,10 +102,12 @@ const GamePage: FC = () => {
     return (
         <>
             { (!game.circle || !game.cross) && <WaitingForOpponent code={ game.code } /> }
+            { /* Діалог очікування немодальний, щоб працювала шапка, тож клавіатуру й мишу від сторінки під ним відсікає inert */ }
             <div
+                inert={ !ready }
                 className={
                     cn([
-                        'grid w-full grow grid-rows-[auto_auto_1fr] gap-5',
+                        'grid w-full grow grid-rows-[auto_auto_1fr] gap-7',
                         'md:grid-cols-[minmax(0,32.5rem)_minmax(0,23.75rem)] md:grid-rows-[auto_1fr] md:justify-center md:gap-x-10 md:gap-y-3'
                     ])
                 }
@@ -122,7 +124,7 @@ const GamePage: FC = () => {
                     <h2
                         className={
                             cn([
-                                'mb-1 text-sm font-medium tracking-widest text-muted-foreground uppercase',
+                                'mb-3 text-2xl font-medium tracking-label text-muted-foreground uppercase',
                                 'max-md:hidden'
                             ])
                         }
@@ -143,8 +145,8 @@ const GamePage: FC = () => {
                     aria-label="Board"
                     className={
                         cn([
-                            'flex flex-col items-center gap-4',
-                            'md:col-start-1 md:row-span-2 md:row-start-1 md:gap-5'
+                            'flex flex-col items-center gap-7',
+                            'md:col-start-1 md:row-span-2 md:row-start-1 md:gap-8'
                         ])
                     }
                 >
@@ -157,8 +159,8 @@ const GamePage: FC = () => {
                 <section
                     className={
                         cn([
-                            'grid grid-cols-2 gap-3 self-end',
-                            'md:col-start-2 md:row-start-2 md:mt-2 md:self-start'
+                            'grid grid-cols-2 gap-3 self-start',
+                            'md:col-start-2 md:row-start-2 md:mt-3'
                         ])
                     }
                 >
@@ -170,7 +172,7 @@ const GamePage: FC = () => {
                             }
                         }
                     >
-                        <RotateCcw />
+                        <RotateCcw className="size-4" />
                         Clear board
                     </Button>
                     <Button
@@ -181,7 +183,7 @@ const GamePage: FC = () => {
                             }
                         }
                     >
-                        <Plus />
+                        <Plus className="size-4" />
                         New session
                     </Button>
                     <p

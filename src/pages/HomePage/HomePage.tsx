@@ -72,8 +72,8 @@ const HomePage: FC = () => {
         <div
             className={
                 cn([
-                    'mx-auto flex w-full max-w-244 flex-col gap-6',
-                    'md:gap-9 md:pt-4'
+                    'mx-auto flex w-full max-w-250 flex-col gap-7',
+                    'md:gap-8'
                 ])
             }
         >
@@ -81,22 +81,31 @@ const HomePage: FC = () => {
                 <h1
                     className={
                         cn([
-                            'font-display text-3xl font-extrabold tracking-tight',
+                            'font-display text-4xl font-extrabold tracking-title',
                             'md:text-page-title'
                         ])
                     }
                 >
                     { `Ready for a round, ${ firstName(me?.name ?? '') }?` }
                 </h1>
-                <p className="text-muted-foreground">Start a new game, or join a friend with the ID they sent you.</p>
+                <p
+                    className={
+                        cn([
+                            'text-muted-foreground',
+                            'md:text-lg'
+                        ])
+                    }
+                >
+                    Start a new game, or join a friend with the ID they sent you.
+                </p>
             </div>
             <div className="flex flex-wrap items-start gap-6">
                 <section
                     aria-label="Start a game"
                     className={
                         cn([
-                            'flex min-w-0 flex-[999_1_32rem] flex-col gap-6',
-                            'md:gap-7 md:rounded-2xl md:border md:border-line md:bg-card md:p-7'
+                            'flex min-w-0 flex-[999_1_32.5rem] flex-col',
+                            'md:rounded-3xl md:border md:border-line md:bg-card md:p-6'
                         ])
                     }
                 >
@@ -117,8 +126,15 @@ const HomePage: FC = () => {
                                 value={ mark }
                                 onChange={ setMark }
                             />
-                            <div className="flex flex-col gap-2">
-                                <span className="text-sm font-medium text-label">Game ID</span>
+                            <div
+                                className={
+                                    cn([
+                                        'flex flex-col gap-2',
+                                        'md:gap-3'
+                                    ])
+                                }
+                            >
+                                <span className="text-sm leading-none font-medium text-label">Game ID</span>
                                 <div className="flex gap-2">
                                     <p
                                         title={ newCode }
@@ -144,9 +160,24 @@ const HomePage: FC = () => {
                                         success="Game ID copied"
                                     />
                                 </div>
-                                <p className="text-sm text-muted-foreground">Generated for you. Your friend joins with this ID.</p>
+                                <p
+                                    className={
+                                        cn([
+                                            '-mt-1 text-sm text-muted-foreground',
+                                            'md:-mt-2'
+                                        ])
+                                    }
+                                >
+                                    Generated for you. Your friend joins with this ID.
+                                </p>
                             </div>
                             <Button
+                                className={
+                                    cn([
+                                        'mt-2',
+                                        'md:mt-0'
+                                    ])
+                                }
                                 onClick={
                                     () => {
                                         navigate(`/game/${ encodeURIComponent(newCode) }?mark=${ mark }`);
@@ -159,7 +190,12 @@ const HomePage: FC = () => {
                         </TabsContent>
                         <TabsContent value="join">
                             <form
-                                className="flex flex-col gap-6"
+                                className={
+                                    cn([
+                                        'flex flex-col gap-5',
+                                        'md:gap-6'
+                                    ])
+                                }
                                 noValidate
                                 onSubmit={ onJoin }
                             >
@@ -197,7 +233,7 @@ const HomePage: FC = () => {
                                     </div>
                                     { joinError
                                         ? <FieldError>{ joinError }</FieldError>
-                                        : <p className="text-sm text-muted-foreground">Opened an invite link? The ID is filled in for you.</p> }
+                                        : <p className="-mt-1 text-sm text-muted-foreground">Opened an invite link? The ID is filled in for you.</p> }
                                 </div>
                                 { /* Сервер сам віддає вільну позначку, тож «Cross» з канвасу тут не обіцяємо */ }
                                 <div
@@ -213,7 +249,15 @@ const HomePage: FC = () => {
                                         <span className="text-sm text-muted-foreground">Circle moves first.</span>
                                     </span>
                                 </div>
-                                <Button type="submit">
+                                <Button
+                                    type="submit"
+                                    className={
+                                        cn([
+                                            'mt-2',
+                                            'md:mt-0'
+                                        ])
+                                    }
+                                >
                                     Join game
                                     <ArrowRight />
                                 </Button>
@@ -225,16 +269,16 @@ const HomePage: FC = () => {
                     className={
                         cn([
                             'hidden',
-                            'md:flex md:flex-[1_1_18rem] md:flex-col md:gap-5 md:rounded-2xl md:border md:border-line md:p-7'
+                            'md:flex md:flex-[1_1_18.75rem] md:flex-col md:gap-5 md:rounded-3xl md:border md:border-line md:p-6'
                         ])
                     }
                 >
-                    <h2 className="font-display text-xl font-bold">How it works</h2>
+                    <h2 className="font-display text-logo font-bold">How it works</h2>
                     <ol className="flex flex-col gap-5">
                         { STEPS[ type ].map((step, index) => (
                             <li
                                 key={ step }
-                                className="flex gap-4"
+                                className="flex gap-3"
                             >
                                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-link">
                                     { index + 1 }

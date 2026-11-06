@@ -47,10 +47,10 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; overflow: hidden; display: flex; flex-direction: column; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
-<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 48px 20px 12px">
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 48px 20px 12px; padding-top: 14px; padding-bottom: 14px">
 <div style="display: flex; align-items: center; gap: 12px">
 <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
-<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700">tic·tac·toe</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; line-height: 1">Tic·Tac·Toe</span>
 </div>
 <a class="icon-btn" href="MobileMenu.dc.html" aria-label="Open menu" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 22px; border: 1px solid #2B3060; background: #151830; color: #EDEFFF">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
@@ -58,13 +58,13 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </header>
 <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 16px; padding: 12px 20px; opacity: 0.3">
 <div style="aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
-<span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span>
-<span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span>
-<span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span><span style="border-radius: 14px; background: #151830"></span>
+<span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span>
+<span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span>
+<span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span><span style="border-radius: 16px; background: #151830"></span>
 </div>
 </div>
-<div style="position: absolute; inset: 104px 0 0 0; background: rgba(8, 9, 22, 0.6)"></div>
-<div role="dialog" aria-modal="true" aria-labelledby="mw-title" aria-describedby="mw-text" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 20px; padding: 12px 20px 36px; border-radius: 24px 24px 0 0; background: #151830; border-top: 1px solid #2B3060; box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.45)">
+<div style="position: absolute; inset: 72px 0 0 0; background: rgba(8, 9, 22, 0.6)"></div>
+<div role="dialog" aria-modal="true" aria-labelledby="mw-title" aria-describedby="mw-text" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 20px; padding: 12px 20px 20px; background: #151830; border-top: 1px solid #2B3060; box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.45); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px">
 <span aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #2B3060"></span>
 <div aria-hidden="true" style="display: flex; justify-content: center; gap: 8px">
 <span class="wait-dot" style="width: 10px; height: 10px; border-radius: 5px; background: #6C8CFF"></span>
@@ -72,17 +72,17 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 <span class="wait-dot" style="width: 10px; height: 10px; border-radius: 5px; background: #6C8CFF"></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h2 id="mw-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2">Waiting for an opponent</h2>
+<h2 id="mw-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2">Waiting for an opponent</h2>
 <p id="mw-text" style="margin: 0; font-size: 16px; line-height: 1.35; color: #A3A8CF">Share the invite link. The game starts as soon as your friend joins.</p>
 </div>
 <div style="display: flex; gap: 8px">
 <p style="flex: 1; min-width: 0; margin: 0; height: 50px; display: flex; align-items: center; padding: 0 16px; border-radius: 12px; background: #10132A; border: 1px solid #2B3060; font: 500 18px 'Geist Mono', monospace; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 1.35">V1StGXR8_Z5jdHi6B-myT</p>
-<button class="icon-btn" type="button" aria-label="Copy game ID" style="width: 50px; height: 50px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF">
+<button class="icon-btn" type="button" aria-label="Copy game ID" style="width: 50px; height: 50px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #A3A8CF">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
 </button>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<a class="btn-primary" href="MobilePlay.dc.html" style="height: 50px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 18px; font-weight: 600">
+<a class="btn-primary" href="MobilePlay.dc.html" style="height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 18px; font-weight: 600">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4"></path><path d="m15.4 6.5-6.8 4"></path></svg>
 Share invite link
 </a>

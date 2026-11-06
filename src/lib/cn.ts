@@ -1,13 +1,15 @@
 import { type ClassValue, clsx } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
-// Власні кеглі й інтервали з @theme у src/index.css. Без цього tailwind-merge приймає `text-score` за колір:
-// лишає поруч `text-lg` і викидає `text-foreground`. Новий --text-* чи --leading-* у темі — додати сюди
+// Власні кеглі, інтервали, трекінг і тіні з @theme у src/index.css. Без цього tailwind-merge приймає `text-score` за колір:
+// лишає поруч `text-lg` і викидає `text-foreground`. Новий --text-*, --leading-*, --tracking-* чи --shadow-* у темі — додати сюди
 const twMerge = extendTailwindMerge({
     extend: {
         theme: {
-            text: [ 'page-title', 'score', 'score-sm', 'dialog-title', 'logo', 'hero', 'hero-sm', 'form-title' ],
-            leading: [ 'body', 'heading' ]
+            text: [ 'page-title', 'score', 'score-sm', 'dialog-title', 'logo', 'hero' ],
+            leading: [ 'body', 'heading' ],
+            tracking: [ 'title', 'heading', 'label' ],
+            shadow: [ 'menu', 'dialog', 'drawer' ]
         }
     }
 });

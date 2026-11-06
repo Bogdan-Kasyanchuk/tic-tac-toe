@@ -31,7 +31,7 @@ const Logo: FC<{ className?: string }> = ({ className }) => (
                 className="stroke-cross"
             />
         </svg>
-        <span className="font-display text-logo font-bold tracking-tight text-foreground">tic·tac·toe</span>
+        <span className="font-display text-logo leading-none font-bold text-foreground">Tic·Tac·Toe</span>
     </span>
 );
 

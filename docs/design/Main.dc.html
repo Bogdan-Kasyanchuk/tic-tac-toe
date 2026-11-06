@@ -43,12 +43,12 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </style>
 </helmet>
 <main style="min-height: 800px; display: flex; flex-wrap: wrap; background: #0D0F1F; color: #EDEFFF; font-family: 'Geist', system-ui, sans-serif">
-<section style="flex: 1 1 520px; display: flex; flex-direction: column; gap: 48px; padding: 48px 56px; background: #121530; border-right: 1px solid #22264D; align-items: flex-start; justify-content: space-between">
+<section style="flex: 1 1 520px; display: flex; flex-direction: column; gap: 48px; padding: 48px 56px; background: #121530; border-right: 1px solid #22264D; align-items: flex-start; justify-content: space-between; height: 800px; padding-right: 60px; padding-left: 60px; padding-top: 40px; padding-bottom: 40px">
 <div style="display: flex; align-items: center; gap: 12px">
 <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1D2142"></rect><circle cx="10.5" cy="16" r="4.5" fill="none" stroke="#6C8CFF" stroke-width="2.5"></circle><path d="M18 11.5l9 9M27 11.5l-9 9" stroke="#FFA24C" stroke-width="2.5" stroke-linecap="round"></path></svg>
-<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.01em">tic·tac·toe</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 700; line-height: 1">Tic·Tac·Toe</span>
 </div>
-<div style="display: flex; flex-direction: column; gap: 32px; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 40px; align-items: flex-start">
 <svg width="280" height="280" viewBox="0 0 320 320" aria-hidden="true" style="max-width: 100%; height: auto">
 <path d="M107 16v288M213 16v288M16 107h288M16 213h288" stroke="#2B3060" stroke-width="6" stroke-linecap="round"></path>
 <circle cx="53" cy="53" r="28" fill="none" stroke="#6C8CFF" stroke-width="11"></circle>
@@ -64,10 +64,10 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </div>
 <p style="margin: 0; font-size: 14px; color: #8086B3">No installs. Moves sync instantly.</p>
 </section>
-<section style="flex: 1 1 440px; display: flex; align-items: center; justify-content: center; padding: 48px 24px">
-<div style="width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 28px">
-<div style="display: flex; flex-direction: column; gap: 8px">
-<h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Sign in</h2>
+<section style="flex: 1 1 440px; display: flex; align-items: center; justify-content: center; padding: 48px 24px; padding-top: 40px; padding-right: 20px; padding-bottom: 40px; padding-left: 20px">
+<div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 42px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Sign in</h2>
 <p style="margin: 0; font-size: 16px; line-height: 1.35; color: #A3A8CF">Welcome back. Your games are waiting.</p>
 </div>
 <button type="button" class="btn-secondary" style="height: 50px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 12px; border: 1px solid #2B3060; background: #1D2142; color: #EDEFFF; font: 500 18px 'Geist', sans-serif; cursor: pointer">
@@ -76,12 +76,12 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </button>
 <div style="display: flex; align-items: center; gap: 12px; color: #8086B3; font-size: 14px">
 <span style="flex: 1; height: 1px; background: #2B3060"></span>
-<span>or with email</span>
+<span style="line-height: 1">or with email</span>
 <span style="flex: 1; height: 1px; background: #2B3060"></span>
 </div>
 <form style="display: flex; flex-direction: column; gap: 20px; margin: 0">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<label for="email" style="font-size: 14px; font-weight: 500; color: #D6D9F5">Email</label>
+<label for="email" style="font-size: 14px; font-weight: 500; color: #D6D9F5; line-height: 1">Email</label>
 <div style="position: relative">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8086B3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 16px; top: 16px"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
 <input id="email" type="email" autocomplete="email" placeholder="you@example.com" style="width: 100%; height: 50px; padding: 0 16px 0 44px; border-radius: 12px; border: 1px solid #2B3060; background: #10132A; color: #EDEFFF; font: 400 18px 'Geist', sans-serif">
@@ -89,7 +89,7 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <div style="display: flex; align-items: baseline; justify-content: space-between">
-<label for="password" style="font-size: 14px; font-weight: 500; color: #D6D9F5">Password</label>
+<label for="password" style="font-size: 14px; font-weight: 500; color: #D6D9F5; line-height: 1">Password</label>
 </div>
 <div style="position: relative">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8086B3" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 16px; top: 16px"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
@@ -99,9 +99,9 @@ input:focus{outline:none;border-color:#6C8CFF !important;box-shadow:0 0 0 3px rg
 </button>
 </div>
 </div>
-<a href="Lobby.dc.html" class="btn-primary" style="height: 50px; margin-top: 8px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 18px; font-weight: 600">Sign in</a>
+<a href="Lobby.dc.html" class="btn-primary" style="height: 50px;display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #EDEFFF; color: #0D0F1F; font-size: 18px; font-weight: 600">Sign in</a>
 </form>
-<p style="margin: 0; font-size: 14px; color: #A3A8CF; text-align: center">New here? <a href="SignUp.dc.html" style="font-weight: 500">Create an account</a></p>
+<p style="margin: 0; font-size: 16px; color: #A3A8CF; text-align: center">New here? <a href="SignUp.dc.html" style="font-weight: 500">Create an account</a></p>
 </div>
 </section>
 </main>

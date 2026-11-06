@@ -12,22 +12,23 @@ type AuthSplitLayoutProps = {
     children: ReactNode
 };
 
-// Десктоп: ліва панель з полем і заголовком, форма праворуч. Телефон і планшет до 768: лише логотип і форма, колонка 380 по центру
+// Десктоп: ліва панель з полем і заголовком, форма праворуч. Телефон і планшет до 768: лише логотип і форма, колонка 400 по центру
 const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footnote, children }) => (
     <div className="flex min-h-dvh">
         <section
             className={
                 cn([
                     'hidden',
-                    'md:flex md:flex-1 md:flex-col md:justify-between md:gap-12 md:border-r md:border-line md:bg-muted md:px-14 md:py-12'
+                    'md:flex md:flex-1 md:flex-col md:justify-between md:gap-12 md:border-r md:border-line md:bg-muted md:p-10',
+                    'lg:px-15'
                 ])
             }
         >
             <Logo />
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-10">
                 <HeroBoard variant={ hero } />
                 <div className="flex max-w-115 flex-col gap-4">
-                    <h1 className="font-display text-hero font-extrabold tracking-tight">{ headline }</h1>
+                    <h1 className="font-display text-hero font-extrabold tracking-title">{ headline }</h1>
                     <p className="text-lg text-muted-foreground">{ lead }</p>
                 </div>
             </div>
@@ -36,15 +37,15 @@ const AuthSplitLayout: FC<AuthSplitLayoutProps> = ({ hero, headline, lead, footn
         <section
             className={
                 cn([
-                    'flex flex-1 flex-col items-center px-6 pt-14 pb-8',
-                    'md:justify-center md:py-12'
+                    'flex flex-1 flex-col items-center p-5',
+                    'md:justify-center md:py-10'
                 ])
             }
         >
             <div
                 className={
                     cn([
-                        'flex w-full max-w-95 grow flex-col gap-7',
+                        'flex w-full max-w-100 grow flex-col gap-7',
                         'md:grow-0'
                     ])
                 }

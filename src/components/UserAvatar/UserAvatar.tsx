@@ -13,7 +13,7 @@ type UserAvatarProps = {
 
 // sm — кнопка в шапці, card — картка рахунку на телефоні, md — на десктопі, lg — меню на телефоні
 // Кегль ініціалів ставиться на AvatarFallback: у нього свій text-sm, тож на корені Avatar він не діє
-const SIZE = { sm: 'size-8', card: 'size-9', md: 'size-11', lg: 'size-13' };
+const SIZE = { sm: 'size-8', card: 'size-9', md: 'size-11', lg: 'size-12.5' };
 const INITIALS = { sm: 'text-xs', card: 'text-xs', md: 'text-sm', lg: 'text-base' };
 
 // referrerPolicy потрібен аватаркам з googleusercontent.com: без нього вони іноді віддають 403
