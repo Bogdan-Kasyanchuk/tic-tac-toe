@@ -3,7 +3,7 @@
   "attachments": {},
   "boards": {
     "Components.dc.html": {
-      "h": 4800,
+      "h": 5480,
       "title": "Components (shadcn/ui)",
       "w": 1280,
       "x": 0,
@@ -44,6 +44,13 @@
       "w": 1280,
       "x": 1360,
       "y": 2444
+    },
+    "LongNames.dc.html": {
+      "h": 844,
+      "title": "Long names: truncation",
+      "w": 920,
+      "x": 3290,
+      "y": 3704
     },
     "Main.dc.html": {
       "expand": "fill",
@@ -103,7 +110,7 @@
       "y": 3704
     },
     "MobileSignIn.dc.html": {
-      "h": 844,
+      "h": 840,
       "is_interactive": true,
       "title": "Sign in",
       "w": 390,
@@ -111,7 +118,7 @@
       "y": 1200
     },
     "MobileSignUp.dc.html": {
-      "h": 844,
+      "h": 840,
       "is_interactive": true,
       "title": "Create account",
       "w": 390,
@@ -143,13 +150,6 @@
       "w": 1280,
       "x": 2720,
       "y": 2444
-    },
-    "LongNames.dc.html": {
-      "h": 844,
-      "title": "Long names: truncation",
-      "w": 920,
-      "x": 3290,
-      "y": 3704
     }
   },
   "createdOnFiles": {
