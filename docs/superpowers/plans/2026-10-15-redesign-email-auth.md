@@ -16,12 +16,12 @@
 **Spec:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, його копія лежить у репозиторії в `docs/design/` (екрани `*.dc.html`; точні кольори, відступи й тексти беруться звідти). Рішення з розмови зведені в розділ «Рішення».
 
 **Зміни від 2026-10-16:**
-- Підтвердження пошти кодом і скидання пароля відкладені (розділ «Пізніше» в кінці). Задача 6 лишилась заглушкою, щоб номери не зсувались. Перша версія плану з повними кроками для коду й скидання — у коміті `5a16c71`.
+- Задача 6 лишилась заглушкою, щоб номери не зсувались.
 - Ручні перевірки замінені: e2e-тестами на Playwright (нова задача 9, прибирання стало задачею 10) і перевірками в браузері, які Claude робить сам через Playwright MCP. Тестові користувачі прибираються командою, а не в дашборді.
 
 ## Рішення
 
-- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone», аркуш «Components (shadcn/ui)» і «Long names: truncation». Екрани «Verify email» і «Reset password» поки не реалізуються (з канвасу прибрані 2026-11-03). Як дизайн-система лягає на токени коду — `docs/design/README.md`.
+- Дизайн — канвас вище. Він розбитий на ряди: «Auth · desktop», «Auth · phone», «Play · desktop», «Play · phone», аркуш «Components (shadcn/ui)» і «Long names: truncation». Як дизайн-система лягає на токени коду — `docs/design/README.md`.
 - Бібліотека компонентів — shadcn/ui на Radix. Файли компонентів генеруються в `src/components/ui/` і далі вважаються кодом проєкту, а не залежністю.
 - Тема тільки темна, світлої немає.
 - Вхід:
@@ -34,7 +34,6 @@
 - Наслідки відсутності підтвердження, з якими власник погодився:
   - можна зареєструватися на чужу адресу;
   - забутий пароль не відновлюється самостійно, лише видаленням акаунта в дашборді Convex.
-- Посилання «Forgot password?» на сторінці входу поки немає.
 - Лобі (`/`) тепер тільки для тих, хто увійшов: привітання звертається на ім'я. Анонім потрапляє на `/login`, а після входу повертається туди, звідки прийшов.
 - Меню:
   - **Десктоп:** кнопка з аватаром та ім'ям відкриває дропдаун; угорі в ньому лише пошта. У грі є ID гри (копіює кнопка поруч, меню лишається відкритим), «Copy invite link», «Back to lobby» і «Sign out»; у лобі — лише «Sign out».
@@ -86,9 +85,8 @@
 
 | Артборд | Де в коді |
 |---|---|
-| `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`), без лінка «Forgot password?» |
+| `Main`, `MobileSignIn` | `src/pages/SignInPage` (`/login`) |
 | `SignUp`, `MobileSignUp` | `src/pages/SignUpPage` (`/signup`) |
-| `VerifyEmail`, `MobileVerifyEmail`, `ResetPassword`, `MobileResetPassword` | поки ніде — див. «Пізніше»; з канвасу прибрані 2026-11-03, копія в git (`ce9e237`) |
 | `LongNames` | `PlayerCard`, `AccountMenu`, `MobileMenu` (обрізання й перенос довгих імен) |
 | `Lobby`, `LobbyJoin`, `MobileLobby`, `MobileLobbyJoin` | `src/pages/HomePage` (`/`, вкладки New / Join) |
 | `Waiting`, `MobileWaiting` | `src/components/WaitingForOpponent` |
@@ -518,7 +516,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `internal.testing.deleteE2eUsers({}) → number` — видаляє користувачів з поштою на `@e2e.test` разом з акаунтами, сесіями, refresh-токенами й іграми, де вони сидять; повертає кількість;
   - провайдер з `id: 'password'`: `signIn('password', { flow: 'signUp', name, email, password })` і `signIn('password', { flow: 'signIn', email, password })`. Користувацькі помилки — лише `ConvexError` з текстами вище.
 
-Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів (розділ «Пізніше»).
+Чому свій провайдер, а не `Password`: у штатного `Password` колбек `profile` синхронний, тож асинхронної перевірки пошти в ньому не зробиш. А його помилка `Account … already exists` — звичайний `Error`, який Convex на prod ховає. `ConvexCredentials`, `createAccount` і `retrieveAccount` — публічний API Convex Auth для власних провайдерів. `id` і хешування (Scrypt з `lucia`) ті самі, що в `Password`, тож пізніше на нього можна перейти без міграції акаунтів.
 
 - [x] **Step 1: Залежність**
 
@@ -2153,7 +2151,7 @@ test('Google sign-in redirects back to the original page', async () => {
 Run: `npx vitest run src/pages/SignInPage`
 Expected: FAIL, бо `./SignInPage` ще немає.
 
-- [x] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`, без лінка «Forgot password?»)
+- [x] **Step 6: `SignInPage`** (артборди `Main`, `MobileSignIn`)
 
 ```tsx
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -2285,7 +2283,7 @@ Expected: PASS.
 - [x] **Step 8: Перевірка в браузері (Claude, Playwright MCP)**
 
 На `npm run dev`, без входу:
-- `/login` на 1280px і 390px — знімки звір з `docs/design/Main.dc.html` і `docs/design/MobileSignIn.dc.html`. «Forgot password?» немає, це очікувано.
+- `/login` на 1280px і 390px — знімки звір з `docs/design/Main.dc.html` і `docs/design/MobileSignIn.dc.html`.
 - Неправильна пошта (`not-an-email`) — «Enter a valid email» під полем, запит не йде.
 
 Неправильний пароль для справжнього акаунта перевіриться в задачі 5, коли з'явиться реєстрація.
@@ -2655,9 +2653,9 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
-### Task 6: Скидання пароля — відкладено
+### Task 6: —
 
-Задачу перенесено в розділ «Пізніше» разом із підтвердженням пошти. Номер лишено, щоб не зсувати посилання на задачі 7–10. Переходь до задачі 7.
+Задачі немає; номер лишено, щоб не зсувати посилання на задачі 7–10. Переходь до задачі 7.
 
 ---
 
@@ -3881,13 +3879,13 @@ Expected: усе зелене.
 
 - [x] **Step 3: Документація**
 
-- **`README.md`:** вхід — Google або пошта з паролем (без підтвердження пошти). Команда `npm run test:e2e` (потрібен запущений `npx convex dev`).
+- **`README.md`:** вхід — Google або пошта з паролем. Команда `npm run test:e2e` (потрібен запущений `npx convex dev`).
 - **`CLAUDE.md`:**
   - **Стек:** додай shadcn/ui (`src/components/ui`, правляться як свій код і за тими самими правилами форматування), `lucide-react`, `sonner`, `react-hook-form` + `zod`.
   - **Бекенд:** вхід поштою — власний провайдер `convex/emailPassword.ts` (`id: 'password'`); помилки для людини лише як `ConvexError`.
   - **Конвенції:** дизайн — канвас https://claude.ai/artifact/PDTUiw8QMxFx1aLJRnp4US, копія в `docs/design/`; кольори лише через токени в `src/index.css`.
   - **Команди:** `npm run test:e2e` — Playwright, проти `npm run dev` і dev-деплойменту; тестові користувачі лише `@e2e.test`, прибирання — `npx convex run testing:deleteE2eUsers`.
-  - **Поточна робота:** прибери розділ або заміни на «Підтвердження пошти й скидання пароля — розділ «Пізніше» в плані 2026-10-15».
+  - **Поточна робота:** прибери розділ.
   - **Історія:** «Редизайн і вхід поштою — жовтень 2026, план `docs/superpowers/plans/2026-10-15-redesign-email-auth.md`».
 
 - [ ] **Step 4: Фінальна перевірка**
@@ -3923,30 +3921,3 @@ E2E_BASE_URL=https://bogkas-tic-tac-toe.netlify.app E2E_PROD=1 npx playwright te
 
 Якщо власник не хоче запускати тести на prod, він перевіряє вручну: реєструється поштою, пробує ще раз на ту саму адресу, потім видаляє тестового користувача (`npx convex run --prod testing:deleteE2eUsers`, якщо пошта на `@e2e.test`, або в дашборді Convex → Production).
 
----
-
-## Пізніше: підтвердження пошти й скидання пароля
-
-Екрани `VerifyEmail`, `ResetPassword`, `MobileVerifyEmail`, `MobileResetPassword` 2026-11-03 з канвасу прибрали; їхня остання копія — `git show ce9e237 -- docs/design/`, і перед реалізацією їх треба оновити під нову дизайн-систему (`docs/design/README.md`). Повні кроки з кодом і тестами — у першій версії цього плану:
-
-```bash
-git show 5a16c71:docs/superpowers/plans/2026-10-15-redesign-email-auth.md
-```
-
-Там задача 2 (Resend і `convex/otp.ts`), задача 5 (екран коду) і задача 6 (скидання пароля). Що врахувати при поверненні:
-
-1. **👤 Resend.**
-   - Акаунт і ключ `AUTH_RESEND_KEY` у Convex dev і prod.
-   - Для листів усім гравцям — підтверджений домен і `AUTH_EMAIL_FROM`.
-2. **Бекенд.**
-   - `convex/otp.ts` з першої версії: `generateCode`, `sendCodeEmail`, `ResendOTP`, `ResendOTPPasswordReset`. Код із 6 цифр, діє 15 хв.
-   - У `EmailPassword` для непідтвердженої пошти викликати `signInViaProvider(ctx, ResendOTP, { accountId, params })` — так робить штатний `Password` (`node_modules/@convex-dev/auth/dist/providers/Password.js`, гілки `email-verification`, `reset`, `reset-verification`).
-   - Перевірку зайнятої пошти зберегти. З перевіркою пошти Convex Auth з'єднує акаунти з однаковою підтвердженою адресою, тож гілку `google` у `takenEmailMessage` варто переглянути.
-   - Наявні акаунти без підтвердженої пошти при наступному вході отримають код — міграція не потрібна.
-3. **Фронт.**
-   - Екран коду (`input-otp`), пам'ять незавершеного входу для «Resend code», екран скидання пароля, лінк «Forgot password?».
-   - Гілка `signingIn: false` у `SignInPage` / `SignUpPage` → `/verify`.
-4. **Review Focus з першої версії:**
-   - вхід у непідтверджений акаунт веде на код;
-   - перезавантаження на `/verify` пояснює, що сесія минула;
-   - `from` переживає `/signup → /verify`.
